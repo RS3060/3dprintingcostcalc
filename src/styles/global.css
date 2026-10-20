@@ -166,7 +166,8 @@ html.light .bg-\[\#0e1628\],
 html.light .bg-\[\#0e1526\],
 html.light .bg-\[\#0c1220\],
 html.light .bg-\[\#060910\],
-html.light .bg-\[\#080c15\] {
+html.light .bg-\[\#080c15\],
+html.light .bg-\[\#0a0f1d\] {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
@@ -174,6 +175,12 @@ html.light .bg-\[\#080c15\] {
 
 /* Light mode for elevated cards, inputs, and comparison boxes */
 html.light .bg-\[\#162035\],
+html.light .bg-\[\#162035\]\/60,
+html.light .bg-\[\#162035\]\/50,
+html.light .bg-\[\#162035\]\/40,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/40,
 html.light .bg-\[\#131d33\],
 html.light .bg-\[\#0c1424\],
 html.light .bg-black\/30,
@@ -379,9 +386,16 @@ html.light .btn-dark * {
 /* High contrast accent colors for light mode (replaces unreadable neon colors) */
 html.light .text-cyan-400,
 html.light .text-cyan-300,
-html.light .text-cyan-500 {
+html.light .text-cyan-500,
+html.light .text-cyan-200,
+html.light .text-cyan-100 {
   color: #0e7490 !important;
   /* cyan-700: 5.1:1 on white */
+}
+
+html.light .text-cyan-200 strong {
+  color: #155e75 !important;
+  /* cyan-800: 7.2:1 on white */
 }
 
 html.light .text-emerald-400,
@@ -421,7 +435,9 @@ html.light .text-red-300 {
 html.light .text-orange-400,
 html.light .text-orange-300,
 html.light .text-amber-400,
-html.light .text-amber-300 {
+html.light .text-amber-300,
+html.light .text-amber-200,
+html.light .text-amber-100 {
   color: #c2410c !important;
   /* orange-700: 5.1:1 on white */
 }
@@ -436,6 +452,20 @@ html.light .border-white\/10,
 html.light .border-white\/5,
 html.light .border-white\/20 {
   border-color: #cbd5e1 !important;
+}
+
+html.light .border-amber-500\/40,
+html.light .border-amber-500\/30,
+html.light .border-amber-500\/50 {
+  border-color: #fcd34d !important;
+}
+
+html.light .border-cyan-800\/40 {
+  border-color: #7dd3fc !important;
+}
+
+html.light .border-emerald-800\/40 {
+  border-color: #bbf7d0 !important;
 }
 
 html.light .divide-white\/5> :not([hidden])~ :not([hidden]),
@@ -584,6 +614,48 @@ html.light .bg-red-950\/40 * {
 html.light .bg-red-950\/60 .text-white,
 html.light .bg-red-950\/40 .text-white {
   color: #7f1d1d !important;
+}
+
+/* Light mode amber callout boxes (Terms & Conditions and warnings) */
+html.light .bg-amber-950\/30,
+html.light .bg-amber-950\/40,
+html.light .bg-amber-950\/50,
+html.light .bg-amber-950\/60,
+html.light .bg-amber-950\/70 {
+  background-color: #fffbeb !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+
+html.light .bg-amber-950\/30 *,
+html.light .bg-amber-950\/40 *,
+html.light .bg-amber-950\/50 *,
+html.light .bg-amber-950\/60 *,
+html.light .bg-amber-950\/70 * {
+  color: #92400e !important;
+}
+
+html.light .bg-amber-950\/30 p.text-amber-300,
+html.light .bg-amber-950\/40 p.text-amber-300,
+html.light .bg-amber-950\/50 p.text-amber-300,
+html.light .bg-amber-950\/60 p.text-amber-300,
+html.light .bg-amber-950\/70 p.text-amber-300,
+html.light .bg-amber-950\/30 .text-amber-300,
+html.light .bg-amber-950\/40 .text-amber-300 {
+  color: #b45309 !important;
+}
+
+/* Light mode slate notification boxes (Contact Us reminder) */
+html.light .bg-slate-900\/60 *,
+html.light .bg-slate-900\/50 *,
+html.light .bg-slate-900\/40 * {
+  color: #334155 !important;
+}
+
+html.light .bg-slate-900\/60 strong,
+html.light .bg-slate-900\/50 strong,
+html.light .bg-slate-900\/40 strong {
+  color: #0f172a !important;
 }
 
 /* =========================================================
