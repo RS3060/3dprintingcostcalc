@@ -25,6 +25,7 @@ export interface Props {
   noindex?: boolean;
   faqList?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ name: string; item: string }>;
+  showLanguageSelector?: boolean;
 }
 
 const {
@@ -39,6 +40,7 @@ const {
   noindex = false,
   faqList = [],
   breadcrumbs,
+  showLanguageSelector = true,
 } = Astro.props;
 
 // Determine current locale
@@ -141,14 +143,23 @@ const jsonLdContent = JSON.stringify({
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Complete Multilingual SEO Alternate Hreflang Tags -->
-    <link rel="alternate" hreflang="x-default" href={`https://3dprintingcostcalc.com${cleanPath}`} />
-    {ALL_LOCALES.map((loc) => {
-      const alternateUrl =
-        loc === DEFAULT_LOCALE
-          ? `https://3dprintingcostcalc.com${cleanPath}`
-          : `https://3dprintingcostcalc.com/${loc}${cleanPath}`;
-      return <link rel="alternate" hreflang={loc} href={alternateUrl} />;
-    })}
+    {showLanguageSelector ? (
+      <>
+        <link rel="alternate" hreflang="x-default" href={`https://3dprintingcostcalc.com${cleanPath}`} />
+        {ALL_LOCALES.map((loc) => {
+          const alternateUrl =
+            loc === DEFAULT_LOCALE
+              ? `https://3dprintingcostcalc.com${cleanPath}`
+              : `https://3dprintingcostcalc.com/${loc}${cleanPath}`;
+          return <link rel="alternate" hreflang={loc} href={alternateUrl} />;
+        })}
+      </>
+    ) : (
+      <>
+        <link rel="alternate" hreflang="x-default" href={`https://3dprintingcostcalc.com${cleanPath}`} />
+        <link rel="alternate" hreflang="en" href={`https://3dprintingcostcalc.com${cleanPath}`} />
+      </>
+    )}
 
     {noindex ? (
       <meta name="robots" content="noindex, nofollow" />
@@ -243,7 +254,9 @@ const jsonLdContent = JSON.stringify({
         <!-- Right Side Actions: Language Selector, Theme Toggle & Mobile Menu Trigger -->
         <div class="flex items-center gap-1 sm:gap-2 shrink-0">
           <!-- Language Dropdown -->
-          <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} />
+          {showLanguageSelector && (
+            <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} />
+          )}
 
           <!-- Light/Dark Toggle -->
           <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer rounded">
@@ -277,9 +290,11 @@ const jsonLdContent = JSON.stringify({
       <!-- Mobile Dropdown Navigation Drawer -->
       <nav id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto" aria-label="Mobile navigation">
         <!-- Language Switcher in Mobile Drawer -->
-        <div class="border-b border-white/10 pb-3">
-          <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} isMobileDrawer={true} />
-        </div>
+        {showLanguageSelector && (
+          <div class="border-b border-white/10 pb-3">
+            <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} isMobileDrawer={true} />
+          </div>
+        )}
 
         <div>
           <span class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">{t.nav.calculators}</span>
@@ -316,11 +331,11 @@ const jsonLdContent = JSON.stringify({
         </div>
 
         <div class="border-t border-white/5 pt-3 flex items-center justify-between px-3 text-xs text-slate-400">
-          <a href={getLocalizedPath('/privacy/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a>
+          <a href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a>
           <span>·</span>
-          <a href={getLocalizedPath('/terms/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a>
+          <a href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a>
           <span>·</span>
-          <a href={getLocalizedPath('/contact/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
+          <a href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
         </div>
       </nav>
     </header>
@@ -382,9 +397,9 @@ const jsonLdContent = JSON.stringify({
               <li><a href={getLocalizedPath('/filament-cost/pla/', currentLocale)} class="hover:text-cyan-400 transition-colors">PLA Guide</a></li>
               <li><a href={getLocalizedPath('/filament-cost/petg/', currentLocale)} class="hover:text-cyan-400 transition-colors">PETG Guide</a></li>
               <li><a href={getLocalizedPath('/filament-cost/abs/', currentLocale)} class="hover:text-cyan-400 transition-colors">ABS Guide</a></li>
-              <li><a href={getLocalizedPath('/privacy/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a></li>
-              <li><a href={getLocalizedPath('/terms/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a></li>
-              <li><a href={getLocalizedPath('/contact/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a></li>
+              <li><a href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a></li>
+              <li><a href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a></li>
+              <li><a href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a></li>
             </ul>
           </div>
         </div>

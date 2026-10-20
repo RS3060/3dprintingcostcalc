@@ -115,7 +115,6 @@ export interface TranslationDictionary {
     metaTitle: string;
     metaDescription: string;
     metaKeywords: string;
-    heroBadge: string;
     heroTitle: string;
     heroGradient: string;
     heroSubtitle: string;

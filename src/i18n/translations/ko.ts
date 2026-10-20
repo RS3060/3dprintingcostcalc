@@ -112,7 +112,6 @@ export const ko: TranslationDictionary = {
     metaTitle: '3D 프린팅 출력 비용 계산기 & 필라멘트 견적기 | 3DPrintingCostCalc.com',
     metaDescription: '무료 3D 프린팅 원가 계산기. .STL, .3MF, .GCODE 파일을 드롭하여 1g당 필라멘트 원가, 밤부랩 및 프루사 전기세, 기기 감가상각, 인건비, 스마트스토어/Etsy 판매 수수료를 즉시 계산하세요.',
     metaKeywords: '3D 프린터 출력 비용, 3D 프린팅 가격 계산기, 필라멘트 원가 계산, 3D 프린터 전기세, 3D 프린팅 대행 견적',
-    heroBadge: '정밀 메이커 경제성 도구',
     heroTitle: '3D 프린팅 & 필라멘트',
     heroGradient: '원가 계산기',
     heroSubtitle: '3D 프린팅 출력물의 원가를 1원 단위까지 정확하게 계산하세요. .STL, .3MF, .GCODE 모델을 드래그하면 소재 무게, 밤부/프루사 전력량, 기기 감가상각비, 인건비, 마켓플레이스 판매 수수료까지 한눈에 분석해 드립니다.',

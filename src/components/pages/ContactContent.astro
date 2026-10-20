@@ -1,56 +1,270 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getPageTranslations } from '../../i18n/pageTranslations';
-import { getTranslations } from '../../i18n/translations';
-import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
-
-export interface Props {
-  locale?: string;
-}
-
-const { locale = DEFAULT_LOCALE } = Astro.props;
-const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
-const t = getTranslations(currentLocale);
-const legal = getPageTranslations(currentLocale).legal;
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout
-  title={`${legal.contactTitle} | 3DPrintingCostCalc.com`}
-  description={legal.contactSubtitle}
-  locale={currentLocale}
+  title="Contact Us | 3DPrintingCostCalc.com"
+  description="Contact the 3DPrintingCostCalc.com team. Submit spool tare weights, suggest new 3D printer profiles, report calculation feedback, or make general inquiries."
+  canonicalUrl="https://3dprintingcostcalc.com/contact/"
+  locale="en"
+  showLanguageSelector={false}
   breadcrumbs={[
-    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
-    { name: legal.contactTitle, item: getLocalizedPath('/contact/', currentLocale) }
+    { name: "Home", item: "/" },
+    { name: "Contact Us", item: "/contact/" },
   ]}
 >
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
-    <div class="space-y-2">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">{legal.contactTitle}</h1>
-      <p class="text-xs text-slate-400 font-mono">{legal.contactSubtitle}</p>
+  <div
+    class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10 text-slate-300"
+  >
+    <!-- Header -->
+    <header class="space-y-3 border-b border-white/10 pb-8">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-800/40"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"
+          aria-hidden="true"></span>
+        <span>Maker Community &amp; Technical Support</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        Contact Us
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-2xl">
+        We welcome community feedback, empty spool tare weight submissions, new
+        3D printer profile requests, and calculation enhancements from makers
+        worldwide.
+      </p>
+    </header>
+
+    <!-- Main Direct Contact Card -->
+    <div
+      class="p-6 sm:p-8 rounded-2xl bg-[#0e1628] border border-cyan-500/30 shadow-2xl space-y-6"
+    >
+      <div class="space-y-2">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Get in Touch</h2>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          For all inquiries, bug reports, feature suggestions, or business
+          partnerships, contact our direct team email below:
+        </p>
+      </div>
+
+      <!-- Email Highlight Box -->
+      <div
+        class="p-5 sm:p-6 rounded-xl bg-[#162035] border border-cyan-500/20 space-y-3"
+      >
+        <span
+          class="text-xs font-mono uppercase tracking-wider text-slate-400 block"
+          >Primary Support &amp; Community Email:</span
+        >
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+        >
+          <a
+            href="mailto:support@3dprintingcostcalc.com"
+            class="text-xl sm:text-2xl font-mono font-bold text-cyan-400 hover:text-cyan-300 transition-colors underline break-all"
+          >
+            support@3dprintingcostcalc.com
+          </a>
+          <a
+            href="mailto:support@3dprintingcostcalc.com"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs tracking-wide shadow-md transition-all self-start sm:self-auto"
+            style="color: #ffffff !important;"
+          >
+            <svg
+              class="w-4 h-4 text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Send Email</span>
+          </a>
+        </div>
+        <p class="text-xs text-slate-400 pt-1 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span
+            >Response turnaround: Typically within 24 to 48 business hours.</span
+          >
+        </p>
+      </div>
     </div>
 
-    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4 text-xs sm:text-sm">
-      <h2 class="text-lg font-bold text-white">{legal.contactCardTitle}</h2>
-      <p class="leading-relaxed">
-        {legal.contactCardDesc}
+    <!-- Submission Guidelines Cards -->
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-white">
+        How Can We Help You?
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 1. Spool Tare Weights -->
+        <div
+          class="p-5 rounded-2xl bg-[#0c1220] border border-white/10 space-y-2"
+        >
+          <div class="flex items-center gap-2 text-cyan-400">
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+            <h3 class="font-bold text-sm text-white">
+              Submitting Empty Spool Tare Weights
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Help expand our Spool Tare Database! Please include:
+          </p>
+          <ul
+            class="text-xs text-slate-300 list-disc list-inside space-y-1 pl-1"
+          >
+            <li>Filament manufacturer &amp; brand name</li>
+            <li>Spool material (Cardboard, Plastic, Reusable MasterSpool)</li>
+            <li>
+              Exact empty tare weight in grams (measured on a digital scale)
+            </li>
+            <li>Spool diameter / width if non-standard</li>
+          </ul>
+        </div>
+
+        <!-- 2. Machine Profiles -->
+        <div
+          class="p-5 rounded-2xl bg-[#0c1220] border border-white/10 space-y-2"
+        >
+          <div class="flex items-center gap-2 text-emerald-400">
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+            <h3 class="font-bold text-sm text-white">
+              Requesting a 3D Printer Profile
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Want to see a specific machine added to our TCO calculator? Please
+            include:
+          </p>
+          <ul
+            class="text-xs text-slate-300 list-disc list-inside space-y-1 pl-1"
+          >
+            <li>Printer brand and exact model version</li>
+            <li>Bed type (AC heated bed, DC, or passive)</li>
+            <li>Average running wattage (or watt-meter test results)</li>
+            <li>Build volume dimensions (X &times; Y &times; Z in mm)</li>
+          </ul>
+        </div>
+
+        <!-- 3. Bug Reports & Slicer Feedback -->
+        <div
+          class="p-5 rounded-2xl bg-[#0c1220] border border-white/10 space-y-2"
+        >
+          <div class="flex items-center gap-2 text-amber-400">
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              ></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <h3 class="font-bold text-sm text-white">
+              Calculation &amp; Bug Reports
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Noticed a math discrepancy or parsing issue? Please provide:
+          </p>
+          <ul
+            class="text-xs text-slate-300 list-disc list-inside space-y-1 pl-1"
+          >
+            <li>
+              Slicer name and version (OrcaSlicer, PrusaSlicer, Bambu Studio)
+            </li>
+            <li>Input values entered into our calculator</li>
+            <li>Expected vs. actual calculation results</li>
+            <li>Browser and device used</li>
+          </ul>
+        </div>
+
+        <!-- 4. Legal & DMCA Inquiries -->
+        <div
+          class="p-5 rounded-2xl bg-[#0c1220] border border-white/10 space-y-2"
+        >
+          <div class="flex items-center gap-2 text-violet-400">
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <h3 class="font-bold text-sm text-white">
+              Legal, Privacy &amp; DMCA Notices
+            </h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            For formal privacy inquiries, data protection matters, or
+            intellectual property notices:
+          </p>
+          <ul
+            class="text-xs text-slate-300 list-disc list-inside space-y-1 pl-1"
+          >
+            <li>Subject line: &ldquo;Legal Notice: [Subject]&rdquo;</li>
+            <li>Detailed statement of inquiry or statutory notice</li>
+            <li>Direct contact name and organizational affiliation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security & Privacy Reminder -->
+    <div
+      class="p-4 rounded-xl bg-slate-900/60 border border-white/5 text-xs text-slate-400 space-y-1"
+    >
+      <strong class="text-slate-300">Important Privacy Note:</strong>
+      <p>
+        For security and privacy reasons, please do <strong>NOT</strong> attach proprietary
+        3D CAD models (.STL, .STEP, .CAD) to email inquiries. Our team cannot accept
+        or review proprietary design files via email.
       </p>
-
-      <div class="p-4 rounded-xl bg-[#162035] border border-white/5 space-y-2">
-        <span class="text-xs text-slate-400 block">{legal.contactEmailLabel}</span>
-        <a href="mailto:support@3dprintingcostcalc.com" class="text-lg font-mono font-bold text-cyan-400 hover:underline">
-          support@3dprintingcostcalc.com
-        </a>
-        <p class="text-[11px] text-slate-400 pt-1">
-          {legal.contactTurnaround}
-        </p>
-      </div>
-
-      <div class="space-y-2 pt-2">
-        <h3 class="font-bold text-white">{legal.contactSuggestTitle}</h3>
-        <p class="text-xs text-slate-400 leading-relaxed">
-          {legal.contactSuggestDesc}
-        </p>
-      </div>
     </div>
   </div>
 </Layout>

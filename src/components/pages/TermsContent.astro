@@ -1,61 +1,486 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getPageTranslations } from '../../i18n/pageTranslations';
-import { getTranslations } from '../../i18n/translations';
-import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
-
-export interface Props {
-  locale?: string;
-}
-
-const { locale = DEFAULT_LOCALE } = Astro.props;
-const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
-const t = getTranslations(currentLocale);
-const legal = getPageTranslations(currentLocale).legal;
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout
-  title={`${legal.termsTitle} | 3DPrintingCostCalc.com`}
-  description={legal.termsDesc}
-  locale={currentLocale}
+  title="Terms & Conditions | 3DPrintingCostCalc.com"
+  description="Official Terms and Conditions for 3DPrintingCostCalc.com. Review our engineering estimation disclaimers, user rights, commercial quoting terms, and limitation of liability."
+  canonicalUrl="https://3dprintingcostcalc.com/terms/"
+  locale="en"
+  showLanguageSelector={false}
   breadcrumbs={[
-    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
-    { name: legal.termsTitle, item: getLocalizedPath('/terms/', currentLocale) }
+    { name: "Home", item: "/" },
+    { name: "Terms & Conditions", item: "/terms/" },
   ]}
 >
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
-    <div class="space-y-2">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">{legal.termsTitle}</h1>
-      <p class="text-xs text-slate-400 font-mono">{legal.termsBadge}</p>
+  <div
+    class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10 text-slate-300"
+  >
+    <!-- Header -->
+    <header class="space-y-3 border-b border-white/10 pb-8">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-800/40"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"
+          aria-hidden="true"></span>
+        <span>User Agreement &amp; Engineering Disclaimers</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        Terms &amp; Conditions
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 font-mono">
+        Effective Date: October 24, 2024 · Last Updated: October 2026 · Version
+        2.4
+      </p>
+    </header>
+
+    <!-- Key Agreement Highlights Card -->
+    <div
+      class="p-6 sm:p-7 rounded-2xl bg-[#0e1628] border border-cyan-500/30 shadow-xl space-y-4"
+    >
+      <div class="flex items-center gap-2 text-cyan-400">
+        <svg
+          class="w-5 h-5 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+          ></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <h2 class="text-base sm:text-lg font-bold text-white">
+          Summary of Terms &amp; Key Understandings
+        </h2>
+      </div>
+      <ul
+        class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-300"
+      >
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-cyan-400 font-bold shrink-0">1.</span>
+          <span
+            ><strong>Calculations are Estimates:</strong> Values are mathematical
+            approximations for planning. Physical verification on digital scales is
+            required before commercial production.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-cyan-400 font-bold shrink-0">2.</span>
+          <span
+            ><strong>You Own 100% of Your IP:</strong> You retain complete ownership
+            over any 3D models and files you inspect. We claim zero rights to your
+            CAD designs.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-cyan-400 font-bold shrink-0">3.</span>
+          <span
+            ><strong>Commercial Quoting Allowed:</strong> You are free to use calculation
+            breakdowns, quote estimates, and pricing formulas for your print business
+            or Etsy store.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-cyan-400 font-bold shrink-0">4.</span>
+          <span
+            ><strong>Zero Liability:</strong> We provide these free tools without
+            warranty of any kind. We are not liable for wasted materials, failed prints,
+            or machine wear.</span
+          >
+        </li>
+      </ul>
     </div>
 
-    <!-- Highlight Box -->
-    <div class="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 leading-relaxed">
-      <strong>{legal.termsSummaryTitle}:</strong> {legal.termsSummaryDesc}
-    </div>
-
-    <!-- 1. Acceptance of Terms -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.termsSec1Title}</h2>
-      <p>
-        {legal.termsSec1Desc}
+    <!-- Section 1: Agreement to Terms -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">01.</span>
+        Agreement to Terms
+      </h2>
+      <p class="text-sm">
+        These Terms &amp; Conditions (&ldquo;Terms&rdquo;) constitute a legally
+        binding agreement between you (&ldquo;User,&rdquo; &ldquo;you,&rdquo; or
+        &ldquo;your&rdquo;) and <strong>3DPrintingCostCalc.com</strong> (&ldquo;we,&rdquo;
+        &ldquo;our,&rdquo; or &ldquo;us&rdquo;), governing your access to and use
+        of our website, calculation utilities, guides, and related tools (collectively,
+        the &ldquo;Service&rdquo;).
+      </p>
+      <p class="text-sm">
+        By accessing, browsing, or using any part of the Service, you
+        acknowledge that you have read, understood, and agree to be bound by
+        these Terms and our <a
+          href="/privacy/"
+          class="text-cyan-400 underline hover:text-cyan-300">Privacy Policy</a
+        >. If you do not agree with all of these Terms, you are prohibited from
+        using the Service and must immediately discontinue access.
       </p>
     </section>
 
-    <!-- 2. Technical Calculation Disclaimer -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.termsSec2Title}</h2>
-      <p>
-        {legal.termsSec2Desc}
+    <!-- Section 2: Service Description & Free Model -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">02.</span>
+        Description of the Service &amp; Free Model
+      </h2>
+      <p class="text-sm">
+        3DPrintingCostCalc.com provides independent, browser-based computational
+        utilities for the additive manufacturing community. These include
+        filament weight converters, electricity cost amortizations, 3D printer
+        total cost of ownership (TCO) estimators, spool tare weight databases,
+        multicolor AMS waste estimators, and SLA/resin volume calculations.
+      </p>
+      <p class="text-sm">
+        The Service is offered completely free of charge on an
+        &ldquo;AS-IS&rdquo; and &ldquo;AS-AVAILABLE&rdquo; basis. We reserve the
+        right to modify, enhance, update, or discontinue features of the Service
+        at any time without notice or liability.
       </p>
     </section>
 
-    <!-- 3. Commercial & Business Usage -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.termsSec3Title}</h2>
-      <p>
-        {legal.termsSec3Desc}
+    <!-- Section 3: Engineering Calculations & Mathematical Disclaimer -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">03.</span>
+        Engineering Calculations &amp; Mathematical Estimation Disclaimer
+      </h2>
+      <div
+        class="p-5 rounded-2xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs sm:text-sm space-y-2"
+      >
+        <p class="font-bold uppercase tracking-wider text-amber-300">
+          Important Engineering &amp; Operational Notice:
+        </p>
+        <p>
+          Additive manufacturing processes depend on complex, non-linear
+          physical variables that cannot be predicted with mathematical
+          perfection outside calibrated laboratory conditions.
+        </p>
+      </div>
+      <p class="text-sm">
+        You acknowledge that all calculation results, cost breakdowns, weight
+        estimations, print duration forecasts, and electricity rates generated
+        by 3DPrintingCostCalc.com are <strong
+          >theoretical mathematical estimates and planning benchmarks only</strong
+        >. Real-world 3D printing results vary significantly due to factors
+        including:
       </p>
+      <ul class="list-disc list-inside space-y-1.5 text-sm pl-2">
+        <li>
+          <strong>Polymer Density &amp; Batch Variances:</strong> Raw filament and
+          resin densities vary by manufacturer and color pigments (&plusmn;3% to &plusmn;5%).
+          Hygroscopic moisture absorption also alters physical filament mass.
+        </li>
+        <li>
+          <strong>Filament Diameter Tolerances:</strong> Standard 1.75mm spools fluctuate
+          between 1.72mm and 1.78mm (&plusmn;0.03mm), changing extruded volume per
+          linear meter.
+        </li>
+        <li>
+          <strong>Slicer Algorithms &amp; Acceleration Curves:</strong> Actual print
+          times are governed by physical stepper motor kinematics, acceleration, jerk,
+          resonance compensation (input shaping), wipe towers, and nozzle purge volumes.
+        </li>
+        <li>
+          <strong>Thermal &amp; Power Factors:</strong> Ambient chamber temperatures,
+          draft conditions, heated bed thermal loss, and regional electricity tariffs
+          fluctuate continuously.
+        </li>
+      </ul>
+      <p class="text-sm">
+        <strong>Mandatory User Verification:</strong> You are solely responsible for
+        conducting physical test prints, weighing spools and finished prints on calibrated
+        digital scales, verifying toolpath slices in your machine slicer, and confirming
+        economic viability before entering into commercial quoting, Etsy order fulfillment,
+        or mass manufacturing runs.
+      </p>
+    </section>
+
+    <!-- Section 4: No Professional Advice -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">04.</span>
+        No Professional, Engineering, or Financial Advice
+      </h2>
+      <p class="text-sm">
+        The information and calculation formulas made available through the
+        Service do not constitute formal engineering certification, structural
+        safety testing, fire/electrical hazard compliance, or certified
+        financial, accounting, or tax advice. You should consult qualified
+        engineering professionals and certified financial advisors for
+        mission-critical structural components or formal enterprise business
+        planning.
+      </p>
+    </section>
+
+    <!-- Section 5: Intellectual Property & File Ownership -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">05.</span>
+        Intellectual Property &amp; Ownership
+      </h2>
+      <div class="space-y-2 text-sm">
+        <p>
+          <strong>Your Intellectual Property (100% User Owned):</strong> You retain
+          full and exclusive ownership, copyright, patent, and trade secret rights
+          over all 3D files (including STL, 3MF, G-code, and OBJ formats) evaluated
+          using our web utilities. Because our calculations occur entirely inside
+          your browser memory without server uploads, we never see, store, reproduce,
+          or claim any license to your proprietary designs.
+        </p>
+        <p>
+          <strong>Our Intellectual Property:</strong> All website source code, algorithms,
+          user interface layouts, stylesheets, typography, brand trademarks, logos,
+          visual graphics, and compilation copyrights are the exclusive intellectual
+          property of 3DPrintingCostCalc.com and are protected by international copyright,
+          trademark, and intellectual property treaties.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 6: Permitted Commercial Use -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">06.</span>
+        Permitted Commercial Quoting &amp; Business Usage
+      </h2>
+      <p class="text-sm">
+        We actively encourage small businesses, Etsy makers, and commercial
+        print farms to use our calculation outputs. You are granted a free,
+        non-exclusive license to:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+        <li>
+          Calculate part costs and retail pricing for commercial quotation to
+          clients.
+        </li>
+        <li>
+          Export and print cost summaries, quote breakdowns, and material
+          estimates for accounting and customer invoicing.
+        </li>
+        <li>
+          Use our machine profile database and material guides to optimize
+          internal manufacturing operations.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 7: Prohibited Activities -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">07.</span>
+        Prohibited User Conduct
+      </h2>
+      <p class="text-sm">
+        When using 3DPrintingCostCalc.com, you agree not to:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+        <li>
+          Engage in automated scraping, data harvesting, or denial-of-service
+          (DDoS) attacks designed to impair service availability for other
+          makers.
+        </li>
+        <li>
+          Attempt to reverse-engineer, decompile, or exploit our hosting and
+          edge infrastructure.
+        </li>
+        <li>
+          Use the Service for any unlawful purpose, fraud, or infringement of
+          third-party intellectual property rights.
+        </li>
+        <li>
+          Mirror or frame the website in a misleading manner without prior
+          written consent.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 8: Third-Party Trademark Disclaimer -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">08.</span>
+        Third-Party Hardware &amp; Trademark Disclaimers
+      </h2>
+      <p class="text-sm">
+        All references to 3D printer hardware brands (including but not limited
+        to Bambu Lab, Prusa Research, Creality, Elegoo, Anycubic, Voron Design,
+        Ultimaker, Formlabs), slicers (such as OrcaSlicer, Bambu Studio,
+        PrusaSlicer, Cura), and filament manufacturers are used strictly for
+        nominative identification, educational reference, and hardware
+        compatibility.
+      </p>
+      <p class="text-sm">
+        All trademarks, registered trademarks, product names, and company logos
+        cited on this website are the property of their respective owners.
+        3DPrintingCostCalc.com is an independent computational utility and is <strong
+          >not affiliated with, endorsed by, or sponsored by</strong
+        > any hardware manufacturer or slicing software developer.
+      </p>
+    </section>
+
+    <!-- Section 9: Disclaimer of Warranties -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">09.</span>
+        Disclaimer of Warranties (&ldquo;AS-IS&rdquo;)
+      </h2>
+      <div
+        class="p-4 rounded-xl bg-[#0e1628] border border-white/10 text-xs sm:text-sm font-mono text-slate-300 space-y-2 uppercase leading-relaxed"
+      >
+        <p>
+          TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SERVICE IS
+          PROVIDED ON AN &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo;
+          BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+        </p>
+        <p>
+          WE SPECIFICALLY DISCLAIM ALL IMPLIED WARRANTIES OF MERCHANTABILITY,
+          FITNESS FOR A PARTICULAR PURPOSE, TITLE, ACCURACY, AND
+          NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE CALCULATIONS WILL BE
+          UNINTERRUPTED, ERROR-FREE, OR FREE OF DEFECTS.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 10: Limitation of Liability -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">10.</span>
+        Limitation of Liability
+      </h2>
+      <div
+        class="p-4 rounded-xl bg-[#0e1628] border border-white/10 text-xs sm:text-sm font-mono text-slate-300 space-y-2 uppercase leading-relaxed"
+      >
+        <p>
+          IN NO EVENT SHALL 3DPRINTINGCOSTCALC.COM, ITS OPERATORS, CREATORS,
+          EMPLOYEES, CONTRIBUTORS, OR AFFILIATES BE LIABLE FOR ANY DIRECT,
+          INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, PUNITIVE, OR EXEMPLARY
+          DAMAGES WHATSOEVER.
+        </p>
+        <p>
+          THIS INCLUDES, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, LOSS
+          OF REVENUE, BUSINESS INTERRUPTION, EQUIPMENT DAMAGE, NOZZLE CLOGS,
+          THERMAL DAMAGE, WASTED FILAMENT OR RESIN, PRODUCTION DELAYS, OR LOSS
+          OF BUSINESS REPUTATION ARISING FROM YOUR USE OF OR RELIANCE UPON OUR
+          CALCULATIONS.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 11: Indemnification -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">11.</span>
+        Indemnification
+      </h2>
+      <p class="text-sm">
+        You agree to defend, indemnify, and hold harmless
+        3DPrintingCostCalc.com, its operators, contributors, and agents from and
+        against any claims, liabilities, damages, losses, costs, or expenses
+        (including reasonable attorney fees) arising from: (a) your use of or
+        reliance upon the Service; (b) your violation of these Terms; or (c) any
+        dispute between you and your customers concerning commercial quotes
+        generated using the Service.
+      </p>
+    </section>
+
+    <!-- Section 12: Severability & Entire Agreement -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">12.</span>
+        Severability &amp; Entire Agreement
+      </h2>
+      <p class="text-sm">
+        These Terms, together with our Privacy Policy, constitute the entire
+        agreement between you and 3DPrintingCostCalc.com regarding the Service.
+        If any provision of these Terms is deemed unlawful, void, or for any
+        reason unenforceable, that provision shall be deemed severable and shall
+        not affect the validity and enforceability of any remaining provisions.
+      </p>
+    </section>
+
+    <!-- Section 13: Governing Law -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">13.</span>
+        Governing Law &amp; Dispute Resolution
+      </h2>
+      <p class="text-sm">
+        These Terms shall be governed by and construed in accordance with the
+        laws of the jurisdiction in which the site operator resides, without
+        regard to its conflict of law principles. You agree to attempt in good
+        faith to resolve any claim or dispute through informal direct
+        communication prior to initiating formal legal proceedings.
+      </p>
+    </section>
+
+    <!-- Section 14: Contact Information -->
+    <section class="space-y-3 leading-relaxed border-t border-white/10 pt-8">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">14.</span>
+        Contacting Us Regarding Terms
+      </h2>
+      <p class="text-sm">
+        If you have questions, feedback, or legal inquiries concerning these
+        Terms &amp; Conditions, please reach out to our team:
+      </p>
+      <div
+        class="p-4 rounded-xl bg-[#0e1628] border border-white/10 inline-block space-y-1"
+      >
+        <span class="text-xs text-slate-400 block font-mono"
+          >Official Legal &amp; Support Contact:</span
+        >
+        <a
+          href="mailto:support@3dprintingcostcalc.com"
+          class="text-base font-mono font-bold text-cyan-400 hover:underline"
+        >
+          support@3dprintingcostcalc.com
+        </a>
+        <span class="text-xs text-slate-400 block"
+          >Response Turnaround: Typically within 24 to 48 business hours.</span
+        >
+      </div>
     </section>
   </div>
 </Layout>

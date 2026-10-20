@@ -112,7 +112,6 @@ export const de: TranslationDictionary = {
     metaTitle: '3D-Druck Kostenrechner & Filament-Preiskalkulator | 3DPrintingCostCalc.com',
     metaDescription: 'Kostenloser 3D-Druck Kostenrechner. Ziehe .STL-, .3MF- und .GCODE-Dateien per Drag & Drop hinein, um Filamentkosten pro Gramm, Stromverbrauch, Abschreibung, Arbeitszeit und Etsy-Verkaufspreise exakt zu berechnen.',
     metaKeywords: '3d druck kostenrechner, filament kosten berechnen, was kostet 3d druck, 3d drucker stromkosten, filament preis pro gramm, 3d druck gewerblich preise',
-    heroBadge: 'Präzisions-Kalkulator für Maker',
     heroTitle: '3D-Druck & Filament',
     heroGradient: 'Kostenrechner',
     heroSubtitle: 'Berechne 3D-Druck-Aufträge centgenau. Ziehe deine .STL-, .3MF- oder .GCODE-Datei hinein, um Materialverbrauch in Gramm, Strombedarf von Bambu Lab & Prusa, Maschinenabschreibung, Handarbeit und Verkaufsgebühren sofort zu ermitteln.',

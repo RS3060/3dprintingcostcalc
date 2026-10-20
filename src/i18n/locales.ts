@@ -127,8 +127,9 @@ export const LOCALES: Record<string, LocaleInfo> = {
 export type LocaleCode = keyof typeof LOCALES;
 export const DEFAULT_LOCALE: LocaleCode = 'en';
 
-// The exact order shown in the user's screenshot list
+// Dropdown locales with English at the top
 export const DROPDOWN_LOCALES: LocaleCode[] = [
+  'en',
   'zh',
   'ja',
   'ko',
@@ -138,7 +139,6 @@ export const DROPDOWN_LOCALES: LocaleCode[] = [
   'de',
   'pt',
   'it',
-  'en',
 ];
 
 export const NON_DEFAULT_LOCALES: LocaleCode[] = [

@@ -1,5 +1,4 @@
 ---
-import TermsContent from '../../../components/pages/TermsContent.astro';
 import { ALL_LOCALES, DEFAULT_LOCALE } from '../../../i18n/locales';
 
 export function getStaticPaths() {
@@ -7,7 +6,17 @@ export function getStaticPaths() {
     params: { locale },
   }));
 }
-
-const { locale } = Astro.params;
 ---
-<TermsContent locale={locale} />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=/terms/" />
+    <link rel="canonical" href="https://3dprintingcostcalc.com/terms/" />
+    <title>Redirecting to Terms & Conditions...</title>
+    <script is:inline>window.location.replace('/terms/');</script>
+  </head>
+  <body style="background:#080c15;color:#94a3b8;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,sans-serif;margin:0;">
+    <p>Redirecting to <a href="/terms/" style="color:#22d3ee;font-weight:bold;">Terms &amp; Conditions</a>...</p>
+  </body>
+</html>

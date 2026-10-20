@@ -112,7 +112,6 @@ export const es: TranslationDictionary = {
     metaTitle: 'Calculadora de Costes de Impresión 3D y Precio de Filamento | 3DPrintingCostCalc.com',
     metaDescription: 'Calculadora gratuita de costes de impresión 3D. Arrastra archivos .STL, .3MF o .GCODE para calcular el precio del filamento por gramo, consumo eléctrico de Bambu y Prusa, amortización, mano de obra y márgenes de venta en Etsy.',
     metaKeywords: 'calculadora coste impresion 3d, precio filamento por gramo, cuanto cuesta imprimir en 3d, calcular precio impresion 3d, coste electricidad impresora 3d',
-    heroBadge: 'Herramientas de Precisión Maker',
     heroTitle: 'Calculadora de Costes de',
     heroGradient: 'Impresión 3D y Filamento',
     heroSubtitle: 'Calcula el precio de fabricación de tus piezas 3D al céntimo. Suelta tus archivos .STL, .3MF o .GCODE para conocer gramos de filamento, consumo eléctrico, desgaste de máquina, mano de obra y comisiones de venta online.',

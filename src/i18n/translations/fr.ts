@@ -112,7 +112,6 @@ export const fr: TranslationDictionary = {
     metaTitle: 'Calculateur de Coût d’Impression 3D & Prix Filament | 3DPrintingCostCalc.com',
     metaDescription: 'Calculateur gratuit et instantané du coût d’impression 3D. Glissez-déposez vos fichiers .STL, .3MF et .GCODE pour calculer le prix du filament au gramme, l’électricité, l’amortissement et les marges de vente Etsy.',
     metaKeywords: 'calculateur cout impression 3d, prix filament impression 3d, cout electricite imprimante 3d, tarif impression 3d au gramme, devis impression 3d',
-    heroBadge: 'Suite Économique pour Makers',
     heroTitle: 'Calculateur de Coût',
     heroGradient: 'd’Impression 3D & Filament',
     heroSubtitle: 'Tarifez vos pièces 3D au centime près. Déposez vos fichiers .STL, .3MF ou .GCODE pour calculer instantanément la matière en grammes, la consommation électrique, l’amortissement matériel, la main-d’œuvre et vos marges e-commerce.',

@@ -112,7 +112,6 @@ export const ja: TranslationDictionary = {
     metaTitle: '3Dプリント原価計算機＆フィラメント価格見積もり | 3DPrintingCostCalc.com',
     metaDescription: '無料の即時3Dプリント原価計算ツール。.STL、.3MF、.GCODEをドラッグ＆ドロップして、1gあたりのフィラメント原価、BambuやPrusaの電気代、減価償却、人件費、販売手数料を自動計算。',
     metaKeywords: '3Dプリント コスト 計算, 3Dプリンター 電気代, フィラメント コスト, 3Dプリント 受託 見積もり, 3Dプリンター 原価計算',
-    heroBadge: '精密メイカー向け経済性解析ツール',
     heroTitle: '3Dプリント＆フィラメント',
     heroGradient: '原価計算ツール',
     heroSubtitle: '3Dプリントの造形原価を1円単位で正確に算出。.STL、.3MF、.GCODEをドロップするだけで、素材重量、Bambu/Prusa消費電力、機械減価償却、人件費、EC販売手数料まで一瞬で可視化します。',

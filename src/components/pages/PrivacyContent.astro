@@ -1,61 +1,484 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getPageTranslations } from '../../i18n/pageTranslations';
-import { getTranslations } from '../../i18n/translations';
-import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
-
-export interface Props {
-  locale?: string;
-}
-
-const { locale = DEFAULT_LOCALE } = Astro.props;
-const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
-const t = getTranslations(currentLocale);
-const legal = getPageTranslations(currentLocale).legal;
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout
-  title={`${legal.privacyTitle} | 3DPrintingCostCalc.com`}
-  description={legal.privacyDesc}
-  locale={currentLocale}
+  title="Privacy Policy | 3DPrintingCostCalc.com"
+  description="Official Privacy Policy for 3DPrintingCostCalc.com. Learn about our 100% client-side zero-upload architecture, GDPR & CCPA compliance, and local storage standards."
+  canonicalUrl="https://3dprintingcostcalc.com/privacy/"
+  locale="en"
+  showLanguageSelector={false}
   breadcrumbs={[
-    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
-    { name: legal.privacyTitle, item: getLocalizedPath('/privacy/', currentLocale) }
+    { name: "Home", item: "/" },
+    { name: "Privacy Policy", item: "/privacy/" },
   ]}
 >
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
-    <div class="space-y-2">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">{legal.privacyTitle}</h1>
-      <p class="text-xs text-slate-400 font-mono">{legal.privacyBadge}</p>
+  <div
+    class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10 text-slate-300"
+  >
+    <!-- Header -->
+    <header class="space-y-3 border-b border-white/10 pb-8">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
+          aria-hidden="true"></span>
+        <span>Zero-Upload Client-Side Guarantee</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        Privacy Policy
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 font-mono">
+        Effective Date: October 24, 2024 · Last Updated: October 2026 · Version
+        2.4
+      </p>
+    </header>
+
+    <!-- Key Highlights Summary Card -->
+    <div
+      class="p-6 sm:p-7 rounded-2xl bg-[#0e1628] border border-cyan-500/30 shadow-xl space-y-4"
+    >
+      <div class="flex items-center gap-2 text-cyan-400">
+        <svg
+          class="w-5 h-5 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <h2 class="text-base sm:text-lg font-bold text-white">
+          Summary of Our Core Privacy Principles
+        </h2>
+      </div>
+      <ul
+        class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-300"
+      >
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-emerald-400 font-bold shrink-0">✓</span>
+          <span
+            ><strong>Zero File Uploads:</strong> 3D files (.stl, .3mf, .gcode, .obj)
+            never leave your device and are processed purely in your browser's RAM.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-emerald-400 font-bold shrink-0">✓</span>
+          <span
+            ><strong>No Account Needed:</strong> We do not ask for registration, passwords,
+            email lists, or personal identity details.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-emerald-400 font-bold shrink-0">✓</span>
+          <span
+            ><strong>Zero Tracking Cookies:</strong> No invasive third-party ad networks,
+            tracking pixels, or cross-site tracking profiles.</span
+          >
+        </li>
+        <li
+          class="flex items-start gap-2 bg-[#162035]/60 p-3 rounded-xl border border-white/5"
+        >
+          <span class="text-emerald-400 font-bold shrink-0">✓</span>
+          <span
+            ><strong>We Never Sell Data:</strong> We have never sold, monetized, or
+            shared personal data under CCPA/CPRA, and never will.</span
+          >
+        </li>
+      </ul>
     </div>
 
-    <!-- Highlight Box -->
-    <div class="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 leading-relaxed">
-      <strong>{legal.privacyGuarTitle}:</strong> {legal.privacyGuarDesc}
-    </div>
-
-    <!-- 1. Zero-Upload Architecture -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.sec1Title}</h2>
-      <p>
-        {legal.sec1Desc}
+    <!-- Section 1: Overview & Scope -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">01.</span>
+        Overview &amp; Scope
+      </h2>
+      <p class="text-sm">
+        Welcome to <strong>3DPrintingCostCalc.com</strong> (&ldquo;we,&rdquo; &ldquo;our,&rdquo;
+        &ldquo;us,&rdquo; or the &ldquo;Service&rdquo;). We provide modern engineering,
+        economic estimation, and calculation tools for 3D printing enthusiasts, makers,
+        print farms, and additive manufacturing businesses.
+      </p>
+      <p class="text-sm">
+        This Privacy Policy describes our practices regarding the information
+        collected when you access or use our website. We believe user privacy is
+        an essential human right. Because our service was engineered from the
+        ground up as a stateless client-side web utility, our design
+        fundamentally minimizes the collection and storage of any personal data.
       </p>
     </section>
 
-    <!-- 2. Information We Do Not Collect -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.sec2Title}</h2>
-      <p>
-        {legal.sec2Desc}
+    <!-- Section 2: Zero-Upload Technical Architecture -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">02.</span>
+        Zero-Upload Client-Side Architecture (Technical Guarantee)
+      </h2>
+      <p class="text-sm">
+        When you drop, select, or parse a 3D model or slice file on
+        3DPrintingCostCalc.com&mdash;including but not limited to <code
+          >.stl</code
+        > (ASCII/Binary), <code>.3mf</code> (XML/ZIP archives), <code
+          >.gcode</code
+        > / <code>.bgcode</code> toolpaths, or <code>.obj</code> geometries:
+      </p>
+      <div
+        class="p-4 rounded-xl bg-[#0e1628] border border-white/10 space-y-2 text-xs sm:text-sm font-mono text-cyan-200"
+      >
+        <p>
+          <strong>Browser-Native Processing:</strong> Files are read directly from
+          your local file system via modern HTML5 JavaScript Web APIs (<code
+            >FileReader</code
+          >, <code>ArrayBuffer</code>, <code>DataView</code>, and Web Workers).
+        </p>
+        <p>
+          <strong>Zero Network Transmission:</strong> The raw geometric coordinates,
+          vertex normals, polygon faces, layer heights, and extruder toolpaths are
+          evaluated purely within your local device's volatile memory (RAM).
+        </p>
+        <p>
+          <strong>Instant Ephemeral Purging:</strong> At no point are your CAD designs,
+          commercial inventions, proprietary models, or G-code instructions transmitted
+          across the Internet to our web servers, cloud storage, or any third party.
+          Closing or refreshing your browser tab immediately frees and purges this
+          memory.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Data We Do NOT Collect -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">03.</span>
+        Information We Do NOT Collect
+      </h2>
+      <p class="text-sm">
+        To eliminate privacy risks and safeguard commercial intellectual
+        property, we deliberately refrain from collecting:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+        <li>
+          <strong>Proprietary 3D Designs &amp; Files:</strong> We never capture or
+          store your 3D models or G-code files.
+        </li>
+        <li>
+          <strong>Personal Identity Information:</strong> We do not collect names,
+          physical addresses, telephone numbers, or government IDs.
+        </li>
+        <li>
+          <strong>User Accounts &amp; Passwords:</strong> There is no sign-up or login
+          portal; the service requires zero credential management.
+        </li>
+        <li>
+          <strong>Payment &amp; Billing Data:</strong> All calculation suites are
+          100% free; we do not process credit cards, bank accounts, or crypto wallets.
+        </li>
+        <li>
+          <strong>Biometric or Sensitive Personal Data:</strong> No biometric, demographic,
+          or special category data is ever collected.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 4: Automated Technical Logging -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">04.</span>
+        Technical Information Collected Automatically (Server Logs)
+      </h2>
+      <p class="text-sm">
+        Like virtually all web applications, when your browser requests static
+        assets (such as HTML pages, stylesheets, JavaScript scripts, or web
+        fonts), standard web server logs receive technical telemetry from your
+        HTTP request headers. This technical data includes:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+        <li>
+          Internet Protocol (IP) address (used for geolocation estimation and
+          DDoS mitigation)
+        </li>
+        <li>Browser type, engine, and version (User-Agent string)</li>
+        <li>Operating system and device platform</li>
+        <li>Referring webpage address and exit page timestamps</li>
+        <li>HTTP status response codes and asset transfer sizes</li>
+      </ul>
+      <p class="text-sm">
+        <strong>Legal Basis &amp; Purpose:</strong> This technical data is processed
+        pursuant to our <em>legitimate interests</em> under GDPR Article 6(1)(f) to
+        maintain network stability, prevent malicious automated scraping, defend against
+        denial-of-service attacks, and troubleshoot 404 errors. Server logs are automatically
+        rotated and purged on a regular scheduled basis.
       </p>
     </section>
 
-    <!-- 3. Local Storage & Client-Side Configuration -->
-    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">{legal.sec3Title}</h2>
-      <p>
-        {legal.sec3Desc}
+    <!-- Section 5: Cookies & Local Storage -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">05.</span>
+        Cookies &amp; Local Storage (localStorage) Policy
+      </h2>
+      <p class="text-sm">
+        We do not use advertising cookies, profiling cookies, or third-party
+        marketing trackers.
       </p>
+      <p class="text-sm">
+        Our website uses the browser&rsquo;s built-in <code>localStorage</code> feature
+        strictly for essential client-side personalization:
+      </p>
+      <div class="overflow-x-auto">
+        <table
+          class="w-full text-left text-xs border border-white/10 rounded-xl overflow-hidden font-mono"
+        >
+          <thead class="bg-[#0e1628] text-slate-300">
+            <tr>
+              <th class="p-3 border-b border-white/10">Storage Key</th>
+              <th class="p-3 border-b border-white/10">Category</th>
+              <th class="p-3 border-b border-white/10"
+                >Purpose &amp; Description</th
+              >
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 bg-[#0a0f1d]">
+            <tr>
+              <td class="p-3 text-cyan-400 font-bold">theme</td>
+              <td class="p-3">Functional / UX</td>
+              <td class="p-3 text-slate-300 font-sans"
+                >Stores whether you selected &lsquo;dark&rsquo; or
+                &lsquo;light&rsquo; mode to prevent screen flickering between
+                visits.</td
+              >
+            </tr>
+            <tr>
+              <td class="p-3 text-cyan-400 font-bold">printer_defaults</td>
+              <td class="p-3">Functional / UX</td>
+              <td class="p-3 text-slate-300 font-sans"
+                >Caches your custom electricity cost rates, machine
+                depreciation, or material cost presets so you do not need to
+                retype them.</td
+              >
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm">
+        Because <code>localStorage</code> resides exclusively within your local browser,
+        it is never transmitted in HTTP headers to any server. You can inspect or
+        clear these values at any time using your browser&rsquo;s Developer Tools
+        or Privacy Settings (&ldquo;Clear Site Data&rdquo;).
+      </p>
+    </section>
+
+    <!-- Section 6: Third-Party Hosting & CDNs -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">06.</span>
+        Content Delivery Networks &amp; Global Hosting
+      </h2>
+      <p class="text-sm">
+        Our website is statically generated and served globally via
+        high-performance edge Content Delivery Networks (CDNs) and cloud hosting
+        infrastructure. These infrastructure partners route static web assets
+        securely and efficiently through globally distributed points of presence
+        (PoPs). All data transferred across our network is enforced through
+        256-bit Transport Layer Security (TLS / HTTPS).
+      </p>
+    </section>
+
+    <!-- Section 7: GDPR & UK GDPR Compliance -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">07.</span>
+        Your Rights Under the General Data Protection Regulation (GDPR / UK GDPR)
+      </h2>
+      <p class="text-sm">
+        If you are located in the European Economic Area (EEA), United Kingdom,
+        or Switzerland, you possess statutory rights regarding your personal
+        information under Regulation (EU) 2016/679 and the UK Data Protection
+        Act:
+      </p>
+      <ul class="list-disc list-inside space-y-1.5 text-sm pl-2">
+        <li>
+          <strong>Right of Access (Art. 15):</strong> You have the right to request
+          confirmation as to whether personal data concerning you is processed.
+        </li>
+        <li>
+          <strong>Right to Rectification (Art. 16):</strong> You may request correction
+          of inaccurate personal data.
+        </li>
+        <li>
+          <strong
+            >Right to Erasure (&ldquo;Right to be Forgotten&rdquo;, Art. 17):</strong
+          > You may request deletion of your personal data where applicable.
+        </li>
+        <li>
+          <strong>Right to Restriction of Processing (Art. 18):</strong> You may request
+          limits on how data is handled.
+        </li>
+        <li>
+          <strong>Right to Data Portability (Art. 20):</strong> You have the right
+          to receive your personal data in a structured, machine-readable format.
+        </li>
+        <li>
+          <strong>Right to Object (Art. 21):</strong> You may object at any time to
+          processing based on legitimate interests.
+        </li>
+        <li>
+          <strong>Right to Lodge a Complaint:</strong> You have the right to file
+          a complaint with your local Data Protection Supervisory Authority.
+        </li>
+      </ul>
+      <p class="text-sm text-slate-400 italic">
+        Note: Because 3DPrintingCostCalc.com does not collect user accounts,
+        email addresses, names, or identifiable 3D files, we typically hold zero
+        personal data linked to your identity.
+      </p>
+    </section>
+
+    <!-- Section 8: California Consumer Privacy Rights (CCPA / CPRA & CalOPPA) -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">08.</span>
+        California Privacy Rights (CCPA / CPRA &amp; CalOPPA)
+      </h2>
+      <p class="text-sm">
+        Under the California Consumer Privacy Act (CCPA) as amended by the
+        California Privacy Rights Act (CPRA), California residents have specific
+        statutory rights:
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+        <li>
+          <strong>Notice at Collection:</strong> We do not collect categories of consumer
+          personal information other than transient IP addresses in server connection
+          logs.
+        </li>
+        <li>
+          <strong>Do Not Sell or Share Personal Information:</strong> We do not sell,
+          rent, release, disclose, disseminate, or transfer consumer personal information
+          for monetary or other valuable consideration.
+        </li>
+        <li>
+          <strong>Right to Non-Discrimination:</strong> We do not discriminate against
+          any user who exercises their statutory privacy rights.
+        </li>
+        <li>
+          <strong>&ldquo;Do Not Track&rdquo; Signals:</strong> We respect browser
+          DNT and Global Privacy Control (GPC) headers. Because we do not track users
+          across websites, our site behaves identically whether DNT is enabled or
+          disabled.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 9: COPPA & Children's Privacy -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">09.</span>
+        Children&rsquo;s Online Privacy Protection Act (COPPA)
+      </h2>
+      <p class="text-sm">
+        Our website is intended for general audiences, STEM educators,
+        engineers, and makers of all ages. We do not knowingly collect, request,
+        or solicit personal information from children under the age of 13 (or
+        under 16 in the European Union). If you believe a minor has somehow
+        provided personal information to us, please contact us immediately, and
+        we will take prompt action to remove any such records.
+      </p>
+    </section>
+
+    <!-- Section 10: External Links Disclaimer -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">10.</span>
+        External Links &amp; Third-Party Services
+      </h2>
+      <p class="text-sm">
+        Our educational guides, spool tare databases, and printer profiles may
+        contain links to external third-party websites (such as hardware
+        manufacturers, material datasheets, or open-source slicers). We have no
+        control over and assume no responsibility for the content, privacy
+        policies, or practices of any third-party websites. We encourage you to
+        review the privacy policy of every website you visit.
+      </p>
+    </section>
+
+    <!-- Section 11: Policy Modifications -->
+    <section class="space-y-3 leading-relaxed">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">11.</span>
+        Modifications to this Privacy Policy
+      </h2>
+      <p class="text-sm">
+        We may update this Privacy Policy periodically to reflect changes in
+        legal standards, web browser security standards, or our computational
+        features. Any updates will be posted directly to this URL with an
+        updated &ldquo;Last Updated&rdquo; timestamp at the top of the document.
+        Your continued use of the website following any changes signifies your
+        acceptance of the revised policy.
+      </p>
+    </section>
+
+    <!-- Section 12: Contact Us -->
+    <section class="space-y-3 leading-relaxed border-t border-white/10 pt-8">
+      <h2
+        class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2"
+      >
+        <span class="text-cyan-400 font-mono text-base">12.</span>
+        Contacting Us Regarding Privacy
+      </h2>
+      <p class="text-sm">
+        If you have questions, inquiries, or legal concerns regarding this
+        Privacy Policy or our client-side zero-upload data protection practices,
+        please contact our team:
+      </p>
+      <div
+        class="p-4 rounded-xl bg-[#0e1628] border border-white/10 inline-block space-y-1"
+      >
+        <span class="text-xs text-slate-400 block font-mono"
+          >Official Privacy &amp; Support Contact:</span
+        >
+        <a
+          href="mailto:support@3dprintingcostcalc.com"
+          class="text-base font-mono font-bold text-cyan-400 hover:underline"
+        >
+          support@3dprintingcostcalc.com
+        </a>
+        <span class="text-xs text-slate-400 block"
+          >Response Turnaround: Typically within 24 to 48 business hours.</span
+        >
+      </div>
     </section>
   </div>
 </Layout>

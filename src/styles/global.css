@@ -67,14 +67,14 @@ html.light .logo-badge-3d {
 
 /* 3D Print Bed Isometric Grid Motif */
 .print-bed-pattern {
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
 html.light .print-bed-pattern {
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
 }
@@ -107,7 +107,8 @@ input[type="range"] {
    ========================================================= */
 /* Dark mode low-contrast fix for slate-500 on #0e1628 surfaces */
 html:not(.light) .text-slate-500 {
-  color: #94a3b8 !important; /* ensures >= 4.5:1 contrast on dark surfaces */
+  color: #94a3b8 !important;
+  /* ensures >= 4.5:1 contrast on dark surfaces */
 }
 
 html.light body {
@@ -217,20 +218,130 @@ html.light .text-slate-300 {
 }
 
 html.light .text-slate-400 {
-  color: #334155 !important; /* contrast ~9.6:1 on white */
+  color: #334155 !important;
+  /* contrast ~9.6:1 on white */
 }
 
 html.light .text-slate-500 {
-  color: #1e293b !important; /* contrast >12:1 on white */
+  color: #1e293b !important;
+  /* contrast >12:1 on white */
 }
 
-/* Preserving readable white text on dark buttons and badges in light mode */
+html.light #langDropdownTrigger {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.light #langDropdownTrigger:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #0e7490 !important;
+  color: #0e7490 !important;
+}
+
+html.light #langDropdownTrigger span,
+html.light #langDropdownTrigger svg {
+  color: #0f172a !important;
+}
+
+html.light #langDropdownTrigger:hover span,
+html.light #langDropdownTrigger:hover svg {
+  color: #0e7490 !important;
+}
+
+html.light #langDropdownMenu {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
+}
+
+html.light #langDropdownMenu a {
+  color: #1e293b !important;
+}
+
+html.light #langDropdownMenu a:hover {
+  background-color: #f1f5f9 !important;
+  color: #0e7490 !important;
+}
+
+html.light #langDropdownMenu a.bg-cyan-500\/15 {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+
+html.light #langDropdownMenu span.text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Preserving readable white text on dark/colored buttons and badges in light mode */
+html.light button.bg-slate-900,
+html.light a.bg-slate-900,
+html.light button.bg-slate-800,
+html.light a.bg-slate-800,
+html.light button.bg-slate-700,
+html.light a.bg-slate-700,
+html.light button.bg-cyan-700,
+html.light a.bg-cyan-700,
+html.light .bg-cyan-700,
+html.light button.bg-cyan-600,
+html.light a.bg-cyan-600,
+html.light .bg-cyan-600,
+html.light button.bg-cyan-500,
+html.light a.bg-cyan-500,
+html.light .bg-cyan-500,
+html.light button.bg-blue-600,
+html.light a.bg-blue-600,
+html.light button.bg-emerald-600,
+html.light a.bg-emerald-600,
+html.light #btn404JobCost,
+html.light #triggerPrintBtn,
+html.light #printQuoteBtn,
+html.light #shareQuoteBtn,
+html.light #shareConfigBtn,
+html.light .btn-dark,
+html.light .bg-slate-900 button,
+html.light .bg-slate-800 button {
+  color: #ffffff !important;
+}
+
+html.light #shareQuoteBtn {
+  background-color: #0e7490 !important;
+  /* cyan-700 */
+  border-color: #0891b2 !important;
+  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.3) !important;
+}
+
+html.light #shareQuoteBtn:hover {
+  background-color: #0891b2 !important;
+  /* cyan-600 */
+}
+
+html.light #btn404JobCost {
+  background-color: #0891b2 !important;
+  /* cyan-600 */
+  color: #ffffff !important;
+  box-shadow: 0 10px 15px -3px rgba(8, 145, 178, 0.3) !important;
+}
+
+html.light #btn404JobCost:hover {
+  background-color: #06b6d4 !important;
+  /* cyan-500 */
+}
+
+html.light #btn404Tco {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.light #btn404Tco:hover {
+  background-color: #e2e8f0 !important;
+  color: #0891b2 !important;
+}
+
 html.light button.bg-slate-900,
 html.light button.bg-slate-800,
 html.light button.bg-slate-700,
-html.light button.bg-cyan-600,
-html.light button.bg-blue-600,
-html.light button.bg-emerald-600,
 html.light #triggerPrintBtn,
 html.light #printQuoteBtn,
 html.light #shareConfigBtn,
@@ -238,15 +349,28 @@ html.light .btn-dark,
 html.light .bg-slate-900 button,
 html.light .bg-slate-800 button {
   background-color: #0f172a !important;
-  color: #ffffff !important;
   border-color: #334155 !important;
 }
 
 html.light button.bg-slate-900 *,
+html.light a.bg-slate-900 *,
 html.light button.bg-slate-800 *,
+html.light a.bg-slate-800 *,
 html.light button.bg-slate-700 *,
+html.light a.bg-slate-700 *,
+html.light button.bg-cyan-700 *,
+html.light a.bg-cyan-700 *,
+html.light .bg-cyan-700 *,
+html.light button.bg-cyan-600 *,
+html.light a.bg-cyan-600 *,
+html.light .bg-cyan-600 *,
+html.light button.bg-cyan-500 *,
+html.light a.bg-cyan-500 *,
+html.light .bg-cyan-500 *,
+html.light #btn404JobCost *,
 html.light #triggerPrintBtn *,
 html.light #printQuoteBtn *,
+html.light #shareQuoteBtn *,
 html.light #shareConfigBtn *,
 html.light .btn-dark * {
   color: #ffffff !important;
@@ -256,43 +380,50 @@ html.light .btn-dark * {
 html.light .text-cyan-400,
 html.light .text-cyan-300,
 html.light .text-cyan-500 {
-  color: #0e7490 !important; /* cyan-700: 5.1:1 on white */
+  color: #0e7490 !important;
+  /* cyan-700: 5.1:1 on white */
 }
 
 html.light .text-emerald-400,
 html.light .text-emerald-300 {
-  color: #047857 !important; /* emerald-700: 5.2:1 on white */
+  color: #047857 !important;
+  /* emerald-700: 5.2:1 on white */
 }
 
 html.light .text-violet-400,
 html.light .text-violet-300,
 html.light .text-purple-400,
 html.light .text-purple-300 {
-  color: #6d28d9 !important; /* violet-700: 6.2:1 on white */
+  color: #6d28d9 !important;
+  /* violet-700: 6.2:1 on white */
 }
 
 html.light .text-blue-400,
 html.light .text-blue-300 {
-  color: #1d4ed8 !important; /* blue-700: 6.5:1 on white */
+  color: #1d4ed8 !important;
+  /* blue-700: 6.5:1 on white */
 }
 
 html.light .text-pink-400,
 html.light .text-pink-300,
 html.light .text-rose-400,
 html.light .text-rose-300 {
-  color: #be185d !important; /* pink-700: 5.2:1 on white */
+  color: #be185d !important;
+  /* pink-700: 5.2:1 on white */
 }
 
 html.light .text-red-400,
 html.light .text-red-300 {
-  color: #b91c1c !important; /* red-700: 5.7:1 on white */
+  color: #b91c1c !important;
+  /* red-700: 5.7:1 on white */
 }
 
 html.light .text-orange-400,
 html.light .text-orange-300,
 html.light .text-amber-400,
 html.light .text-amber-300 {
-  color: #c2410c !important; /* orange-700: 5.1:1 on white */
+  color: #c2410c !important;
+  /* orange-700: 5.1:1 on white */
 }
 
 /* Preserve bright icon/text in dark badges or gradient icons */
@@ -307,8 +438,8 @@ html.light .border-white\/20 {
   border-color: #cbd5e1 !important;
 }
 
-html.light .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
-html.light .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+html.light .divide-white\/5> :not([hidden])~ :not([hidden]),
+html.light .divide-white\/10> :not([hidden])~ :not([hidden]) {
   border-color: #e2e8f0 !important;
 }
 
@@ -344,6 +475,7 @@ html.light #badgeStatus404 {
   border-color: #7dd3fc !important;
   color: #0369a1 !important;
 }
+
 html.light .bg-cyan-950\/70 *,
 html.light .bg-cyan-950\/80 *,
 html.light .bg-cyan-950\/60 *,
@@ -351,6 +483,7 @@ html.light .bg-cyan-950\/40 *,
 html.light #badgeStatus404 * {
   color: #0369a1 !important;
 }
+
 html.light #badgeStatus404 span.animate-ping,
 html.light #badgeStatus404 span.bg-cyan-400 {
   background-color: #0284c7 !important;
@@ -362,10 +495,12 @@ html.light .bg-emerald-950\/40 {
   border-color: #bbf7d0 !important;
   color: #166534 !important;
 }
+
 html.light .bg-emerald-950\/60 *,
 html.light .bg-emerald-950\/40 * {
   color: #166534 !important;
 }
+
 html.light .bg-emerald-950\/60 .text-white,
 html.light .bg-emerald-950\/40 .text-white {
   color: #14532d !important;
@@ -377,10 +512,12 @@ html.light .bg-blue-950\/40 {
   border-color: #bfdbfe !important;
   color: #1e40af !important;
 }
+
 html.light .bg-blue-950\/60 *,
 html.light .bg-blue-950\/40 * {
   color: #1e40af !important;
 }
+
 html.light .bg-blue-950\/60 .text-white,
 html.light .bg-blue-950\/40 .text-white {
   color: #1e3a8a !important;
@@ -394,12 +531,14 @@ html.light .bg-purple-950\/40 {
   border-color: #ddd6fe !important;
   color: #5b21b6 !important;
 }
+
 html.light .bg-violet-950\/60 *,
 html.light .bg-violet-950\/40 *,
 html.light .bg-purple-950\/60 *,
 html.light .bg-purple-950\/40 * {
   color: #5b21b6 !important;
 }
+
 html.light .bg-violet-950\/60 .text-white,
 html.light .bg-violet-950\/40 .text-white,
 html.light .bg-purple-950\/60 .text-white,
@@ -415,12 +554,14 @@ html.light .bg-rose-950\/40 {
   border-color: #fbcfe8 !important;
   color: #9d174d !important;
 }
+
 html.light .bg-pink-950\/60 *,
 html.light .bg-pink-950\/40 *,
 html.light .bg-rose-950\/60 *,
 html.light .bg-rose-950\/40 * {
   color: #9d174d !important;
 }
+
 html.light .bg-pink-950\/60 .text-white,
 html.light .bg-pink-950\/40 .text-white,
 html.light .bg-rose-950\/60 .text-white,
@@ -434,10 +575,12 @@ html.light .bg-red-950\/40 {
   border-color: #fecaca !important;
   color: #991b1b !important;
 }
+
 html.light .bg-red-950\/60 *,
 html.light .bg-red-950\/40 * {
   color: #991b1b !important;
 }
+
 html.light .bg-red-950\/60 .text-white,
 html.light .bg-red-950\/40 .text-white {
   color: #7f1d1d !important;
@@ -452,7 +595,8 @@ html.light .bg-red-950\/40 .text-white {
     margin: 10mm;
   }
 
-  html, body {
+  html,
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
@@ -463,7 +607,7 @@ html.light .bg-red-950\/40 .text-white {
   }
 
   /* When printing quote modal: hide everything else in body */
-  body.printing-quote > *:not(#quoteInvoiceModal) {
+  body.printing-quote>*:not(#quoteInvoiceModal) {
     display: none !important;
   }
 

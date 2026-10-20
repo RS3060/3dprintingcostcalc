@@ -112,7 +112,6 @@ export const zh: TranslationDictionary = {
     metaTitle: '3D打印成本计算器与耗材单价估算 | 免费 3DPrintingCostCalc.com',
     metaDescription: '免费即时3D打印成本计算器。直接拖拽.STL、.3MF与.GCODE文件，精确计算每克耗材成本、拓竹与普鲁萨电费、设备折旧、人工工时及电商抽成售价。',
     metaKeywords: '3D打印成本计算器, 耗材成本计算, 3D打印多少钱, 3D打印机电费计算器, 拓竹耗材成本, 3D打印每克多少钱',
-    heroBadge: '专业创客经济学工具箱',
     heroTitle: '3D打印与耗材',
     heroGradient: '精准成本计算器',
     heroSubtitle: '将3D打印成品成本精准计算到分。拖放您的 .STL、.3MF 或 .GCODE 模型，瞬间测算材料克重、拓竹/Prusa耗电功率、设备折旧、人工工时以及电商平台销售利润。',

@@ -20,7 +20,10 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404') && !page.includes('/500'),
+      filter: (page) =>
+        !page.includes('/404') &&
+        !page.includes('/500') &&
+        !page.match(/\/(zh|ja|ko|fr|es|ru|de|pt|it)\/(privacy|terms|contact)/),
       changefreq: 'weekly',
       priority: 0.8,
       lastmod: new Date(),
