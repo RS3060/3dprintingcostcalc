@@ -677,26 +677,28 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
       </div>
 
       <!-- Item Specifications Table -->
-      <table class="w-full text-xs mb-6 border-collapse">
-        <thead>
-          <tr class="border-b border-slate-200 text-slate-500 text-left">
-            <th class="py-2">Description</th>
-            <th class="py-2">Material</th>
-            <th class="py-2">Filament Weight</th>
-            <th class="py-2">Est. Time</th>
-            <th class="py-2 text-right">Total Price</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 font-mono">
-          <tr>
-            <td class="py-3 font-semibold text-slate-800" id="invoiceModelName">Custom 3D Print Job</td>
-            <td class="py-3 text-slate-600" id="invoiceMaterialName">PLA</td>
-            <td class="py-3 text-slate-600" id="invoiceWeight">85g</td>
-            <td class="py-3 text-slate-600" id="invoiceTime">3.5 hrs</td>
-            <td class="py-3 text-right font-bold text-slate-900 text-sm" id="invoicePrice">$19.63</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto mb-6">
+        <table class="w-full text-xs border-collapse min-w-[420px]">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500 text-left">
+              <th class="py-2">Description</th>
+              <th class="py-2">Material</th>
+              <th class="py-2">Filament Weight</th>
+              <th class="py-2">Est. Time</th>
+              <th class="py-2 text-right">Total Price</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-mono">
+            <tr>
+              <td class="py-3 font-semibold text-slate-800" id="invoiceModelName">Custom 3D Print Job</td>
+              <td class="py-3 text-slate-600" id="invoiceMaterialName">PLA</td>
+              <td class="py-3 text-slate-600" id="invoiceWeight">85g</td>
+              <td class="py-3 text-slate-600" id="invoiceTime">3.5 hrs</td>
+              <td class="py-3 text-right font-bold text-slate-900 text-sm" id="invoicePrice">$19.63</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Notes & Terms -->
       <div class="border-t border-slate-200 pt-4 text-[11px] text-slate-500 space-y-1">

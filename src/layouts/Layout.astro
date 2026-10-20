@@ -6,6 +6,11 @@ export interface Props {
   description: string;
   canonicalUrl?: string;
   keywords?: string;
+  image?: string;
+  imageAlt?: string;
+  ogType?: string;
+  author?: string;
+  noindex?: boolean;
   faqList?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ name: string; item: string }>;
 }
@@ -15,6 +20,11 @@ const {
   description,
   canonicalUrl = Astro.url.href,
   keywords = 'filament cost calculator, 3d print cost calculator, 3d printing cost calculator, 3d print calculator, 3d printer cost calculator, filament calculator, 3d print price calculator',
+  image = 'https://3dprintingcostcalc.com/og-image.png',
+  imageAlt = '3DPrintingCostCalc.com - Pro Maker 3D Print Cost Calculator Suite',
+  ogType = 'website',
+  author = '3DPrintingCostCalc.com',
+  noindex = false,
   faqList = [],
   breadcrumbs = [{ name: 'Home', item: 'https://3dprintingcostcalc.com/' }],
 } = Astro.props;
@@ -27,6 +37,13 @@ const schemaGraph: any[] = [
     url: 'https://3dprintingcostcalc.com/',
     name: '3D Printing Cost Calculator',
     description: 'The definitive client-side 3D print cost, filament weight, electricity, and marketplace price calculator.',
+  },
+  {
+    '@type': 'Organization',
+    '@id': 'https://3dprintingcostcalc.com/#organization',
+    name: '3D Printing Cost Calculator',
+    url: 'https://3dprintingcostcalc.com/',
+    logo: 'https://3dprintingcostcalc.com/apple-touch-icon.png',
   },
   {
     '@type': 'SoftwareApplication',
@@ -79,29 +96,57 @@ const jsonLdContent = JSON.stringify({
 <html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
+    <meta name="author" content={author} />
+    <meta name="publisher" content="3DPrintingCostCalc.com" />
     <link rel="canonical" href={canonicalUrl} />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    )}
+
+    <!-- Web App & Mobile Optimization -->
+    <meta name="application-name" content="3D Printing Cost Calculator" />
+    <meta name="apple-mobile-web-app-title" content="3D Cost Calc" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="3D Printing Cost Calculator" />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:secure_url" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <meta name="twitter:site" content="@3DPrintCostCalc" />
+    <meta name="twitter:creator" content="@3DPrintCostCalc" />
 
-    <!-- Theme Color -->
+    <!-- Favicon & Icons -->
     <meta name="theme-color" content="#080c15" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={jsonLdContent} />
@@ -120,22 +165,24 @@ const jsonLdContent = JSON.stringify({
   </head>
   <body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
     <!-- Top Decorative RGB Layer Line -->
-    <div class="h-1 w-full layer-line-rgb no-print"></div>
+    <div class="h-1 w-full layer-line-rgb no-print" aria-hidden="true"></div>
 
     <!-- Navigation Header -->
     <header class="sticky top-0 z-40 border-b border-white/10 bg-[#080c15]/90 backdrop-blur-md transition-colors no-print">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <!-- Logo & Branding -->
-        <a href="/" class="flex items-center gap-2.5 group">
-          <div class="logo-badge-3d w-8 h-8 flex items-center justify-center font-bold text-sm tracking-tight border group-hover:scale-105 transition-transform">3D</div>
-          <div>
-            <span class="text-base font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">3DPrintingCostCalc.com</span>
-            <span class="text-[11px] block text-slate-400 font-mono tracking-wider uppercase">Pro Maker Suite</span>
+        <a href="/" class="flex items-center gap-2.5 group min-w-0" aria-label="3DPrintingCostCalc.com Home">
+          <div class="logo-badge-3d w-8 h-8 shrink-0 flex items-center justify-center font-bold text-sm tracking-tight border group-hover:scale-105 transition-transform" aria-hidden="true">3D</div>
+          <div class="truncate">
+            <span class="text-sm sm:text-base font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors block truncate">
+              3DPrintingCostCalc<span class="text-slate-400">.com</span>
+            </span>
+            <span class="text-[10px] sm:text-[11px] block text-slate-400 font-mono tracking-wider uppercase truncate">Pro Maker Suite</span>
           </div>
         </a>
 
         <!-- Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium" aria-label="Main navigation">
           <a href="/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Job Cost</a>
           <a href="/3d-printer-cost-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Printer TCO</a>
           <a href="/filament-cost-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Filament & Length</a>
@@ -145,36 +192,80 @@ const jsonLdContent = JSON.stringify({
         </nav>
 
         <!-- Right Side Actions: Theme Toggle & Mobile Menu Trigger -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <!-- Light/Dark Toggle -->
-          <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-            <svg id="themeIconSun" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer">
+            <svg id="themeIconSun" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4"/>
               <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
             </svg>
-            <svg id="themeIconMoon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="themeIconMoon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
             </svg>
           </button>
 
           <!-- Mobile Menu Button -->
-          <button id="mobileMenuBtn" aria-label="Open navigation menu" class="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button
+            id="mobileMenuBtn"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+            aria-controls="mobileMenuDrawer"
+            class="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+          >
+            <svg id="menuIconOpen" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
+            <svg id="menuIconClose" class="w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
         </div>
       </div>
 
-      <!-- Mobile Dropdown Navigation -->
-      <div id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-3 space-y-1">
-        <a href="/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">3D Print Job Cost Calculator</a>
-        <a href="/3d-printer-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">3D Printer TCO & Running Cost</a>
-        <a href="/filament-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">Filament Cost & Length Converter</a>
-        <a href="/spool-remaining-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">Empty Spool Tare Weight Lookup</a>
-        <a href="/multicolor-ams-waste-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">Bambu AMS Purge Waste Calculator</a>
-        <a href="/resin-3d-print-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5">Resin 3D Print Cost Calculator</a>
-      </div>
+      <!-- Mobile Dropdown Navigation Drawer -->
+      <nav id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-4 space-y-4 max-h-[80vh] overflow-y-auto" aria-label="Mobile navigation">
+        <div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">Calculators</span>
+          <div class="space-y-1">
+            <a href="/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">3D Print Job Cost Calculator</a>
+            <a href="/3d-printer-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">3D Printer TCO & Electricity</a>
+            <a href="/filament-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Filament Cost & Length Converter</a>
+            <a href="/spool-remaining-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Empty Spool Tare Weight Lookup</a>
+            <a href="/multicolor-ams-waste-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Bambu AMS Purge Waste Calculator</a>
+            <a href="/resin-3d-print-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Resin SLA Cost Calculator</a>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-3">
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">Popular Machine Profiles</span>
+          <div class="grid grid-cols-2 gap-1 text-xs">
+            <a href="/cost-calculator/bambu-lab-p1s/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu P1S</a>
+            <a href="/cost-calculator/bambu-lab-a1-mini/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu A1 Mini</a>
+            <a href="/cost-calculator/bambu-lab-x1-carbon/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu X1C</a>
+            <a href="/cost-calculator/prusa-mk4s/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Prusa MK4S</a>
+            <a href="/cost-calculator/creality-ender-3-v3-se/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Ender-3 V3</a>
+            <a href="/cost-calculator/elegoo-saturn-4-ultra/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Saturn 4 Ultra</a>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-3">
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">Materials & Guides</span>
+          <div class="grid grid-cols-2 gap-1 text-xs">
+            <a href="/filament-cost/pla/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PLA Guide</a>
+            <a href="/filament-cost/petg/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PETG Guide</a>
+            <a href="/filament-cost/abs/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">ABS Guide</a>
+            <a href="/filament-cost/tpu-95a/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">TPU Guide</a>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-3 flex items-center justify-between px-3 text-xs text-slate-400">
+          <a href="/privacy/" class="hover:text-cyan-400 transition-colors">Privacy</a>
+          <span>·</span>
+          <a href="/terms/" class="hover:text-cyan-400 transition-colors">Terms</a>
+          <span>·</span>
+          <a href="/contact/" class="hover:text-cyan-400 transition-colors">Contact</a>
+        </div>
+      </nav>
     </header>
 
     <!-- Main Content Slot -->
@@ -189,14 +280,14 @@ const jsonLdContent = JSON.stringify({
           <!-- Col 1: About & Privacy -->
           <div class="space-y-3">
             <div class="flex items-center gap-2">
-              <div class="logo-badge-3d w-7 h-7 flex items-center justify-center font-bold text-xs tracking-tight border">3D</div>
+              <div class="logo-badge-3d w-7 h-7 flex items-center justify-center font-bold text-xs tracking-tight border" aria-hidden="true">3D</div>
               <span class="font-semibold text-white">3DPrintingCostCalc.com</span>
             </div>
             <p class="text-xs text-slate-400 leading-relaxed">
               100% free, client-side 3D printing economics hub for makers, print farms, and Etsy businesses. Drag-and-drop .STL, .3MF, and .GCODE parsing with zero server uploads.
             </p>
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
-              <span class="w-1.5 h-1.5 bg-emerald-400 animate-pulse"></span>
+              <span class="w-1.5 h-1.5 bg-emerald-400 animate-pulse" aria-hidden="true"></span>
               100% Client-Side
             </div>
           </div>
@@ -255,6 +346,8 @@ const jsonLdContent = JSON.stringify({
       const moonIcon = document.getElementById('themeIconMoon');
       const mobileBtn = document.getElementById('mobileMenuBtn');
       const mobileDrawer = document.getElementById('mobileMenuDrawer');
+      const menuIconOpen = document.getElementById('menuIconOpen');
+      const menuIconClose = document.getElementById('menuIconClose');
 
       function updateThemeIcons() {
         const isLight = document.documentElement.classList.contains('light');
@@ -281,8 +374,38 @@ const jsonLdContent = JSON.stringify({
         updateThemeIcons();
       });
 
-      mobileBtn?.addEventListener('click', () => {
-        mobileDrawer?.classList.toggle('hidden');
+      function toggleMobileDrawer(forceClose?: boolean) {
+        if (!mobileDrawer || !mobileBtn) return;
+        const willOpen = forceClose !== undefined ? !forceClose : mobileDrawer.classList.contains('hidden');
+        if (willOpen) {
+          mobileDrawer.classList.remove('hidden');
+          mobileBtn.setAttribute('aria-expanded', 'true');
+          menuIconOpen?.classList.add('hidden');
+          menuIconClose?.classList.remove('hidden');
+        } else {
+          mobileDrawer.classList.add('hidden');
+          mobileBtn.setAttribute('aria-expanded', 'false');
+          menuIconOpen?.classList.remove('hidden');
+          menuIconClose?.classList.add('hidden');
+        }
+      }
+
+      mobileBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMobileDrawer();
+      });
+
+      // Close on outside click or Escape key
+      document.addEventListener('click', (e) => {
+        if (!mobileDrawer?.contains(e.target as Node) && !mobileBtn?.contains(e.target as Node)) {
+          toggleMobileDrawer(true);
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          toggleMobileDrawer(true);
+        }
       });
 
       updateThemeIcons();

@@ -10,7 +10,14 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/404') && !page.includes('/500'),
+      changefreq: 'weekly',
+      priority: 0.8,
+      lastmod: new Date(),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
