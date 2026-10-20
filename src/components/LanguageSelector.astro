@@ -1,0 +1,184 @@
+---
+import { LOCALES, DROPDOWN_LOCALES, getLocalizedPath, type LocaleCode } from '../i18n/locales';
+
+export interface Props {
+  currentLocale: string;
+  currentPathname?: string;
+  isMobileDrawer?: boolean;
+}
+
+const {
+  currentLocale = 'en',
+  currentPathname = Astro.url.pathname,
+  isMobileDrawer = false,
+} = Astro.props;
+
+const activeLocale = LOCALES[currentLocale] || LOCALES.en;
+---
+
+{isMobileDrawer ? (
+  <div class="space-y-2">
+    <div class="flex items-center gap-2 px-3 text-[11px] font-mono uppercase tracking-wider text-cyan-400">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" x2="22" y1="12" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      <span>Language / 语言 / 言語</span>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 px-2">
+      {DROPDOWN_LOCALES.map((code) => {
+        const loc = LOCALES[code];
+        const isSelected = code === currentLocale;
+        const targetUrl = getLocalizedPath(currentPathname, code);
+        return (
+          <a
+            href={targetUrl}
+            class={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+              isSelected
+                ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold'
+                : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
+            }`}
+          >
+            <span>{loc.nativeName}</span>
+            {isSelected && (
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
+            )}
+          </a>
+        );
+      })}
+    </div>
+  </div>
+) : (
+  <div class="relative inline-block text-left" id="langSelectorWrapper">
+    <!-- Trigger Button -->
+    <button
+      type="button"
+      id="langDropdownTrigger"
+      aria-haspopup="true"
+      aria-expanded="false"
+      aria-label={`Select Language, currently ${activeLocale.display}`}
+      class="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 border border-white/20 hover:border-cyan-400/60 bg-[#0e1628]/80 hover:bg-[#142038] text-slate-200 hover:text-white transition-all duration-200 rounded text-xs font-mono tracking-wide focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer shadow-sm"
+    >
+      <!-- Globe Icon (responsive: hidden on mobile to avoid cluttering header, visible on sm and up) -->
+      <svg
+        class="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-400 shrink-0 hidden sm:inline-block"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" x2="22" y1="12" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+
+      <!-- Language Display Name -->
+      <span class="font-bold text-[11px] sm:text-xs uppercase">{activeLocale.display}</span>
+
+      <!-- Down Chevron Icon -->
+      <svg
+        id="langChevron"
+        class="w-3 h-3 text-slate-400 transition-transform duration-200 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div
+      id="langDropdownMenu"
+      class="hidden absolute right-0 mt-2 w-44 rounded-xl bg-[#0c1220]/95 backdrop-blur-md border border-white/10 shadow-2xl py-1.5 z-50 text-xs focus:outline-none ring-1 ring-black/50 overflow-hidden transform transition-all duration-150 origin-top-right"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="langDropdownTrigger"
+    >
+      <div class="py-1">
+        {DROPDOWN_LOCALES.map((code) => {
+          const loc = LOCALES[code];
+          const isSelected = code === currentLocale;
+          const targetUrl = getLocalizedPath(currentPathname, code);
+          return (
+            <a
+              href={targetUrl}
+              role="menuitem"
+              class={`flex items-center justify-between px-3.5 py-2 text-xs transition-colors ${
+                isSelected
+                  ? 'bg-cyan-500/15 text-cyan-300 font-bold border-l-2 border-cyan-400'
+                  : 'text-slate-300 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <span>{loc.nativeName}</span>
+              {isSelected ? (
+                <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              ) : (
+                <span class="text-[10px] font-mono text-slate-500 uppercase">{loc.shortDisplay}</span>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  function setupLangDropdown() {
+    const trigger = document.getElementById('langDropdownTrigger');
+    const menu = document.getElementById('langDropdownMenu');
+    const chevron = document.getElementById('langChevron');
+    const wrapper = document.getElementById('langSelectorWrapper');
+
+    if (!trigger || !menu || !wrapper) return;
+
+    function openMenu() {
+      menu?.classList.remove('hidden');
+      trigger?.setAttribute('aria-expanded', 'true');
+      chevron?.classList.add('rotate-180');
+    }
+
+    function closeMenu() {
+      menu?.classList.add('hidden');
+      trigger?.setAttribute('aria-expanded', 'false');
+      chevron?.classList.remove('rotate-180');
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !menu.classList.contains('hidden');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target as Node)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+      }
+    });
+  }
+
+  // Setup on page load & view transitions
+  setupLangDropdown();
+  document.addEventListener('astro:page-load', setupLangDropdown);
+</script>

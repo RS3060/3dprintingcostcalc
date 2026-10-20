@@ -1,0 +1,19 @@
+---
+import PrinterProfileContent from '../../../components/pages/PrinterProfileContent.astro';
+import printers from '../../../data/printers.json';
+import { ALL_LOCALES, DEFAULT_LOCALE } from '../../../i18n/locales';
+
+export function getStaticPaths() {
+  const locales = ALL_LOCALES.filter((l) => l !== DEFAULT_LOCALE);
+  return locales.flatMap((locale) =>
+    printers.map((printer) => ({
+      params: { locale, printerSlug: printer.slug },
+      props: { printer },
+    }))
+  );
+}
+
+const { printer } = Astro.props;
+const { locale } = Astro.params;
+---
+<PrinterProfileContent printer={printer} locale={locale} />

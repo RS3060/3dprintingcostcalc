@@ -1,0 +1,227 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPageTranslations } from '../../i18n/pageTranslations';
+import { getTranslations } from '../../i18n/translations';
+import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
+
+export interface Props {
+  locale?: string;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
+const locInfo = LOCALES[currentLocale] || LOCALES[DEFAULT_LOCALE];
+const t = getTranslations(currentLocale);
+const pageT = getPageTranslations(currentLocale).amsCalc;
+const curr = locInfo.currency;
+
+const defaultPriceKg = currentLocale === 'zh' ? 69 : (currentLocale === 'ja' ? 2800 : (currentLocale === 'ko' ? 24000 : (currentLocale === 'pt' ? 110 : (['fr', 'de', 'es', 'it'].includes(currentLocale) ? 22 : 22))));
+---
+
+<Layout
+  title={pageT.metaTitle}
+  description={pageT.metaDescription}
+  keywords={pageT.metaKeywords}
+  locale={currentLocale}
+  faqList={pageT.faqs}
+  breadcrumbs={[
+    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
+    { name: t.nav.amsWaste, item: getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale) }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-violet-950/60 text-violet-300 border border-violet-800/40">
+        {pageT.badge}
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        {pageT.heroTitle} <span class="bg-gradient-to-r from-violet-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">{pageT.heroGradient}</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        {pageT.heroSubtitle}
+      </p>
+    </div>
+
+    <!-- Interactive Calculator -->
+    <div
+      id="amsRoot"
+      class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+      data-currency={curr}
+    >
+      <!-- Input Controls (6 Cols) -->
+      <div class="lg:col-span-6 bg-[#0e1628] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-violet-400 font-mono">
+          {pageT.labels.configTitle}
+        </h2>
+
+        <div class="space-y-4 text-xs">
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Filament Swaps -->
+            <div>
+              <label for="amsSwapsInput" class="block font-medium text-slate-300 mb-1">{pageT.labels.totalSwaps}</label>
+              <input type="number" id="amsSwapsInput" value="280" step="10" min="1" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Flush Per Swap -->
+            <div>
+              <label for="amsFlushPerSwap" class="block font-medium text-slate-300 mb-1">{pageT.labels.flushVolume}</label>
+              <input type="number" id="amsFlushPerSwap" value="0.38" step="0.02" min="0.1" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Prime Tower Weight -->
+            <div>
+              <label for="amsPrimeTower" class="block font-medium text-slate-300 mb-1">Prime Tower (g):</label>
+              <input type="number" id="amsPrimeTower" value="30" step="5" min="0" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Model Weight Per Unit -->
+            <div>
+              <label for="amsModelWeight" class="block font-medium text-slate-300 mb-1">{pageT.labels.modelGrams}</label>
+              <input type="number" id="amsModelWeight" value="50" step="5" min="1" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Spool Price -->
+            <div>
+              <label for="amsFilamentPrice" class="block font-medium text-slate-300 mb-1">{pageT.labels.spoolPriceKg}</label>
+              <input type="number" id="amsFilamentPrice" value={defaultPriceKg} step="1" min="1" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Batch Count -->
+            <div>
+              <label for="amsBatchCount" class="block font-medium text-slate-300 mb-1">Batch Copies:</label>
+              <input type="number" id="amsBatchCount" value="6" step="1" min="1" max="30" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Card (6 Cols) -->
+      <div class="lg:col-span-6 bg-gradient-to-b from-[#131d33] to-[#0c1424] border border-violet-500/30 rounded-2xl p-6 shadow-2xl space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-wider text-violet-300 font-semibold">{pageT.labels.resultsTitle}</span>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span class="text-4xl sm:text-5xl font-black text-white font-mono" id="amsTotalWasteGrams">136.4g</span>
+            <span class="text-sm text-slate-400">{pageT.labels.wasteWeight}</span>
+          </div>
+          <span class="text-xs text-slate-400 block font-mono mt-1" id="amsWasteCostDisplay">
+            {curr}3.00 {pageT.labels.wasteCost}
+          </span>
+        </div>
+
+        <!-- Single vs Batch Comparison Box -->
+        <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+          <div class="p-4 rounded-xl bg-red-950/40 border border-red-500/20 space-y-1">
+            <span class="text-red-400 font-bold block">1 Unit:</span>
+            <div class="text-lg font-bold text-white" id="amsSingleUnitWaste">136.4g</div>
+            <span class="text-[11px] text-red-300 block" id="amsSingleUnitCost">+{curr}3.00/unit</span>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/20 space-y-1">
+            <span class="text-emerald-400 font-bold block" id="amsBatchTitle">6 Units Batch:</span>
+            <div class="text-lg font-bold text-white" id="amsBatchUnitWaste">22.7g</div>
+            <span class="text-[11px] text-emerald-300 block" id="amsBatchUnitCost">+{curr}0.50/unit</span>
+          </div>
+        </div>
+
+        <!-- Plate Batch Curve Visualization -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-mono text-slate-300">
+            <span>{pageT.labels.ratio}</span>
+            <span class="text-cyan-400" id="amsSavingsBadge">Batch savings</span>
+          </div>
+          <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div id="batchEfficiencyBar" class="h-full bg-gradient-to-r from-violet-500 to-cyan-400" style="width: 83%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">{t.nav.amsWaste} - FAQ</h2>
+      <div class="space-y-3">
+        {pageT.faqs.map((faq, index) => (
+          <details class="group p-5 rounded-2xl bg-[#0e1628] border border-white/10 transition-all hover:border-cyan-500/30">
+            <summary class="flex items-center justify-between cursor-pointer list-none select-none font-bold text-white text-sm sm:text-base gap-4">
+              <span class="flex items-center gap-3">
+                <span class="text-cyan-400 font-mono text-xs px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/40 shrink-0">Q{index + 1}</span>
+                <span class="text-slate-100 group-hover:text-cyan-300 transition-colors">{faq.question}</span>
+              </span>
+              <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-white/5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const root = document.getElementById('amsRoot');
+  const curr = root?.dataset.currency || '$';
+
+  const swapsInput = document.getElementById('amsSwapsInput') as HTMLInputElement;
+  const flushInput = document.getElementById('amsFlushPerSwap') as HTMLInputElement;
+  const towerInput = document.getElementById('amsPrimeTower') as HTMLInputElement;
+  const modelInput = document.getElementById('amsModelWeight') as HTMLInputElement;
+  const priceInput = document.getElementById('amsFilamentPrice') as HTMLInputElement;
+  const batchInput = document.getElementById('amsBatchCount') as HTMLInputElement;
+
+  const totalWasteDisplay = document.getElementById('amsTotalWasteGrams');
+  const wasteCostDisplay = document.getElementById('amsWasteCostDisplay');
+  const singleUnitWaste = document.getElementById('amsSingleUnitWaste');
+  const singleUnitCost = document.getElementById('amsSingleUnitCost');
+  const batchTitle = document.getElementById('amsBatchTitle');
+  const batchUnitWaste = document.getElementById('amsBatchUnitWaste');
+  const batchUnitCost = document.getElementById('amsBatchUnitCost');
+  const savingsBadge = document.getElementById('amsSavingsBadge');
+  const efficiencyBar = document.getElementById('batchEfficiencyBar');
+
+  function calculateAMS() {
+    if (!swapsInput || !flushInput) return;
+    const swaps = parseFloat(swapsInput.value) || 0;
+    const flush = parseFloat(flushInput.value) || 0;
+    const tower = parseFloat(towerInput?.value || '0') || 0;
+    const model = parseFloat(modelInput?.value || '0') || 0;
+    const priceKg = parseFloat(priceInput?.value || '20') || 20;
+    const batch = Math.max(1, parseInt(batchInput?.value || '1', 10) || 1);
+
+    const pricePerGram = priceKg / 1000;
+    const totalPlateWaste = (swaps * flush) + tower;
+    const totalWasteCost = totalPlateWaste * pricePerGram;
+
+    const singleWastePerUnit = totalPlateWaste;
+    const singleCostPerUnit = totalWasteCost;
+
+    const batchWastePerUnit = totalPlateWaste / batch;
+    const batchCostPerUnit = totalWasteCost / batch;
+
+    const savedPerUnit = Math.max(0, singleCostPerUnit - batchCostPerUnit);
+    const reductionPct = singleCostPerUnit > 0 ? ((savedPerUnit / singleCostPerUnit) * 100) : 0;
+
+    if (totalWasteDisplay) totalWasteDisplay.textContent = `${totalPlateWaste.toFixed(1)}g`;
+    if (wasteCostDisplay) wasteCostDisplay.textContent = `${curr}${totalWasteCost.toFixed(2)}`;
+
+    if (singleUnitWaste) singleUnitWaste.textContent = `${singleWastePerUnit.toFixed(1)}g`;
+    if (singleUnitCost) singleUnitCost.textContent = `+${curr}${singleCostPerUnit.toFixed(2)}/unit`;
+
+    if (batchTitle) batchTitle.textContent = `${batch} Units:`;
+    if (batchUnitWaste) batchUnitWaste.textContent = `${batchWastePerUnit.toFixed(1)}g`;
+    if (batchUnitCost) batchUnitCost.textContent = `+${curr}${batchCostPerUnit.toFixed(2)}/unit`;
+
+    if (savingsBadge) savingsBadge.textContent = `-${reductionPct.toFixed(0)}%`;
+    if (efficiencyBar) efficiencyBar.style.width = `${Math.min(100, Math.max(10, reductionPct))}%`;
+  }
+
+  [swapsInput, flushInput, towerInput, modelInput, priceInput, batchInput].forEach(inp => {
+    inp?.addEventListener('input', calculateAMS);
+  });
+
+  calculateAMS();
+</script>

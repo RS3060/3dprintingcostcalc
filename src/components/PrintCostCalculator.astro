@@ -1,31 +1,48 @@
 ---
 import printersData from '../data/printers.json';
 import materialsData from '../data/materials.json';
+import { getTranslations } from '../i18n/translations';
+import { LOCALES } from '../i18n/locales';
 
 export interface Props {
   initialPrinterSlug?: string;
   initialMaterialSlug?: string;
   titleOverride?: string;
+  locale?: string;
 }
 
 const {
   initialPrinterSlug = 'bambu-lab-p1s',
   initialMaterialSlug = 'pla',
   titleOverride,
+  locale = 'en',
 } = Astro.props;
 
 const selectedPrinter = printersData.find(p => p.slug === initialPrinterSlug) || printersData[0];
 const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug) || materialsData[0];
+
+const t = getTranslations(locale);
+const locInfo = LOCALES[locale] || LOCALES.en;
+const currSym = locInfo.currency;
 ---
 
-<div id="calculatorRoot" class="w-full" data-initial-printer={initialPrinterSlug} data-initial-material={initialMaterialSlug}>
+<div
+  id="calculatorRoot"
+  class="w-full"
+  data-initial-printer={initialPrinterSlug}
+  data-initial-material={initialMaterialSlug}
+  data-currency={currSym}
+  data-profit-label={t.calc.profit}
+  data-invoice-item-name={t.calc.invoiceItemName}
+  data-toast-msg={t.calc.copiedToast}
+>
   <!-- Top Banner / Title if provided -->
   {titleOverride ? (
     <div class="mb-6">
       <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{titleOverride}</h2>
     </div>
   ) : (
-    <h2 class="sr-only">Interactive 3D Print Cost Calculator Studio</h2>
+    <h2 class="sr-only">{t.calc.totalCostTitle}</h2>
   )}
 
   <!-- Two Column Layout: Controls (Left) and Results / Waterfall (Right) -->
@@ -39,10 +56,10 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-cyan-400">3D File Inspector</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-cyan-400">{t.calc.fileInspector}</h3>
           </div>
           <span class="text-xs font-mono text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
-            100% Client-Side
+            {t.calc.clientSide}
           </span>
         </div>
 
@@ -64,14 +81,14 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" x2="12" y1="3" y2="15"/>
+                <line x1="12" x2="12" y1="2" y2="15"/>
               </svg>
             </div>
             <p class="text-sm font-medium text-slate-200">
-              Drop your <span class="text-cyan-400 font-semibold">.STL, .3MF, .GCODE, .BGCODE</span> or <span class="text-cyan-400 font-semibold">.OBJ</span> here
+              {t.calc.dropText}
             </p>
             <p class="text-xs text-slate-400">
-              or click to browse from your computer
+              {t.calc.dropBrowse}
             </p>
           </div>
         </div>
@@ -92,49 +109,49 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-300 font-mono text-[11px]">
             <div>
-              <span class="text-slate-400 block">File Size:</span>
+              <span class="text-slate-400 block">{t.calc.fileSize}</span>
               <span id="parsedFileSize" class="font-bold text-white">0 KB</span>
             </div>
             <div>
-              <span class="text-slate-400 block">Calculated Grams:</span>
+              <span class="text-slate-400 block">{t.calc.calcGrams}</span>
               <span id="parsedFilamentGrams" class="font-bold text-cyan-400">0.0g</span>
             </div>
             <div>
-              <span class="text-slate-400 block">Est. Print Time:</span>
+              <span class="text-slate-400 block">{t.calc.estPrintTime}</span>
               <span id="parsedPrintTime" class="font-bold text-white">0h 0m</span>
             </div>
             <div>
-              <span class="text-slate-400 block">Mesh Volume:</span>
+              <span class="text-slate-400 block">{t.calc.meshVolume}</span>
               <span id="parsedMeshVol" class="font-bold text-white">0 cm³</span>
             </div>
           </div>
 
           <!-- Slicer vs Mesh info note -->
           <p id="parsedNote" class="mt-2 text-[11px] text-cyan-300/80 italic">
-            Exact slicer metadata extracted directly from file headers.
+            {t.calc.exactMetadata}
           </p>
 
           <!-- Secondary sliders if unsliced mesh (.stl / .obj / raw .3mf) -->
           <div id="meshAdjustControls" class="hidden mt-3 pt-3 border-t border-cyan-500/20 space-y-3">
             <div class="flex items-center justify-between text-[11px] text-slate-300">
-              <span class="font-semibold text-cyan-300">Slicer Simulation Sliders:</span>
-              <span class="text-slate-400">Adjust to match your slicer profile</span>
+              <span class="font-semibold text-cyan-300">{t.calc.slicerSliders}</span>
+              <span class="text-slate-400">{t.calc.adjustProfile}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label for="wallLoopsInput" class="block text-[11px] text-slate-400 mb-1">Wall Loops: <span id="wallLoopsVal" class="text-cyan-400 font-bold">2</span></label>
+                <label for="wallLoopsInput" class="block text-[11px] text-slate-400 mb-1">{t.calc.wallLoops} <span id="wallLoopsVal" class="text-cyan-400 font-bold">2</span></label>
                 <input type="range" id="wallLoopsInput" min="1" max="6" value="2" class="w-full h-1.5 bg-slate-700 rounded-lg" />
               </div>
               <div>
-                <label for="infillInput" class="block text-[11px] text-slate-400 mb-1">Infill Density: <span id="infillVal" class="text-cyan-400 font-bold">15%</span></label>
+                <label for="infillInput" class="block text-[11px] text-slate-400 mb-1">{t.calc.infillDensity} <span id="infillVal" class="text-cyan-400 font-bold">15%</span></label>
                 <input type="range" id="infillInput" min="0" max="100" step="5" value="15" class="w-full h-1.5 bg-slate-700 rounded-lg" />
               </div>
               <div>
-                <label for="supportSelect" class="block text-[11px] text-slate-400 mb-1">Supports:</label>
+                <label for="supportSelect" class="block text-[11px] text-slate-400 mb-1">{t.calc.supports}</label>
                 <select id="supportSelect" class="w-full bg-[#080c15] border border-white/10 rounded px-2 py-1 text-[11px] text-white">
-                  <option value="1.0">None (1.0x)</option>
-                  <option value="1.08">Light / Tree (1.08x)</option>
-                  <option value="1.18">Heavy (1.18x)</option>
+                  <option value="1.0">{t.calc.supportNone}</option>
+                  <option value="1.08">{t.calc.supportTree}</option>
+                  <option value="1.18">{t.calc.supportHeavy}</option>
                 </select>
               </div>
             </div>
@@ -145,21 +162,21 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
       <!-- 2. Hardware & Material Presets + Manual Inputs -->
       <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
         <div class="flex items-center justify-between">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">1. Machine & Material Configuration</h3>
-          <span class="text-xs font-mono text-cyan-400">Presets or Manual Custom</span>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">{t.calc.secMachine}</h3>
+          <span class="text-xs font-mono text-cyan-400">{t.calc.secMachineBadge}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Printer Selector -->
           <div>
             <label for="printerSelect" class="block text-xs font-medium text-slate-400 mb-1">
-              Printer Preset / Model:
+              {t.calc.printerModel}
             </label>
             <select
               id="printerSelect"
               class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
-              <option value="custom">➕ Custom Printer (Manual Entry)</option>
+              <option value="custom">{t.calc.customPrinter}</option>
               {printersData.map((printer) => (
                 <option value={printer.slug} selected={printer.slug === selectedPrinter.slug}>
                   {printer.brand} - {printer.model} ({printer.avgWattsPla}W)
@@ -171,8 +188,8 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Printer Power (Watts) - Explicit User Insertion -->
           <div>
             <label for="printerWattsInput" class="flex justify-between text-xs font-medium text-slate-400 mb-1">
-              <span>Printer Power (Watts):</span>
-              <span class="text-slate-400">Average draw</span>
+              <span>{t.calc.printerPower}</span>
+              <span class="text-slate-400">{t.calc.avgDraw}</span>
             </label>
             <div class="relative">
               <input
@@ -191,13 +208,13 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Material Selector -->
           <div>
             <label for="materialSelect" class="block text-xs font-medium text-slate-400 mb-1">
-              Filament Preset:
+              {t.calc.filamentPreset}
             </label>
             <select
               id="materialSelect"
               class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
-              <option value="custom">➕ Custom Material (Manual Entry)</option>
+              <option value="custom">{t.calc.customMaterial}</option>
               {materialsData.map((material) => (
                 <option value={material.slug} selected={material.slug === selectedMaterial.slug}>
                   {material.name} ({material.densityGcm3} g/cm³)
@@ -209,7 +226,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Material Density - Explicit User Insertion -->
           <div>
             <label for="materialDensityInput" class="flex justify-between text-xs font-medium text-slate-400 mb-1">
-              <span>Material Density:</span>
+              <span>{t.calc.materialDensity}</span>
               <span class="text-slate-400">g/cm³</span>
             </label>
             <div class="relative">
@@ -228,23 +245,23 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         </div>
 
         <p id="printerPresetSummary" class="text-[11px] text-slate-400 font-mono">
-          Watts: {selectedPrinter.avgWattsPla}W · MSRP: ${selectedPrinter.msrpUsd} · Lifespan: {selectedPrinter.defaultLifespanHours}h
+          Watts: {selectedPrinter.avgWattsPla}W · MSRP: {currSym}{selectedPrinter.msrpUsd} · Lifespan: {selectedPrinter.defaultLifespanHours}h
         </p>
       </div>
 
       <!-- 3. Primary Core Inputs (Manual Sliders & Numbers) -->
       <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-5">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">2. Job Parameters</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">{t.calc.secJob}</h3>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Spool Price -->
           <div>
             <label for="spoolPriceInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Spool Price ($)</span>
-              <span class="text-slate-400">e.g. $19.99</span>
+              <span>{t.calc.spoolPrice}</span>
+              <span class="text-slate-400">{currSym}19.99</span>
             </label>
             <div class="relative">
-              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">{currSym}</span>
               <input
                 type="number"
                 id="spoolPriceInput"
@@ -259,7 +276,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Spool Size -->
           <div>
             <label for="spoolWeightInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Spool Weight (grams)</span>
+              <span>{t.calc.spoolWeight}</span>
               <span class="text-slate-400">1kg = 1000g</span>
             </label>
             <input
@@ -281,7 +298,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Print Weight (Grams) -->
           <div>
             <label for="printWeightInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Print Weight (grams)</span>
+              <span>{t.calc.printWeight}</span>
               <span id="printWeightGramLive" class="text-cyan-400 font-mono">85g</span>
             </label>
             <input
@@ -297,8 +314,8 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Purge / AMS Waste (Grams) -->
           <div>
             <label for="purgeWasteInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Purge / Support Waste (g)</span>
-              <span class="text-slate-400">AMS poop or tree supports</span>
+              <span>{t.calc.purgeWaste}</span>
+              <span class="text-slate-400">AMS / Support</span>
             </label>
             <input
               type="number"
@@ -313,7 +330,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Print Time (Hours) -->
           <div>
             <label for="printHoursInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Print Time (Hours)</span>
+              <span>{t.calc.printHours}</span>
               <span id="printTimeLive" class="text-cyan-400 font-mono">3.5 hrs</span>
             </label>
             <input
@@ -329,11 +346,11 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <!-- Electricity Rate ($/kWh) -->
           <div>
             <label for="electricityRateInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
-              <span>Electricity Cost ($/kWh)</span>
-              <span class="text-slate-400">US Avg ~ $0.16</span>
+              <span>{t.calc.electricityRate}</span>
+              <span class="text-slate-400">Avg kWh</span>
             </label>
             <div class="relative">
-              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">{currSym}</span>
               <input
                 type="number"
                 id="electricityRateInput"
@@ -352,12 +369,12 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <button
           type="button"
           id="advancedToggleBtn"
-          class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors focus:outline-none"
+          class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors focus:outline-none cursor-pointer"
         >
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
             <span class="text-sm font-semibold uppercase tracking-wider text-slate-200">
-              3. Advanced Overhead & Labor Settings
+              {t.calc.secAdvanced}
             </span>
           </div>
           <svg id="advancedArrow" class="w-5 h-5 text-slate-400 transform transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -367,13 +384,13 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
         <div id="advancedContent" class="hidden px-5 pb-5 pt-2 border-t border-white/5 space-y-4">
           <p class="text-xs text-slate-400">
-            Professional print farms factor in machine depreciation, failure rates, post-processing labor, and shipping packaging to ensure profitable pricing.
+            {t.calc.advancedDesc}
           </p>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Printer Purchase Price -->
             <div>
-              <label for="printerPriceInput" class="block text-xs font-medium text-slate-300 mb-1">Printer Purchase Price ($)</label>
+              <label for="printerPriceInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.printerPrice}</label>
               <input
                 type="number"
                 id="printerPriceInput"
@@ -386,7 +403,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Lifespan Hours -->
             <div>
-              <label for="lifespanInput" class="block text-xs font-medium text-slate-300 mb-1">Expected Lifespan (Hours)</label>
+              <label for="lifespanInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.lifespan}</label>
               <input
                 type="number"
                 id="lifespanInput"
@@ -399,7 +416,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Hourly Maintenance / Nozzle Reserve -->
             <div>
-              <label for="maintenanceInput" class="block text-xs font-medium text-slate-300 mb-1">Hourly Maintenance ($/hr)</label>
+              <label for="maintenanceInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.maintenance}</label>
               <input
                 type="number"
                 id="maintenanceInput"
@@ -412,7 +429,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Failure Rate % -->
             <div>
-              <label for="failureRateInput" class="block text-xs font-medium text-slate-300 mb-1">Failure Risk Buffer (%)</label>
+              <label for="failureRateInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.failureRate}</label>
               <input
                 type="number"
                 id="failureRateInput"
@@ -426,7 +443,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Post-Processing Labor Minutes -->
             <div>
-              <label for="laborMinutesInput" class="block text-xs font-medium text-slate-300 mb-1">Prep & Post-Processing (Mins)</label>
+              <label for="laborMinutesInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.laborMinutes}</label>
               <input
                 type="number"
                 id="laborMinutesInput"
@@ -439,7 +456,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Labor Rate $/hr -->
             <div>
-              <label for="laborRateInput" class="block text-xs font-medium text-slate-300 mb-1">Hourly Labor Rate ($/hr)</label>
+              <label for="laborRateInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.laborRate}</label>
               <input
                 type="number"
                 id="laborRateInput"
@@ -452,7 +469,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Hardware & Fasteners -->
             <div>
-              <label for="hardwareCostInput" class="block text-xs font-medium text-slate-300 mb-1">Hardware / Magnets / Inserts ($)</label>
+              <label for="hardwareCostInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.hardwareCost}</label>
               <input
                 type="number"
                 id="hardwareCostInput"
@@ -465,7 +482,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
             <!-- Packaging Box -->
             <div>
-              <label for="packagingCostInput" class="block text-xs font-medium text-slate-300 mb-1">Shipping Box & Packaging ($)</label>
+              <label for="packagingCostInput" class="block text-xs font-medium text-slate-300 mb-1">{t.calc.packagingCost}</label>
               <input
                 type="number"
                 id="packagingCostInput"
@@ -489,47 +506,47 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400"></div>
 
         <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-mono uppercase tracking-wider text-cyan-300 font-semibold">Total Landed Production Cost</span>
-          <span class="text-xs font-mono text-slate-400" id="costPerGramBadge">$0.0200/g</span>
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-300 font-semibold">{t.calc.totalCostTitle}</span>
+          <span class="text-xs font-mono text-slate-400" id="costPerGramBadge">{currSym}0.0200/g</span>
         </div>
 
         <!-- Big Cost Display -->
         <div class="flex items-baseline gap-2 mb-4">
           <span class="text-4xl sm:text-5xl font-black tracking-tight text-white font-mono" id="totalLandedCostDisplay">
-            $7.85
+            {currSym}7.85
           </span>
-          <span class="text-sm font-medium text-slate-400">USD</span>
+          <span class="text-sm font-medium text-slate-400">{locInfo.currencyCode}</span>
         </div>
 
         <!-- Cost Breakdown Table -->
         <div class="border-t border-white/10 pt-3 space-y-2 text-xs font-mono">
           <div class="flex justify-between text-slate-300">
-            <span class="text-slate-400">Filament Material:</span>
-            <span id="costMaterialDisplay" class="font-bold text-white">$1.70</span>
+            <span class="text-slate-400">{t.calc.filamentMat}</span>
+            <span id="costMaterialDisplay" class="font-bold text-white">{currSym}1.70</span>
           </div>
           <div class="flex justify-between text-slate-300">
-            <span class="text-slate-400">Electricity (kWh):</span>
-            <span id="costElectricityDisplay" class="font-bold text-white">$0.07</span>
+            <span class="text-slate-400">{t.calc.electricityKwh}</span>
+            <span id="costElectricityDisplay" class="font-bold text-white">{currSym}0.07</span>
           </div>
           <div class="flex justify-between text-slate-300">
-            <span class="text-slate-400">Machine Wear & Depr.:</span>
-            <span id="costMachineDisplay" class="font-bold text-white">$0.94</span>
+            <span class="text-slate-400">{t.calc.machineWear}</span>
+            <span id="costMachineDisplay" class="font-bold text-white">{currSym}0.94</span>
           </div>
           <div class="flex justify-between text-slate-300">
-            <span class="text-slate-400">Failure Risk Reserve (5%):</span>
-            <span id="costFailureDisplay" class="font-bold text-white">$0.14</span>
+            <span class="text-slate-400">{t.calc.failureRisk}</span>
+            <span id="costFailureDisplay" class="font-bold text-white">{currSym}0.14</span>
           </div>
           <div class="flex justify-between text-slate-300">
-            <span class="text-slate-400">Labor, Inserts & Packaging:</span>
-            <span id="costLaborDisplay" class="font-bold text-white">$5.00</span>
+            <span class="text-slate-400">{t.calc.laborInserts}</span>
+            <span id="costLaborDisplay" class="font-bold text-white">{currSym}5.00</span>
           </div>
         </div>
 
         <!-- Stacked Waterfall Visual Bar -->
         <div class="mt-4">
           <div class="text-[11px] text-slate-400 mb-1 flex justify-between font-mono">
-            <span>Cost Distribution:</span>
-            <span id="costDistributionLabel">Material vs Overhead</span>
+            <span>{t.calc.costDist}</span>
+            <span id="costDistributionLabel">100%</span>
           </div>
           <div class="h-2.5 w-full bg-slate-800 rounded-full overflow-hidden flex">
             <div id="barMaterial" class="bg-cyan-500 h-full" style="width: 25%" title="Material"></div>
@@ -551,15 +568,15 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
       <!-- Commercial Marketplace Waterfall Card -->
       <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
         <div class="flex items-center justify-between">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Commercial Seller Pricing</h3>
-          <span class="text-xs font-mono text-cyan-400" id="multiplierLabel">2.5x Markup</span>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">{t.calc.commercialPricing}</h3>
+          <span class="text-xs font-mono text-cyan-400" id="multiplierLabel">{t.calc.markupMultiplier}</span>
         </div>
 
         <!-- Markup Slider -->
         <div>
           <label for="markupSlider" class="flex justify-between text-xs text-slate-400 mb-1">
-            <span>Client Markup Multiplier:</span>
-            <span id="targetMarginLabel" class="text-emerald-400 font-mono">60% Target Margin</span>
+            <span>{t.calc.markupMultiplier}:</span>
+            <span id="targetMarginLabel" class="text-emerald-400 font-mono">{t.calc.targetMargin}</span>
           </label>
           <input
             type="range"
@@ -576,7 +593,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <div class="flex items-center justify-between text-xs text-slate-300 pt-1">
           <label for="etsyAdsCheckbox" class="cursor-pointer flex items-center gap-2">
             <input type="checkbox" id="etsyAdsCheckbox" class="rounded bg-slate-800 border-white/20 text-cyan-500 focus:ring-cyan-400" />
-            <span>Include Etsy Offsite Ads fee (+15%)</span>
+            <span>{t.calc.offsiteAds}</span>
           </label>
         </div>
 
@@ -584,34 +601,34 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <div class="grid grid-cols-2 gap-3 text-xs">
           <!-- Direct Invoice -->
           <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
-            <span class="font-semibold text-slate-200 block">Direct / Local</span>
-            <div class="text-lg font-mono font-bold text-white" id="directPriceVal">$19.63</div>
-            <div class="text-[11px] text-emerald-400 font-mono" id="directProfitVal">+$11.78 profit</div>
-            <span class="text-[10px] text-slate-400 block">0% fee deduction</span>
+            <span class="font-semibold text-slate-200 block">{t.calc.directLocal}</span>
+            <div class="text-lg font-mono font-bold text-white" id="directPriceVal">{currSym}19.63</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="directProfitVal">+{currSym}11.78 {t.calc.profit}</div>
+            <span class="text-[10px] text-slate-400 block">{t.calc.feeDeduction}</span>
           </div>
 
           <!-- Etsy -->
           <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
-            <span class="font-semibold text-orange-400 block">Etsy Store</span>
-            <div class="text-lg font-mono font-bold text-white" id="etsyPriceVal">$22.18</div>
-            <div class="text-[11px] text-emerald-400 font-mono" id="etsyProfitVal">+$11.78 profit</div>
-            <span class="text-[10px] text-slate-400 block" id="etsyFeeVal">~$2.55 Etsy cut</span>
+            <span class="font-semibold text-orange-400 block">{t.calc.etsyStore}</span>
+            <div class="text-lg font-mono font-bold text-white" id="etsyPriceVal">{currSym}22.18</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="etsyProfitVal">+{currSym}11.78 {t.calc.profit}</div>
+            <span class="text-[10px] text-slate-400 block" id="etsyFeeVal">~{currSym}2.55 Etsy</span>
           </div>
 
           <!-- eBay -->
           <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
-            <span class="font-semibold text-blue-400 block">eBay</span>
-            <div class="text-lg font-mono font-bold text-white" id="ebayPriceVal">$23.09</div>
-            <div class="text-[11px] text-emerald-400 font-mono" id="ebayProfitVal">+$11.78 profit</div>
-            <span class="text-[10px] text-slate-400 block" id="ebayFeeVal">~$3.46 eBay cut</span>
+            <span class="font-semibold text-blue-400 block">{t.calc.ebayStore}</span>
+            <div class="text-lg font-mono font-bold text-white" id="ebayPriceVal">{currSym}23.09</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="ebayProfitVal">+{currSym}11.78 {t.calc.profit}</div>
+            <span class="text-[10px] text-slate-400 block" id="ebayFeeVal">~{currSym}3.46 Fee</span>
           </div>
 
           <!-- Shopify -->
           <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
-            <span class="font-semibold text-emerald-400 block">Shopify / Web</span>
-            <div class="text-lg font-mono font-bold text-white" id="shopifyPriceVal">$20.52</div>
-            <div class="text-[11px] text-emerald-400 font-mono" id="shopifyProfitVal">+$11.78 profit</div>
-            <span class="text-[10px] text-slate-400 block" id="shopifyFeeVal">~$0.89 Stripe cut</span>
+            <span class="font-semibold text-emerald-400 block">{t.calc.shopifyWeb}</span>
+            <div class="text-lg font-mono font-bold text-white" id="shopifyPriceVal">{currSym}20.52</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="shopifyProfitVal">+{currSym}11.78 {t.calc.profit}</div>
+            <span class="text-[10px] text-slate-400 block" id="shopifyFeeVal">~{currSym}0.89 Fee</span>
           </div>
         </div>
 
@@ -620,27 +637,27 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
           <button
             type="button"
             id="shareQuoteBtn"
-            class="flex-1 py-2.5 px-3 rounded-xl bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors shadow-lg shadow-cyan-900/30"
+            class="flex-1 py-2.5 px-3 rounded-xl bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors shadow-lg shadow-cyan-900/30 cursor-pointer"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
               <polyline points="16 6 12 2 8 6"/>
               <line x1="12" x2="12" y1="2" y2="15"/>
             </svg>
-            <span>Copy Quote Link</span>
+            <span>{t.calc.copyQuote}</span>
           </button>
 
           <button
             type="button"
             id="printQuoteBtn"
-            class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors border border-white/10"
+            class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors border border-white/10 cursor-pointer"
           >
             <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 6 2 18 2 18 9"/>
               <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
               <rect width="12" height="8" x="6" y="14"/>
             </svg>
-            <span>Print PDF Quote</span>
+            <span>{t.calc.printPdf}</span>
           </button>
         </div>
       </div>
@@ -653,26 +670,26 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
-    <span>Shareable URL with current parameters copied to clipboard!</span>
+    <span>{t.calc.copiedToast}</span>
   </div>
 
   <!-- Printable Client Invoice Modal / Print Template -->
   <div id="quoteInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
     <div id="printableInvoiceCard" class="max-w-2xl mx-auto bg-white text-slate-900 rounded-2xl p-8 shadow-2xl my-8 relative">
-      <button id="closeInvoiceBtn" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800 no-print">
+      <button id="closeInvoiceBtn" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800 no-print cursor-pointer">
         ✕
       </button>
 
       <!-- Invoice Header -->
       <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
         <div>
-          <h2 class="text-2xl font-black tracking-tight text-slate-900">3D PRINTING SERVICE QUOTE</h2>
-          <p class="text-xs text-slate-500 font-mono mt-1">Generated via 3DPrintingCostCalc.com</p>
+          <h2 class="text-2xl font-black tracking-tight text-slate-900">{t.calc.invoiceTitle}</h2>
+          <p class="text-xs text-slate-500 font-mono mt-1">{t.calc.invoiceSubtitle}</p>
         </div>
         <div class="text-right text-xs text-slate-500 font-mono">
-          <p>Date: <span id="invoiceDate"></span></p>
-          <p>Quote Ref: <span id="invoiceRef">#3DP-9481</span></p>
-          <p>Valid For: 14 Days</p>
+          <p>{t.calc.invoiceDate} <span id="invoiceDate"></span></p>
+          <p>{t.calc.invoiceRef} <span id="invoiceRef">#3DP-9481</span></p>
+          <p>{t.calc.invoiceValid}</p>
         </div>
       </div>
 
@@ -681,20 +698,20 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         <table class="w-full text-xs border-collapse min-w-[420px]">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500 text-left">
-              <th class="py-2">Description</th>
-              <th class="py-2">Material</th>
-              <th class="py-2">Filament Weight</th>
-              <th class="py-2">Est. Time</th>
-              <th class="py-2 text-right">Total Price</th>
+              <th class="py-2">{t.calc.invoiceDesc}</th>
+              <th class="py-2">{t.calc.invoiceMat}</th>
+              <th class="py-2">{t.calc.invoiceWeight}</th>
+              <th class="py-2">{t.calc.invoiceTime}</th>
+              <th class="py-2 text-right">{t.calc.invoicePrice}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 font-mono">
             <tr>
-              <td class="py-3 font-semibold text-slate-800" id="invoiceModelName">Custom 3D Print Job</td>
+              <td class="py-3 font-semibold text-slate-800" id="invoiceModelName">{t.calc.invoiceItemName}</td>
               <td class="py-3 text-slate-600" id="invoiceMaterialName">PLA</td>
               <td class="py-3 text-slate-600" id="invoiceWeight">85g</td>
               <td class="py-3 text-slate-600" id="invoiceTime">3.5 hrs</td>
-              <td class="py-3 text-right font-bold text-slate-900 text-sm" id="invoicePrice">$19.63</td>
+              <td class="py-3 text-right font-bold text-slate-900 text-sm" id="invoicePrice">{currSym}19.63</td>
             </tr>
           </tbody>
         </table>
@@ -702,14 +719,14 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 
       <!-- Notes & Terms -->
       <div class="border-t border-slate-200 pt-4 text-[11px] text-slate-500 space-y-1">
-        <p><strong>Terms:</strong> Standard FDM 3D printing tolerances are ±0.2mm. Surface finish includes standard 0.2mm layer lines.</p>
-        <p>This quote is based on current material density, post-processing specs, and machine schedule availability.</p>
+        <p><strong>{t.calc.invoiceTerms}</strong></p>
+        <p>{t.calc.invoiceNote}</p>
       </div>
 
       <!-- Print Action inside modal -->
       <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end gap-3 no-print">
         <button id="triggerPrintBtn" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors shadow-sm cursor-pointer">
-          Print or Save to PDF
+          {t.calc.invoicePrintBtn}
         </button>
       </div>
     </div>
@@ -717,13 +734,17 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
 </div>
 
 <script>
-  import { calculate3DPrintCost, DEFAULT_COST_INPUTS } from '../utils/costMath';
-  import { parse3DFile, estimateMeshWeightAndTime, DEFAULT_MESH_PARAMS } from '../utils/fileParser';
+  import { calculate3DPrintCost } from '../utils/costMath';
+  import { parse3DFile, estimateMeshWeightAndTime } from '../utils/fileParser';
   import printers from '../data/printers.json';
   import materials from '../data/materials.json';
 
   // Elements
   const root = document.getElementById('calculatorRoot');
+  const currencySym = root?.dataset.currency || '$';
+  const profitLabel = root?.dataset.profitLabel || 'profit';
+  const defaultItemName = root?.dataset.invoiceItemName || 'Custom 3D Print Job';
+
   const printerSelect = document.getElementById('printerSelect') as HTMLSelectElement;
   const materialSelect = document.getElementById('materialSelect') as HTMLSelectElement;
   const printerSummary = document.getElementById('printerPresetSummary');
@@ -884,9 +905,7 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
     const printTimeHours = parseFloat(printHoursInput.value) || 0;
     const electricityRateKwh = parseFloat(electricityRateInput.value) || 0.16;
 
-    // Use direct user input for printer wattage
     const powerWatts = parseFloat(printerWattsInput.value) || activePrinter.avgWattsPla;
-
     const printerPriceUsd = parseFloat(printerPriceInput.value) || activePrinter.msrpUsd;
     const expectedLifespanHours = parseFloat(lifespanInput.value) || activePrinter.defaultLifespanHours;
     const hourlyMaintenanceUsd = parseFloat(maintenanceInput.value) || activePrinter.hourlyMaintenanceUsd;
@@ -918,21 +937,21 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
       etsyOffsiteAds,
     });
 
-    // Update Live UI
-    if (totalLandedCostDisplay) totalLandedCostDisplay.textContent = `$${results.totalLandedCost.toFixed(2)}`;
-    if (costPerGramBadge) costPerGramBadge.textContent = `$${results.costPerGram.toFixed(4)}/g`;
-    if (costMaterialDisplay) costMaterialDisplay.textContent = `$${results.materialCost.toFixed(2)}`;
-    if (costElectricityDisplay) costElectricityDisplay.textContent = `$${results.electricityCost.toFixed(2)}`;
-    if (costMachineDisplay) costMachineDisplay.textContent = `$${results.machineWearCost.toFixed(2)}`;
-    if (costFailureDisplay) costFailureDisplay.textContent = `$${results.failureBufferCost.toFixed(2)}`;
-    if (costLaborDisplay) costLaborDisplay.textContent = `$${(results.laborCost + results.hardwareCost + results.packagingCost).toFixed(2)}`;
+    // Update Live UI with localized currency symbol
+    if (totalLandedCostDisplay) totalLandedCostDisplay.textContent = `${currencySym}${results.totalLandedCost.toFixed(2)}`;
+    if (costPerGramBadge) costPerGramBadge.textContent = `${currencySym}${results.costPerGram.toFixed(4)}/g`;
+    if (costMaterialDisplay) costMaterialDisplay.textContent = `${currencySym}${results.materialCost.toFixed(2)}`;
+    if (costElectricityDisplay) costElectricityDisplay.textContent = `${currencySym}${results.electricityCost.toFixed(2)}`;
+    if (costMachineDisplay) costMachineDisplay.textContent = `${currencySym}${results.machineWearCost.toFixed(2)}`;
+    if (costFailureDisplay) costFailureDisplay.textContent = `${currencySym}${results.failureBufferCost.toFixed(2)}`;
+    if (costLaborDisplay) costLaborDisplay.textContent = `${currencySym}${(results.laborCost + results.hardwareCost + results.packagingCost).toFixed(2)}`;
 
     if (printWeightGramLive) printWeightGramLive.textContent = `${results.totalFilamentGrams}g`;
     if (printTimeLive) printTimeLive.textContent = `${printTimeHours} hrs`;
 
     // Multiplier Labels
-    if (multiplierLabel) multiplierLabel.textContent = `${markupMultiplier.toFixed(1)}x Markup`;
-    if (targetMarginLabel) targetMarginLabel.textContent = `${results.directMarginPercent}% Target Margin`;
+    if (multiplierLabel) multiplierLabel.textContent = `${markupMultiplier.toFixed(1)}x`;
+    if (targetMarginLabel) targetMarginLabel.textContent = `${results.directMarginPercent}%`;
 
     // Visual Waterfall Bar
     if (barMaterial) barMaterial.style.width = `${results.percentages.material}%`;
@@ -942,38 +961,37 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
     if (barOther) barOther.style.width = `${results.percentages.other + results.percentages.failure}%`;
 
     // Platform Breakdown
-    if (directPriceVal) directPriceVal.textContent = `$${results.platforms.direct.recommendedPrice.toFixed(2)}`;
-    if (directProfitVal) directProfitVal.textContent = `+$${results.platforms.direct.netProfit.toFixed(2)} profit`;
+    if (directPriceVal) directPriceVal.textContent = `${currencySym}${results.platforms.direct.recommendedPrice.toFixed(2)}`;
+    if (directProfitVal) directProfitVal.textContent = `+${currencySym}${results.platforms.direct.netProfit.toFixed(2)} ${profitLabel}`;
 
-    if (etsyPriceVal) etsyPriceVal.textContent = `$${results.platforms.etsy.recommendedPrice.toFixed(2)}`;
-    if (etsyProfitVal) etsyProfitVal.textContent = `+$${results.platforms.etsy.netProfit.toFixed(2)} profit`;
-    if (etsyFeeVal) etsyFeeVal.textContent = `~$${results.platforms.etsy.platformFees.toFixed(2)} Etsy cut`;
+    if (etsyPriceVal) etsyPriceVal.textContent = `${currencySym}${results.platforms.etsy.recommendedPrice.toFixed(2)}`;
+    if (etsyProfitVal) etsyProfitVal.textContent = `+${currencySym}${results.platforms.etsy.netProfit.toFixed(2)} ${profitLabel}`;
+    if (etsyFeeVal) etsyFeeVal.textContent = `~${currencySym}${results.platforms.etsy.platformFees.toFixed(2)} Etsy`;
 
-    if (ebayPriceVal) ebayPriceVal.textContent = `$${results.platforms.ebay.recommendedPrice.toFixed(2)}`;
-    if (ebayProfitVal) ebayProfitVal.textContent = `+$${results.platforms.ebay.netProfit.toFixed(2)} profit`;
-    if (ebayFeeVal) ebayFeeVal.textContent = `~$${results.platforms.ebay.platformFees.toFixed(2)} eBay cut`;
+    if (ebayPriceVal) ebayPriceVal.textContent = `${currencySym}${results.platforms.ebay.recommendedPrice.toFixed(2)}`;
+    if (ebayProfitVal) ebayProfitVal.textContent = `+${currencySym}${results.platforms.ebay.netProfit.toFixed(2)} ${profitLabel}`;
+    if (ebayFeeVal) ebayFeeVal.textContent = `~${currencySym}${results.platforms.ebay.platformFees.toFixed(2)} Fee`;
 
-    if (shopifyPriceVal) shopifyPriceVal.textContent = `$${results.platforms.shopify.recommendedPrice.toFixed(2)}`;
-    if (shopifyProfitVal) shopifyProfitVal.textContent = `+$${results.platforms.shopify.netProfit.toFixed(2)} profit`;
-    if (shopifyFeeVal) shopifyFeeVal.textContent = `~$${results.platforms.shopify.platformFees.toFixed(2)} Stripe cut`;
+    if (shopifyPriceVal) shopifyPriceVal.textContent = `${currencySym}${results.platforms.shopify.recommendedPrice.toFixed(2)}`;
+    if (shopifyProfitVal) shopifyProfitVal.textContent = `+${currencySym}${results.platforms.shopify.netProfit.toFixed(2)} ${profitLabel}`;
+    if (shopifyFeeVal) shopifyFeeVal.textContent = `~${currencySym}${results.platforms.shopify.platformFees.toFixed(2)} Fee`;
 
     // Update Invoice Preview Fields
-    if (invoiceModelName) invoiceModelName.textContent = currentActiveFile ? currentActiveFile.name : 'Custom 3D Print Job';
+    if (invoiceModelName) invoiceModelName.textContent = currentActiveFile ? currentActiveFile.name : defaultItemName;
     if (invoiceMaterialName) invoiceMaterialName.textContent = activeMaterial.name;
     if (invoiceWeight) invoiceWeight.textContent = `${results.totalFilamentGrams}g`;
     if (invoiceTime) invoiceTime.textContent = `${printTimeHours} hrs`;
-    if (invoicePrice) invoicePrice.textContent = `$${results.platforms.direct.recommendedPrice.toFixed(2)}`;
+    if (invoicePrice) invoicePrice.textContent = `${currencySym}${results.platforms.direct.recommendedPrice.toFixed(2)}`;
   }
 
   // Handle printer selection change
   printerSelect?.addEventListener('change', () => {
     if (printerSelect.value === 'custom') {
-      if (printerSummary) printerSummary.textContent = 'Custom Printer Mode: Direct manual inputs active.';
       return;
     }
     const printer = getActivePrinter();
     if (printerSummary) {
-      printerSummary.textContent = `Watts: ${printer.avgWattsPla}W · MSRP: $${printer.msrpUsd} · Lifespan: ${printer.defaultLifespanHours}h`;
+      printerSummary.textContent = `Watts: ${printer.avgWattsPla}W · MSRP: ${currencySym}${printer.msrpUsd} · Lifespan: ${printer.defaultLifespanHours}h`;
     }
     printerWattsInput.value = printer.avgWattsPla.toString();
     printerPriceInput.value = printer.msrpUsd.toString();
@@ -988,7 +1006,6 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
       const selected = getActivePrinter();
       if (parseFloat(printerWattsInput.value) !== selected.avgWattsPla) {
         printerSelect.value = 'custom';
-        if (printerSummary) printerSummary.textContent = 'Custom Printer: Manual power draw active.';
       }
     }
     updateCalculations();
@@ -1003,7 +1020,6 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
     materialDensityInput.value = mat.densityGcm3.toString();
     spoolPriceInput.value = mat.defaultPricePerKgUsd.toString();
 
-    // If an unsliced mesh is loaded, recalculate weight with new density
     if (currentMeshVolume > 0) {
       recomputeMeshEstimation();
     } else {
@@ -1098,19 +1114,15 @@ const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug)
         if (meshAdjustControls) meshAdjustControls.classList.add('hidden');
         if (parsedNote) {
           parsedNote.textContent = parsed.slicerName
-            ? `Exact metadata extracted from ${parsed.slicerName}. Includes full toolpath & purge details.`
+            ? `Extracted from ${parsed.slicerName}.`
             : `Exact slicer metadata extracted directly from file headers.`;
         }
         currentMeshVolume = 0;
         currentSurfaceArea = 0;
       } else {
-        // Raw mesh (.stl, .obj, raw .3mf)
         currentMeshVolume = parsed.volumeCm3 || 0;
         currentSurfaceArea = parsed.surfaceAreaCm2 || 0;
         if (meshAdjustControls) meshAdjustControls.classList.remove('hidden');
-        if (parsedNote) {
-          parsedNote.textContent = `Raw 3D mesh analyzed via signed tetrahedron physics (${parsed.triangleCount?.toLocaleString()} triangles). Adjust wall and infill sliders below for real-time simulation.`;
-        }
       }
 
       updateCalculations();

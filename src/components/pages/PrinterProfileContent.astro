@@ -1,0 +1,175 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PrintCostCalculator from '../PrintCostCalculator.astro';
+import { getPageTranslations } from '../../i18n/pageTranslations';
+import { getTranslations } from '../../i18n/translations';
+import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
+
+export interface Props {
+  printer: any;
+  locale?: string;
+}
+
+const { printer, locale = DEFAULT_LOCALE } = Astro.props;
+const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
+const locInfo = LOCALES[currentLocale] || LOCALES[DEFAULT_LOCALE];
+const t = getTranslations(currentLocale);
+const pageBundle = getPageTranslations(currentLocale);
+const pp = pageBundle.printerProfile;
+const curr = locInfo.currency;
+
+const utilityRate = currentLocale === 'zh' ? 0.68 : (currentLocale === 'ja' ? 31.0 : (currentLocale === 'ko' ? 200.0 : (['fr', 'de', 'es', 'it'].includes(currentLocale) ? 0.28 : 0.16)));
+const spoolPrice = currentLocale === 'zh' ? 69 : (currentLocale === 'ja' ? 2800 : (currentLocale === 'ko' ? 24000 : (['fr', 'de', 'es', 'it'].includes(currentLocale) ? 20 : 19.99)));
+const costPerGram = spoolPrice / 1000;
+const hourlyDeprec = printer.msrpUsd / printer.defaultLifespanHours;
+
+const scenarios = [
+  {
+    name: pp.smallPart,
+    grams: 50,
+    hours: 2.0,
+    matCost: 50 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 2.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 2.0,
+  },
+  {
+    name: pp.medPart,
+    grams: 150,
+    hours: 5.0,
+    matCost: 150 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 5.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 5.0,
+  },
+  {
+    name: pp.largePart,
+    grams: 500,
+    hours: 14.0,
+    matCost: 500 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 14.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 14.0,
+  },
+];
+
+const faqs = pp.faqs(printer);
+---
+
+<Layout
+  title={pp.title(printer.brand, printer.model)}
+  description={pp.description(printer.brand, printer.model, printer.avgWattsPla)}
+  keywords={`${printer.model.toLowerCase()} print cost, ${printer.brand.toLowerCase()} cost calculator, 3d print cost calculator ${printer.slug}, ${printer.model.toLowerCase()} wattage`}
+  locale={currentLocale}
+  faqList={faqs}
+  breadcrumbs={[
+    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
+    { name: t.nav.printerTco, item: getLocalizedPath('/3d-printer-cost-calculator/', currentLocale) },
+    { name: `${printer.brand} ${printer.model}`, item: getLocalizedPath(`/cost-calculator/${printer.slug}/`, currentLocale) }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/40">
+        {pp.badge} · {printer.category}
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        {printer.brand} <span class="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{printer.model}</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        {pp.subtitle(printer.brand, printer.model, printer.buildVolumeMm, printer.msrpUsd)}
+      </p>
+    </div>
+
+    <!-- Pre-rendered Static Scenarios Table -->
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white tracking-wide uppercase font-mono text-xs text-cyan-400">
+          {pp.benchmarksTitle}
+        </h2>
+        <span class="text-xs font-mono text-slate-400">{curr}{spoolPrice}/kg · {curr}{utilityRate}/kWh</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-white/5 text-slate-400 font-mono border-b border-white/10">
+            <tr>
+              <th class="py-3 px-4">{pp.colJob}</th>
+              <th class="py-3 px-4">{pp.colFilament}</th>
+              <th class="py-3 px-4">{pp.colTime}</th>
+              <th class="py-3 px-4">{pp.colMatCost}</th>
+              <th class="py-3 px-4">{pp.colElecCost}</th>
+              <th class="py-3 px-4">{pp.colMachCost}</th>
+              <th class="py-3 px-4 text-cyan-400 font-bold">{pp.colTotalCost}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono">
+            {scenarios.map((sc) => {
+              const total = sc.matCost + sc.elecCost + sc.machCost;
+              return (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-bold text-white font-sans">{sc.name}</td>
+                  <td class="py-3 px-4">{sc.grams}g</td>
+                  <td class="py-3 px-4">{sc.hours}h</td>
+                  <td class="py-3 px-4">{curr}{sc.matCost.toFixed(2)}</td>
+                  <td class="py-3 px-4">{curr}{sc.elecCost.toFixed(2)}</td>
+                  <td class="py-3 px-4">{curr}{sc.machCost.toFixed(2)}</td>
+                  <td class="py-3 px-4 font-bold text-white text-sm bg-cyan-950/20">{curr}{total.toFixed(2)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Live Interactive Calculator Pre-loaded with this printer -->
+    <div class="pt-6">
+      <PrintCostCalculator initialPrinterSlug={printer.slug} locale={currentLocale} />
+    </div>
+
+    <!-- Machine Specifications Card -->
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4">
+      <h2 class="text-xl font-bold text-white">{pp.specsTitle}</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{pp.hardwareMsrp}</span>
+          <span class="text-base font-bold text-white">{curr}{printer.msrpUsd}</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{pp.avgPower}</span>
+          <span class="text-base font-bold text-cyan-400">{printer.avgWattsPla}W</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{pp.lifespan}</span>
+          <span class="text-base font-bold text-white">{printer.defaultLifespanHours}h</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{pp.buildVolume}</span>
+          <span class="text-base font-bold text-white">{printer.buildVolumeMm} mm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">{printer.brand} {printer.model} - FAQ</h2>
+      <div class="space-y-3">
+        {faqs.map((faq, index) => (
+          <details class="group p-5 rounded-2xl bg-[#0e1628] border border-white/10 transition-all hover:border-cyan-500/30">
+            <summary class="flex items-center justify-between cursor-pointer list-none select-none font-bold text-white text-sm sm:text-base gap-4">
+              <span class="flex items-center gap-3">
+                <span class="text-cyan-400 font-mono text-xs px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/40 shrink-0">Q{index + 1}</span>
+                <span class="text-slate-100 group-hover:text-cyan-300 transition-colors">{faq.question}</span>
+              </span>
+              <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-white/5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

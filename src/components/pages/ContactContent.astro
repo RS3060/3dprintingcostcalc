@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPageTranslations } from '../../i18n/pageTranslations';
+import { getTranslations } from '../../i18n/translations';
+import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
+
+export interface Props {
+  locale?: string;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
+const t = getTranslations(currentLocale);
+const legal = getPageTranslations(currentLocale).legal;
+---
+
+<Layout
+  title={`${legal.contactTitle} | 3DPrintingCostCalc.com`}
+  description={legal.contactSubtitle}
+  locale={currentLocale}
+  breadcrumbs={[
+    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
+    { name: legal.contactTitle, item: getLocalizedPath('/contact/', currentLocale) }
+  ]}
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
+    <div class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">{legal.contactTitle}</h1>
+      <p class="text-xs text-slate-400 font-mono">{legal.contactSubtitle}</p>
+    </div>
+
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4 text-xs sm:text-sm">
+      <h2 class="text-lg font-bold text-white">{legal.contactCardTitle}</h2>
+      <p class="leading-relaxed">
+        {legal.contactCardDesc}
+      </p>
+
+      <div class="p-4 rounded-xl bg-[#162035] border border-white/5 space-y-2">
+        <span class="text-xs text-slate-400 block">{legal.contactEmailLabel}</span>
+        <a href="mailto:support@3dprintingcostcalc.com" class="text-lg font-mono font-bold text-cyan-400 hover:underline">
+          support@3dprintingcostcalc.com
+        </a>
+        <p class="text-[11px] text-slate-400 pt-1">
+          {legal.contactTurnaround}
+        </p>
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <h3 class="font-bold text-white">{legal.contactSuggestTitle}</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          {legal.contactSuggestDesc}
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>

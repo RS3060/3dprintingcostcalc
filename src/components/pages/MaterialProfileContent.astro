@@ -1,0 +1,119 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PrintCostCalculator from '../PrintCostCalculator.astro';
+import { getPageTranslations } from '../../i18n/pageTranslations';
+import { getTranslations } from '../../i18n/translations';
+import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
+
+export interface Props {
+  material: any;
+  locale?: string;
+}
+
+const { material, locale = DEFAULT_LOCALE } = Astro.props;
+const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
+const locInfo = LOCALES[currentLocale] || LOCALES[DEFAULT_LOCALE];
+const t = getTranslations(currentLocale);
+const pageBundle = getPageTranslations(currentLocale);
+const mp = pageBundle.materialProfile;
+const curr = locInfo.currency;
+
+const defaultPrice = currentLocale === 'zh' ? 69 : (currentLocale === 'ja' ? 2800 : (currentLocale === 'ko' ? 24000 : (['fr', 'de', 'es', 'it'].includes(currentLocale) ? 20 : material.defaultPricePerKgUsd)));
+const costPerGram = defaultPrice / 1000;
+const faqs = mp.faqs(material);
+---
+
+<Layout
+  title={mp.title(material.name)}
+  description={mp.description(material.name, material.densityGcm3)}
+  keywords={`${material.shortName.toLowerCase()} cost per gram, ${material.shortName.toLowerCase()} filament cost calculator, ${material.shortName.toLowerCase()} density 3d printing, ${material.name.toLowerCase()} cost`}
+  locale={currentLocale}
+  faqList={faqs}
+  breadcrumbs={[
+    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
+    { name: t.nav.filamentLength, item: getLocalizedPath('/filament-cost-calculator/', currentLocale) },
+    { name: material.name, item: getLocalizedPath(`/filament-cost/${material.slug}/`, currentLocale) }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-950/60 text-emerald-300 border border-emerald-800/40">
+        {mp.badge} · {material.category}
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        {material.name}
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        {mp.subtitle(material.name, material.densityGcm3)}
+      </p>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+      <div class="p-4 rounded-2xl bg-[#0e1628] border border-white/10">
+        <span class="text-slate-400 block mb-1">{mp.density}</span>
+        <span class="text-2xl font-bold text-white">{material.densityGcm3} g/cm³</span>
+      </div>
+      <div class="p-4 rounded-2xl bg-[#0e1628] border border-white/10">
+        <span class="text-slate-400 block mb-1">{mp.costPerKg}</span>
+        <span class="text-2xl font-bold text-emerald-400">{curr}{costPerGram.toFixed(3)}/g</span>
+      </div>
+      <div class="p-4 rounded-2xl bg-[#0e1628] border border-white/10">
+        <span class="text-slate-400 block mb-1">{mp.metersPerKg}</span>
+        <span class="text-2xl font-bold text-cyan-400">{material.metersPerKg175 > 0 ? `${material.metersPerKg175} m` : 'N/A'}</span>
+      </div>
+      <div class="p-4 rounded-2xl bg-[#0e1628] border border-white/10">
+        <span class="text-slate-400 block mb-1">{mp.bedTemp}</span>
+        <span class="text-2xl font-bold text-amber-400">{material.bedTempC}°C</span>
+      </div>
+    </div>
+
+    <!-- Live Interactive Calculator Pre-loaded with this material -->
+    <div class="pt-6">
+      <PrintCostCalculator initialMaterialSlug={material.slug} locale={currentLocale} />
+    </div>
+
+    <!-- Thermal & Mechanical Specifications -->
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4">
+      <h2 class="text-xl font-bold text-white">{mp.specsTitle}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="p-4 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{mp.nozzleTemp}</span>
+          <span class="text-lg font-bold text-white">{material.nozzleTempC > 0 ? `${material.nozzleTempC}°C` : 'UV 405nm'}</span>
+        </div>
+        <div class="p-4 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{mp.bedTemp}</span>
+          <span class="text-lg font-bold text-white">{material.bedTempC > 0 ? `${material.bedTempC}°C` : '0°C'}</span>
+        </div>
+        <div class="p-4 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">{mp.shrinkage}</span>
+          <span class="text-lg font-bold text-cyan-400">{material.tensileMpa} MPa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">{material.name} - FAQ</h2>
+      <div class="space-y-3">
+        {faqs.map((faq, index) => (
+          <details class="group p-5 rounded-2xl bg-[#0e1628] border border-white/10 transition-all hover:border-emerald-500/30">
+            <summary class="flex items-center justify-between cursor-pointer list-none select-none font-bold text-white text-sm sm:text-base gap-4">
+              <span class="flex items-center gap-3">
+                <span class="text-emerald-400 font-mono text-xs px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/40 shrink-0">Q{index + 1}</span>
+                <span class="text-slate-100 group-hover:text-emerald-300 transition-colors">{faq.question}</span>
+              </span>
+              <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-white/5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

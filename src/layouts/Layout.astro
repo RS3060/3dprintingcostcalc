@@ -1,9 +1,21 @@
 ---
 import '../styles/global.css';
+import {
+  LOCALES,
+  ALL_LOCALES,
+  DEFAULT_LOCALE,
+  getCleanPath,
+  getLocalizedPath,
+  getLocaleFromPath,
+  type LocaleCode,
+} from '../i18n/locales';
+import { getTranslations } from '../i18n/translations';
+import LanguageSelector from '../components/LanguageSelector.astro';
 
 export interface Props {
   title: string;
   description: string;
+  locale?: string;
   canonicalUrl?: string;
   keywords?: string;
   image?: string;
@@ -18,7 +30,7 @@ export interface Props {
 const {
   title,
   description,
-  canonicalUrl = Astro.url.href,
+  locale,
   keywords = 'filament cost calculator, 3d print cost calculator, 3d printing cost calculator, 3d print calculator, 3d printer cost calculator, filament calculator, 3d print price calculator',
   image = 'https://3dprintingcostcalc.com/og-image.png',
   imageAlt = '3DPrintingCostCalc.com - Pro Maker 3D Print Cost Calculator Suite',
@@ -26,17 +38,39 @@ const {
   author = '3DPrintingCostCalc.com',
   noindex = false,
   faqList = [],
-  breadcrumbs = [{ name: 'Home', item: 'https://3dprintingcostcalc.com/' }],
+  breadcrumbs,
 } = Astro.props;
+
+// Determine current locale
+const currentLocale = (locale as LocaleCode) || getLocaleFromPath(Astro.url.pathname);
+const locInfo = LOCALES[currentLocale] || LOCALES[DEFAULT_LOCALE];
+const t = getTranslations(currentLocale);
+
+// Calculate canonical & clean path
+const cleanPath = getCleanPath(Astro.url.pathname);
+const canonicalUrl =
+  Astro.props.canonicalUrl ||
+  (currentLocale === DEFAULT_LOCALE
+    ? `https://3dprintingcostcalc.com${cleanPath}`
+    : `https://3dprintingcostcalc.com/${currentLocale}${cleanPath}`);
+
+// Default breadcrumbs
+const activeBreadcrumbs = breadcrumbs || [
+  {
+    name: t.nav.jobCost,
+    item: currentLocale === DEFAULT_LOCALE ? 'https://3dprintingcostcalc.com/' : `https://3dprintingcostcalc.com/${currentLocale}/`,
+  },
+];
 
 // Schema graph construction
 const schemaGraph: any[] = [
   {
     '@type': 'WebSite',
     '@id': 'https://3dprintingcostcalc.com/#website',
-    url: 'https://3dprintingcostcalc.com/',
+    url: currentLocale === DEFAULT_LOCALE ? 'https://3dprintingcostcalc.com/' : `https://3dprintingcostcalc.com/${currentLocale}/`,
     name: '3D Printing Cost Calculator',
-    description: 'The definitive client-side 3D print cost, filament weight, electricity, and marketplace price calculator.',
+    inLanguage: locInfo.htmlLang,
+    description: description,
   },
   {
     '@type': 'Organization',
@@ -50,19 +84,20 @@ const schemaGraph: any[] = [
     '@id': `${canonicalUrl}#software`,
     name: title,
     url: canonicalUrl,
+    inLanguage: locInfo.htmlLang,
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'All Web Browsers',
     offers: {
       '@type': 'Offer',
       price: '0',
-      priceCurrency: 'USD',
+      priceCurrency: locInfo.currencyCode,
     },
     description: description,
   },
   {
     '@type': 'BreadcrumbList',
     '@id': `${canonicalUrl}#breadcrumbs`,
-    itemListElement: breadcrumbs.map((b, index) => ({
+    itemListElement: activeBreadcrumbs.map((b, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: b.name,
@@ -75,6 +110,7 @@ if (faqList.length > 0) {
   schemaGraph.push({
     '@type': 'FAQPage',
     '@id': `${canonicalUrl}#faq`,
+    inLanguage: locInfo.htmlLang,
     mainEntity: faqList.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
@@ -93,7 +129,7 @@ const jsonLdContent = JSON.stringify({
 ---
 
 <!doctype html>
-<html lang="en" class="dark">
+<html lang={locInfo.htmlLang} class="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -103,6 +139,16 @@ const jsonLdContent = JSON.stringify({
     <meta name="author" content={author} />
     <meta name="publisher" content="3DPrintingCostCalc.com" />
     <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Complete Multilingual SEO Alternate Hreflang Tags -->
+    <link rel="alternate" hreflang="x-default" href={`https://3dprintingcostcalc.com${cleanPath}`} />
+    {ALL_LOCALES.map((loc) => {
+      const alternateUrl =
+        loc === DEFAULT_LOCALE
+          ? `https://3dprintingcostcalc.com${cleanPath}`
+          : `https://3dprintingcostcalc.com/${loc}${cleanPath}`;
+      return <link rel="alternate" hreflang={loc} href={alternateUrl} />;
+    })}
 
     {noindex ? (
       <meta name="robots" content="noindex, nofollow" />
@@ -129,7 +175,10 @@ const jsonLdContent = JSON.stringify({
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={imageAlt} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={locInfo.ogLocale} />
+    {ALL_LOCALES.filter((l) => l !== currentLocale).map((otherLoc) => (
+      <meta property="og:locale:alternate" content={LOCALES[otherLoc].ogLocale} />
+    ))}
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -169,32 +218,35 @@ const jsonLdContent = JSON.stringify({
 
     <!-- Navigation Header -->
     <header class="sticky top-0 z-40 border-b border-white/10 bg-[#080c15]/90 backdrop-blur-md transition-colors no-print">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
         <!-- Logo & Branding -->
-        <a href="/" class="flex items-center gap-2.5 group min-w-0" aria-label="3DPrintingCostCalc.com Home">
+        <a href={getLocalizedPath('/', currentLocale)} class="flex items-center gap-2 sm:gap-2.5 group min-w-0" aria-label="3DPrintingCostCalc.com Home">
           <div class="logo-badge-3d w-8 h-8 shrink-0 flex items-center justify-center font-bold text-sm tracking-tight border group-hover:scale-105 transition-transform" aria-hidden="true">3D</div>
           <div class="truncate">
             <span class="text-sm sm:text-base font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors block truncate">
               3DPrintingCostCalc<span class="text-slate-400">.com</span>
             </span>
-            <span class="text-[10px] sm:text-[11px] block text-slate-400 font-mono tracking-wider uppercase truncate">Pro Maker Suite</span>
+            <span class="text-[10px] sm:text-[11px] block text-slate-400 font-mono tracking-wider uppercase truncate">{t.nav.proMakerSuite}</span>
           </div>
         </a>
 
         <!-- Desktop Navigation Links -->
         <nav class="hidden lg:flex items-center gap-1 text-sm font-medium" aria-label="Main navigation">
-          <a href="/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Job Cost</a>
-          <a href="/3d-printer-cost-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Printer TCO</a>
-          <a href="/filament-cost-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Filament & Length</a>
-          <a href="/spool-remaining-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Spool Tare</a>
-          <a href="/multicolor-ams-waste-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">AMS Waste</a>
-          <a href="/resin-3d-print-cost-calculator/" class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Resin SLA</a>
+          <a href={getLocalizedPath('/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.jobCost}</a>
+          <a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.printerTco}</a>
+          <a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.filamentLength}</a>
+          <a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.spoolTare}</a>
+          <a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.amsWaste}</a>
+          <a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.resinSla}</a>
         </nav>
 
-        <!-- Right Side Actions: Theme Toggle & Mobile Menu Trigger -->
-        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Right Side Actions: Language Selector, Theme Toggle & Mobile Menu Trigger -->
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+          <!-- Language Dropdown -->
+          <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} />
+
           <!-- Light/Dark Toggle -->
-          <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer">
+          <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer rounded">
             <svg id="themeIconSun" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4"/>
               <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
@@ -210,7 +262,7 @@ const jsonLdContent = JSON.stringify({
             aria-label="Open navigation menu"
             aria-expanded="false"
             aria-controls="mobileMenuDrawer"
-            class="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            class="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer rounded"
           >
             <svg id="menuIconOpen" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
@@ -223,47 +275,52 @@ const jsonLdContent = JSON.stringify({
       </div>
 
       <!-- Mobile Dropdown Navigation Drawer -->
-      <nav id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-4 space-y-4 max-h-[80vh] overflow-y-auto" aria-label="Mobile navigation">
+      <nav id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto" aria-label="Mobile navigation">
+        <!-- Language Switcher in Mobile Drawer -->
+        <div class="border-b border-white/10 pb-3">
+          <LanguageSelector currentLocale={currentLocale} currentPathname={Astro.url.pathname} isMobileDrawer={true} />
+        </div>
+
         <div>
-          <span class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">Calculators</span>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">{t.nav.calculators}</span>
           <div class="space-y-1">
-            <a href="/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">3D Print Job Cost Calculator</a>
-            <a href="/3d-printer-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">3D Printer TCO & Electricity</a>
-            <a href="/filament-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Filament Cost & Length Converter</a>
-            <a href="/spool-remaining-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Empty Spool Tare Weight Lookup</a>
-            <a href="/multicolor-ams-waste-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Bambu AMS Purge Waste Calculator</a>
-            <a href="/resin-3d-print-cost-calculator/" class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">Resin SLA Cost Calculator</a>
+            <a href={getLocalizedPath('/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.jobCost}</a>
+            <a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.printerTco}</a>
+            <a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.filamentLength}</a>
+            <a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.spoolTare}</a>
+            <a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.amsWaste}</a>
+            <a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.resinSla}</a>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-3">
-          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">Popular Machine Profiles</span>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.machineProfiles}</span>
           <div class="grid grid-cols-2 gap-1 text-xs">
-            <a href="/cost-calculator/bambu-lab-p1s/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu P1S</a>
-            <a href="/cost-calculator/bambu-lab-a1-mini/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu A1 Mini</a>
-            <a href="/cost-calculator/bambu-lab-x1-carbon/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu X1C</a>
-            <a href="/cost-calculator/prusa-mk4s/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Prusa MK4S</a>
-            <a href="/cost-calculator/creality-ender-3-v3-se/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Ender-3 V3</a>
-            <a href="/cost-calculator/elegoo-saturn-4-ultra/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Saturn 4 Ultra</a>
+            <a href={getLocalizedPath('/cost-calculator/bambu-lab-p1s/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu P1S</a>
+            <a href={getLocalizedPath('/cost-calculator/bambu-lab-a1-mini/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu A1 Mini</a>
+            <a href={getLocalizedPath('/cost-calculator/bambu-lab-x1-carbon/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu X1C</a>
+            <a href={getLocalizedPath('/cost-calculator/prusa-mk4s/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Prusa MK4S</a>
+            <a href={getLocalizedPath('/cost-calculator/creality-ender-3-v3-se/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Ender-3 V3</a>
+            <a href={getLocalizedPath('/cost-calculator/elegoo-saturn-4-ultra/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Saturn 4 Ultra</a>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-3">
-          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">Materials & Guides</span>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.materialsGuides}</span>
           <div class="grid grid-cols-2 gap-1 text-xs">
-            <a href="/filament-cost/pla/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PLA Guide</a>
-            <a href="/filament-cost/petg/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PETG Guide</a>
-            <a href="/filament-cost/abs/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">ABS Guide</a>
-            <a href="/filament-cost/tpu-95a/" class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">TPU Guide</a>
+            <a href={getLocalizedPath('/filament-cost/pla/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PLA Guide</a>
+            <a href={getLocalizedPath('/filament-cost/petg/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PETG Guide</a>
+            <a href={getLocalizedPath('/filament-cost/abs/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">ABS Guide</a>
+            <a href={getLocalizedPath('/filament-cost/tpu-95a/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">TPU Guide</a>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-3 flex items-center justify-between px-3 text-xs text-slate-400">
-          <a href="/privacy/" class="hover:text-cyan-400 transition-colors">Privacy</a>
+          <a href={getLocalizedPath('/privacy/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a>
           <span>·</span>
-          <a href="/terms/" class="hover:text-cyan-400 transition-colors">Terms</a>
+          <a href={getLocalizedPath('/terms/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a>
           <span>·</span>
-          <a href="/contact/" class="hover:text-cyan-400 transition-colors">Contact</a>
+          <a href={getLocalizedPath('/contact/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
         </div>
       </nav>
     </header>
@@ -284,57 +341,57 @@ const jsonLdContent = JSON.stringify({
               <span class="font-semibold text-white">3DPrintingCostCalc.com</span>
             </div>
             <p class="text-xs text-slate-400 leading-relaxed">
-              100% free, client-side 3D printing economics hub for makers, print farms, and Etsy businesses. Drag-and-drop .STL, .3MF, and .GCODE parsing with zero server uploads.
+              {t.footer.aboutDesc}
             </p>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 rounded">
               <span class="w-1.5 h-1.5 bg-emerald-400 animate-pulse" aria-hidden="true"></span>
-              100% Client-Side
+              {t.footer.clientSideBadge}
             </div>
           </div>
 
           <!-- Col 2: Core Calculators -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Calculators</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.calculatorsCol}</h3>
             <ul class="space-y-2 text-xs">
-              <li><a href="/" class="hover:text-cyan-400 transition-colors">3D Print Cost Calculator</a></li>
-              <li><a href="/3d-printer-cost-calculator/" class="hover:text-cyan-400 transition-colors">3D Printer TCO & Electricity</a></li>
-              <li><a href="/filament-cost-calculator/" class="hover:text-cyan-400 transition-colors">Filament Cost & Length</a></li>
-              <li><a href="/spool-remaining-calculator/" class="hover:text-cyan-400 transition-colors">Spool Tare Weight Database</a></li>
-              <li><a href="/multicolor-ams-waste-calculator/" class="hover:text-cyan-400 transition-colors">AMS Purge & Poop Optimizer</a></li>
-              <li><a href="/resin-3d-print-cost-calculator/" class="hover:text-cyan-400 transition-colors">Resin SLA Cost Calculator</a></li>
+              <li><a href={getLocalizedPath('/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.jobCost}</a></li>
+              <li><a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.printerTco}</a></li>
+              <li><a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.filamentLength}</a></li>
+              <li><a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.spoolTare}</a></li>
+              <li><a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.amsWaste}</a></li>
+              <li><a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.resinSla}</a></li>
             </ul>
           </div>
 
           <!-- Col 3: Popular Printer Profiles -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Machine Profiles</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.machineProfilesCol}</h3>
             <ul class="space-y-2 text-xs">
-              <li><a href="/cost-calculator/bambu-lab-p1s/" class="hover:text-cyan-400 transition-colors">Bambu Lab P1S Cost Guide</a></li>
-              <li><a href="/cost-calculator/bambu-lab-a1-mini/" class="hover:text-cyan-400 transition-colors">Bambu A1 Mini Cost Guide</a></li>
-              <li><a href="/cost-calculator/bambu-lab-x1-carbon/" class="hover:text-cyan-400 transition-colors">Bambu X1 Carbon Cost Guide</a></li>
-              <li><a href="/cost-calculator/prusa-mk4s/" class="hover:text-cyan-400 transition-colors">Original Prusa MK4S Cost Guide</a></li>
-              <li><a href="/cost-calculator/creality-ender-3-v3-se/" class="hover:text-cyan-400 transition-colors">Creality Ender-3 V3 Cost Guide</a></li>
-              <li><a href="/cost-calculator/elegoo-saturn-4-ultra/" class="hover:text-cyan-400 transition-colors">Elegoo Saturn 4 Ultra Cost</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/bambu-lab-p1s/', currentLocale)} class="hover:text-cyan-400 transition-colors">Bambu Lab P1S</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/bambu-lab-a1-mini/', currentLocale)} class="hover:text-cyan-400 transition-colors">Bambu A1 Mini</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/bambu-lab-x1-carbon/', currentLocale)} class="hover:text-cyan-400 transition-colors">Bambu X1 Carbon</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/prusa-mk4s/', currentLocale)} class="hover:text-cyan-400 transition-colors">Original Prusa MK4S</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/creality-ender-3-v3-se/', currentLocale)} class="hover:text-cyan-400 transition-colors">Creality Ender-3 V3</a></li>
+              <li><a href={getLocalizedPath('/cost-calculator/elegoo-saturn-4-ultra/', currentLocale)} class="hover:text-cyan-400 transition-colors">Elegoo Saturn 4 Ultra</a></li>
             </ul>
           </div>
 
           <!-- Col 4: Materials & Legal -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Materials & Legal</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.materialsCol}</h3>
             <ul class="space-y-2 text-xs">
-              <li><a href="/filament-cost/pla/" class="hover:text-cyan-400 transition-colors">PLA Cost & Density</a></li>
-              <li><a href="/filament-cost/petg/" class="hover:text-cyan-400 transition-colors">PETG Cost & Specs</a></li>
-              <li><a href="/filament-cost/abs/" class="hover:text-cyan-400 transition-colors">ABS Cost & Shrinkage</a></li>
-              <li><a href="/privacy/" class="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
-              <li><a href="/terms/" class="hover:text-cyan-400 transition-colors">Terms of Service</a></li>
-              <li><a href="/contact/" class="hover:text-cyan-400 transition-colors">Contact Support</a></li>
+              <li><a href={getLocalizedPath('/filament-cost/pla/', currentLocale)} class="hover:text-cyan-400 transition-colors">PLA Guide</a></li>
+              <li><a href={getLocalizedPath('/filament-cost/petg/', currentLocale)} class="hover:text-cyan-400 transition-colors">PETG Guide</a></li>
+              <li><a href={getLocalizedPath('/filament-cost/abs/', currentLocale)} class="hover:text-cyan-400 transition-colors">ABS Guide</a></li>
+              <li><a href={getLocalizedPath('/privacy/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a></li>
+              <li><a href={getLocalizedPath('/terms/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a></li>
+              <li><a href={getLocalizedPath('/contact/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a></li>
             </ul>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>© {new Date().getFullYear()} 3DPrintingCostCalc.com. All calculations provided for professional estimation purposes.</p>
-          <p class="text-slate-400">Built for precision makers & print farms worldwide.</p>
+          <p>{t.footer.copyrightNotice}</p>
+          <p class="text-slate-400">{t.footer.builtFor}</p>
         </div>
       </div>
     </footer>

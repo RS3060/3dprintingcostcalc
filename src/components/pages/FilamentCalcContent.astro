@@ -1,0 +1,251 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import materials from '../../data/materials.json';
+import { getPageTranslations } from '../../i18n/pageTranslations';
+import { getTranslations } from '../../i18n/translations';
+import { LOCALES, DEFAULT_LOCALE, getLocalizedPath, type LocaleCode } from '../../i18n/locales';
+
+export interface Props {
+  locale?: string;
+}
+
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const currentLocale = (locale as LocaleCode) || DEFAULT_LOCALE;
+const locInfo = LOCALES[currentLocale] || LOCALES[DEFAULT_LOCALE];
+const t = getTranslations(currentLocale);
+const pageT = getPageTranslations(currentLocale).filamentCalc;
+const curr = locInfo.currency;
+
+const defaultSpoolPrice = currentLocale === 'zh' ? 69 : (currentLocale === 'ja' ? 2800 : (currentLocale === 'ko' ? 24000 : (currentLocale === 'pt' ? 110 : (['fr', 'de', 'es', 'it'].includes(currentLocale) ? 20 : 19.99))));
+---
+
+<Layout
+  title={pageT.metaTitle}
+  description={pageT.metaDescription}
+  keywords={pageT.metaKeywords}
+  locale={currentLocale}
+  faqList={pageT.faqs}
+  breadcrumbs={[
+    { name: t.nav.jobCost, item: getLocalizedPath('/', currentLocale) },
+    { name: t.nav.filamentLength, item: getLocalizedPath('/filament-cost-calculator/', currentLocale) }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-950/60 text-emerald-300 border border-emerald-800/40">
+        {pageT.badge}
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        {pageT.heroTitle} <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">{pageT.heroGradient}</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        {pageT.heroSubtitle}
+      </p>
+    </div>
+
+    <!-- Converter Cards -->
+    <div
+      id="filamentRoot"
+      class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+      data-currency={curr}
+    >
+      <!-- Input Controls (6 Cols) -->
+      <div class="lg:col-span-6 bg-[#0e1628] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-emerald-400 font-mono">
+          {pageT.labels.configTitle}
+        </h2>
+
+        <div class="space-y-4 text-xs">
+          <!-- Material Selector -->
+          <div>
+            <label for="fMatSelect" class="block font-medium text-slate-300 mb-1">{pageT.labels.selectPolymer}</label>
+            <select id="fMatSelect" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-sm text-white rounded-lg">
+              <option value="custom">{pageT.labels.customMat}</option>
+              {materials.filter(m => m.diameterMm > 0).map((m) => (
+                <option value={m.slug} data-density={m.densityGcm3} data-price={m.defaultPricePerKgUsd}>
+                  {m.name} ({m.densityGcm3} g/cm³)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Diameter -->
+            <div>
+              <label for="fDiameterSelect" class="block font-medium text-slate-300 mb-1">{pageT.labels.diameter}</label>
+              <select id="fDiameterSelect" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono">
+                <option value="1.75" selected>1.75 mm</option>
+                <option value="2.85">2.85 mm</option>
+              </select>
+            </div>
+
+            <!-- Material Density Override -->
+            <div>
+              <label for="fDensityInput" class="block font-medium text-slate-300 mb-1">{pageT.labels.density}</label>
+              <input type="number" id="fDensityInput" step="0.01" value="1.24" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Spool Net Weight -->
+            <div>
+              <label for="fSpoolWeight" class="block font-medium text-slate-300 mb-1">{pageT.labels.spoolWeight}</label>
+              <input type="number" id="fSpoolWeight" step="50" value="1000" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+
+            <!-- Spool Price -->
+            <div>
+              <label for="fSpoolPrice" class="block font-medium text-slate-300 mb-1">{pageT.labels.spoolPrice}</label>
+              <input type="number" id="fSpoolPrice" step="0.5" value={defaultSpoolPrice} class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono" />
+            </div>
+          </div>
+
+          <!-- Quick interactive Weight to Length Converter tool -->
+          <div class="pt-4 border-t border-white/5 space-y-3">
+            <h3 class="font-bold text-white text-sm">{pageT.labels.totalLengthMeters} ⇄ Grams</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="fGramsToConvert" class="block text-slate-400 mb-1">Grams (g):</label>
+                <input type="number" id="fGramsToConvert" value="85" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+              </div>
+              <div>
+                <label class="block text-slate-400 mb-1">{pageT.labels.totalLengthMeters}:</label>
+                <div class="bg-[#162035] border border-white/5 rounded-xl px-3 py-2 text-cyan-400 font-mono text-sm font-bold" id="fMetersResult">
+                  28.5 m
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Output Metrics Card (6 Cols) -->
+      <div class="lg:col-span-6 bg-gradient-to-b from-[#131d33] to-[#0c1424] border border-emerald-500/30 rounded-2xl p-6 shadow-2xl space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-wider text-emerald-300 font-semibold">{pageT.labels.resultsTitle}</span>
+          <div class="grid grid-cols-2 gap-4 mt-3">
+            <div class="p-4 rounded-xl bg-black/30 border border-white/5">
+              <span class="text-xs text-slate-400 block mb-1">{pageT.labels.costPerGram}</span>
+              <span class="text-2xl sm:text-3xl font-black text-white font-mono" id="fCostGram">{curr}0.0200</span>
+            </div>
+            <div class="p-4 rounded-xl bg-black/30 border border-white/5">
+              <span class="text-xs text-slate-400 block mb-1">{pageT.labels.costPerMeter}</span>
+              <span class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono" id="fCostMeter">{curr}0.0596</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-white/10 pt-4 space-y-3 font-mono text-xs">
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">{pageT.labels.totalLengthMeters}:</span>
+            <span id="fTotalMeters" class="font-bold text-white">335.3 m</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">{pageT.labels.volumeCm3}:</span>
+            <span id="fTotalVolume" class="font-bold text-white">806.5 cm³</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">100g:</span>
+            <span id="f100gCost" class="font-bold text-cyan-400">{curr}2.00</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">10m:</span>
+            <span id="f10mCost" class="font-bold text-cyan-400">{curr}0.60</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">{t.nav.filamentLength} - FAQ</h2>
+      <div class="space-y-3">
+        {pageT.faqs.map((faq, index) => (
+          <details class="group p-5 rounded-2xl bg-[#0e1628] border border-white/10 transition-all hover:border-emerald-500/30">
+            <summary class="flex items-center justify-between cursor-pointer list-none select-none font-bold text-white text-sm sm:text-base gap-4">
+              <span class="flex items-center gap-3">
+                <span class="text-emerald-400 font-mono text-xs px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/40 shrink-0">Q{index + 1}</span>
+                <span class="text-slate-100 group-hover:text-emerald-300 transition-colors">{faq.question}</span>
+              </span>
+              <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-white/5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import materials from '../../data/materials.json';
+
+  const root = document.getElementById('filamentRoot');
+  const curr = root?.dataset.currency || '$';
+
+  const matSelect = document.getElementById('fMatSelect') as HTMLSelectElement;
+  const diameterSelect = document.getElementById('fDiameterSelect') as HTMLSelectElement;
+  const densityInput = document.getElementById('fDensityInput') as HTMLInputElement;
+  const spoolWeightInput = document.getElementById('fSpoolWeight') as HTMLInputElement;
+  const spoolPriceInput = document.getElementById('fSpoolPrice') as HTMLInputElement;
+  const gramsToConvertInput = document.getElementById('fGramsToConvert') as HTMLInputElement;
+
+  const fCostGram = document.getElementById('fCostGram');
+  const fCostMeter = document.getElementById('fCostMeter');
+  const fTotalMeters = document.getElementById('fTotalMeters');
+  const fTotalVolume = document.getElementById('fTotalVolume');
+  const f100gCost = document.getElementById('f100gCost');
+  const f10mCost = document.getElementById('f10mCost');
+  const fMetersResult = document.getElementById('fMetersResult');
+
+  function calculateFilament() {
+    if (!densityInput || !diameterSelect) return;
+    const density = parseFloat(densityInput.value) || 1.24;
+    const diameter = parseFloat(diameterSelect.value) || 1.75;
+    const spoolWeight = parseFloat(spoolWeightInput?.value || '1000') || 1000;
+    const spoolPrice = parseFloat(spoolPriceInput?.value || '20') || 20;
+    const gramsConvert = parseFloat(gramsToConvertInput?.value || '0') || 0;
+
+    const radiusCm = (diameter / 2) / 10;
+    const crossSectionAreaCm2 = Math.PI * radiusCm * radiusCm;
+    const totalVolumeCm3 = spoolWeight / density;
+    const totalLengthCm = totalVolumeCm3 / crossSectionAreaCm2;
+    const totalLengthM = totalLengthCm / 100;
+
+    const costPerGram = spoolPrice / spoolWeight;
+    const costPerMeter = totalLengthM > 0 ? spoolPrice / totalLengthM : 0;
+
+    const convertVolumeCm3 = gramsConvert / density;
+    const convertLengthM = (convertVolumeCm3 / crossSectionAreaCm2) / 100;
+
+    if (fCostGram) fCostGram.textContent = `${curr}${costPerGram.toFixed(4)}`;
+    if (fCostMeter) fCostMeter.textContent = `${curr}${costPerMeter.toFixed(4)}`;
+    if (fTotalMeters) fTotalMeters.textContent = `${totalLengthM.toFixed(1)} m`;
+    if (fTotalVolume) fTotalVolume.textContent = `${totalVolumeCm3.toFixed(1)} cm³`;
+    if (f100gCost) f100gCost.textContent = `${curr}${(costPerGram * 100).toFixed(2)}`;
+    if (f10mCost) f10mCost.textContent = `${curr}${(costPerMeter * 10).toFixed(2)}`;
+    if (fMetersResult) fMetersResult.textContent = `${convertLengthM.toFixed(1)} m`;
+  }
+
+  matSelect?.addEventListener('change', () => {
+    if (matSelect.value === 'custom') {
+      calculateFilament();
+      return;
+    }
+    const selected = materials.find(m => m.slug === matSelect.value);
+    if (selected) {
+      densityInput.value = selected.densityGcm3.toString();
+      calculateFilament();
+    }
+  });
+
+  [densityInput, spoolPriceInput, diameterSelect, spoolWeightInput, gramsToConvertInput].forEach(inp => {
+    inp?.addEventListener('input', calculateFilament);
+    inp?.addEventListener('change', calculateFilament);
+  });
+
+  calculateFilament();
+</script>

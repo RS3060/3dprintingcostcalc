@@ -1,0 +1,19 @@
+---
+import MaterialProfileContent from '../../../components/pages/MaterialProfileContent.astro';
+import materials from '../../../data/materials.json';
+import { ALL_LOCALES, DEFAULT_LOCALE } from '../../../i18n/locales';
+
+export function getStaticPaths() {
+  const locales = ALL_LOCALES.filter((l) => l !== DEFAULT_LOCALE);
+  return locales.flatMap((locale) =>
+    materials.map((material) => ({
+      params: { locale, materialSlug: material.slug },
+      props: { material },
+    }))
+  );
+}
+
+const { material } = Astro.props;
+const { locale } = Astro.params;
+---
+<MaterialProfileContent material={material} locale={locale} />
