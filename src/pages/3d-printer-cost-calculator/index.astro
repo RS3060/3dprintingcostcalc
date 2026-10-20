@@ -1,0 +1,294 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import printers from '../../data/printers.json';
+
+const faqs = [
+  {
+    question: "How much does a 3D printer cost to buy in 2026?",
+    answer: "Consumer 3D printers span three primary tiers: Budget entry-level printers (such as the Bambu Lab A1 Mini or Creality Ender-3 V3 SE) cost between $199 and $299. Mid-range high-speed enclosed CoreXY printers (such as the Bambu Lab P1S, Creality K1C, or Elegoo Centauri Carbon) cost between $499 and $849. Professional multi-tool or engineering machines (such as the Bambu Lab X1 Carbon or Original Prusa XL) range from $1,199 to $3,999+."
+  },
+  {
+    question: "How much does a 3D printer cost to run per month in electricity?",
+    answer: "Running a 3D printer for 150 hours a month (about 5 hours a day) consumes between 15 and 35 kilowatt-hours (kWh) of electricity depending on bed temperature. At an average US residential utility rate of $0.16 per kWh, monthly electricity costs range between $2.40 and $5.60 for PLA printing. For high-temperature materials like ABS or ASA that maintain 100°C bed temperatures, monthly electricity costs range between $7.20 and $12.00."
+  },
+  {
+    question: "What is the true Total Cost of Ownership (TCO) of a 3D printer?",
+    answer: "Total Cost of Ownership includes the upfront machine purchase price plus ongoing consumable filament, electricity, replacement nozzles (hardened steel or brass every 1,000–2,000 hours), replacement PEI build plates, and routine maintenance (lubrication, belt tensioning). For an average user consuming 12 spools of filament a year on a $600 printer, the first-year ownership cost is roughly $900 ($600 machine + $240 filament + $30 electricity + $30 replacement parts)."
+  },
+  {
+    question: "How many prints does it take to break even versus outsourcing to Shapeways or Craftcloud?",
+    answer: "Commercial 3D printing bureaus typically charge $20 to $45 for a standard 100g PLA part to cover commercial labor and shipping. Printing that same part at home costs approximately $2.50 to $3.50 in material and electricity. On a $400 3D printer, you break even after printing approximately 12 to 15 medium-sized parts (saving roughly $25 to $35 per print)."
+  }
+];
+---
+
+<Layout
+  title="3D Printer Cost Calculator & Ownership TCO Estimator | 3DPrintingCostCalc.com"
+  description="Calculate the true cost of buying and owning a 3D printer. Compare upfront machine price, monthly electricity, maintenance, and buy vs outsource break-even analysis."
+  keywords="3d printer cost, cost of 3d printer, how much does a 3d printer cost, 3d printer electricity cost calculator, 3d printer tco"
+  faqList={faqs}
+  breadcrumbs={[
+    { name: 'Home', item: 'https://3dprintingcostcalc.com/' },
+    { name: '3D Printer Cost', item: 'https://3dprintingcostcalc.com/3d-printer-cost-calculator/' }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-blue-950/60 text-blue-300 border border-blue-800/40">
+        Hardware TCO & Electricity Engine
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        How Much Does a <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">3D Printer Cost</span> to Buy & Run?
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        Compare upfront hardware purchase price, continuous electricity draw, ongoing filament spools, and maintenance wear. Determine your exact break-even timeline versus commercial printing services.
+      </p>
+    </div>
+
+    <!-- Interactive TCO Calculator -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Input Controls (7 Cols) -->
+      <div class="lg:col-span-7 bg-[#0e1628] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+        <h2 class="text-base font-bold text-white tracking-wide uppercase font-mono text-xs text-blue-400">
+          Hardware & Usage Parameters
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <!-- Printer Hardware Preset -->
+          <div class="sm:col-span-2">
+            <label for="tcoPrinterSelect" class="block font-medium text-slate-300 mb-1">Select 3D Printer Model:</label>
+            <select id="tcoPrinterSelect" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white">
+              {printers.map((p) => (
+                <option value={p.slug} data-msrp={p.msrpUsd} data-watts={p.avgWattsPla}>
+                  {p.brand} {p.model} (${p.msrpUsd} MSRP · {p.avgWattsPla}W)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <!-- Custom Hardware Price -->
+          <div>
+            <label for="tcoHardwarePrice" class="block font-medium text-slate-300 mb-1">Upfront Printer Price ($):</label>
+            <input type="number" id="tcoHardwarePrice" value="849" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Average Print Hours Per Month -->
+          <div>
+            <label for="tcoMonthlyHours" class="block font-medium text-slate-300 mb-1">Monthly Print Hours:</label>
+            <input type="number" id="tcoMonthlyHours" value="120" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Monthly Spools -->
+          <div>
+            <label for="tcoSpoolsMonth" class="block font-medium text-slate-300 mb-1">Spools Used Per Month (1kg):</label>
+            <input type="number" id="tcoSpoolsMonth" value="2" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Cost Per Spool -->
+          <div>
+            <label for="tcoSpoolCost" class="block font-medium text-slate-300 mb-1">Average Spool Cost ($):</label>
+            <input type="number" id="tcoSpoolCost" value="20" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Electricity Rate -->
+          <div>
+            <label for="tcoElecRate" class="block font-medium text-slate-300 mb-1">Electricity Rate ($/kWh):</label>
+            <input type="number" id="tcoElecRate" step="0.01" value="0.16" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Replacement Outsource Cost -->
+          <div>
+            <label for="tcoOutsourceCost" class="block font-medium text-slate-300 mb-1">Outsource Cost Per 100g Part ($):</label>
+            <input type="number" id="tcoOutsourceCost" value="30" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Results & TCO Projection (5 Cols) -->
+      <div class="lg:col-span-5 bg-gradient-to-b from-[#131d33] to-[#0c1424] border border-blue-500/30 rounded-2xl p-6 shadow-2xl space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-wider text-blue-300 font-semibold">1-Year Total Cost of Ownership</span>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span class="text-4xl sm:text-5xl font-black text-white font-mono" id="tcoYear1Total">$1,389</span>
+            <span class="text-sm text-slate-400">Total Year 1</span>
+          </div>
+          <span class="text-xs text-slate-400 block mt-1">Ongoing monthly operating expense: <strong class="text-cyan-400" id="tcoMonthlyOpEx">$45.00/mo</strong></span>
+        </div>
+
+        <!-- Breakdown List -->
+        <div class="border-t border-white/10 pt-4 space-y-2.5 text-xs font-mono">
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Hardware Capital Purchase:</span>
+            <span id="tcoHardwareDisplay" class="font-bold text-white">$849.00</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Annual Filament (24kg):</span>
+            <span id="tcoFilamentYearDisplay" class="font-bold text-white">$480.00</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Annual Electricity:</span>
+            <span id="tcoElecYearDisplay" class="font-bold text-white">$29.95</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Annual Nozzles & Spares:</span>
+            <span id="tcoSparesDisplay" class="font-bold text-white">$30.00</span>
+          </div>
+        </div>
+
+        <!-- Break-Even Badge -->
+        <div class="p-4 rounded-xl bg-blue-950/60 border border-blue-500/30 space-y-1.5">
+          <span class="text-xs font-semibold text-blue-300 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Buy vs Outsource Break-Even Point
+          </span>
+          <p class="text-xs text-slate-300">
+            Compared to ordering from online 3D print bureaus at $<span id="tcoOutsourceVal">30</span> per part, this printer pays for itself after printing:
+          </p>
+          <div class="text-2xl font-bold font-mono text-cyan-400" id="tcoBreakEvenParts">31 Parts</div>
+          <p class="text-[11px] text-slate-400 font-mono" id="tcoBreakEvenMonths">Reached in ~3.8 months at current usage.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tiers Comparison Table -->
+    <div class="space-y-4">
+      <h2 class="text-2xl font-bold text-white tracking-tight">3D Printer Market Tier Comparison</h2>
+      <p class="text-slate-400 text-sm">Real-world specs, wattage, and ownership cost expectations across the 3 core buyer segments:</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Budget -->
+        <div class="p-5 rounded-2xl bg-[#0e1628] border border-white/10 space-y-3">
+          <span class="text-xs font-mono text-cyan-400 font-bold uppercase">Budget Tier ($199 – $299)</span>
+          <h3 class="text-lg font-bold text-white">Entry Bedslingers</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Models like Bambu A1 Mini and Creality Ender-3 V3 SE. Ideal for beginners, light makers, and single PLA/PETG prints.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+            <li>• Avg Power: 65W – 80W</li>
+            <li>• Monthly Power: ~$1.50 – $2.50</li>
+            <li>• Speed: 150 – 300 mm/s</li>
+            <li>• First Year TCO: ~$450 – $600</li>
+          </ul>
+        </div>
+
+        <!-- Mid Range -->
+        <div class="p-5 rounded-2xl bg-[#0e1628] border border-cyan-500/30 space-y-3 glow-cyan">
+          <span class="text-xs font-mono text-cyan-300 font-bold uppercase">Most Popular ($499 – $849)</span>
+          <h3 class="text-lg font-bold text-white">High-Speed CoreXY</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Models like Bambu P1S, Creality K1C, and Elegoo Centauri Carbon. Fully enclosed, handles ABS/ASA, high print speed.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+            <li>• Avg Power: 110W – 160W</li>
+            <li>• Monthly Power: ~$2.50 – $5.00</li>
+            <li>• Speed: 300 – 500 mm/s</li>
+            <li>• First Year TCO: ~$900 – $1,300</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="p-5 rounded-2xl bg-[#0e1628] border border-white/10 space-y-3">
+          <span class="text-xs font-mono text-violet-400 font-bold uppercase">Pro & Farm Tier ($1,199 – $3,999+)</span>
+          <h3 class="text-lg font-bold text-white">Industrial & Multi-Tool</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Models like Bambu X1 Carbon, Prusa CORE One, and Prusa XL 5-Tool. Built for high-volume engineering production.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+            <li>• Avg Power: 140W – 250W+</li>
+            <li>• Monthly Power: ~$5.00 – $12.00</li>
+            <li>• Active Heated Chamber / Toolchanger</li>
+            <li>• First Year TCO: ~$1,800 – $4,500+</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">3D Printer Buying & Running Cost FAQ</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {faqs.map((faq) => (
+          <div class="p-5 rounded-2xl bg-[#0e1628] border border-white/10 space-y-2">
+            <h3 class="text-sm font-bold text-white">{faq.question}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import printers from '../../data/printers.json';
+
+  const printerSelect = document.getElementById('tcoPrinterSelect') as HTMLSelectElement;
+  const hardwarePriceInput = document.getElementById('tcoHardwarePrice') as HTMLInputElement;
+  const monthlyHoursInput = document.getElementById('tcoMonthlyHours') as HTMLInputElement;
+  const spoolsMonthInput = document.getElementById('tcoSpoolsMonth') as HTMLInputElement;
+  const spoolCostInput = document.getElementById('tcoSpoolCost') as HTMLInputElement;
+  const elecRateInput = document.getElementById('tcoElecRate') as HTMLInputElement;
+  const outsourceCostInput = document.getElementById('tcoOutsourceCost') as HTMLInputElement;
+
+  const tcoYear1Total = document.getElementById('tcoYear1Total');
+  const tcoMonthlyOpEx = document.getElementById('tcoMonthlyOpEx');
+  const tcoHardwareDisplay = document.getElementById('tcoHardwareDisplay');
+  const tcoFilamentYearDisplay = document.getElementById('tcoFilamentYearDisplay');
+  const tcoElecYearDisplay = document.getElementById('tcoElecYearDisplay');
+  const tcoBreakEvenParts = document.getElementById('tcoBreakEvenParts');
+  const tcoBreakEvenMonths = document.getElementById('tcoBreakEvenMonths');
+  const tcoOutsourceVal = document.getElementById('tcoOutsourceVal');
+
+  function updateTCO() {
+    const selected = printers.find(p => p.slug === printerSelect.value) || printers[0];
+    const hardwareCost = parseFloat(hardwarePriceInput.value) || 0;
+    const monthlyHours = parseFloat(monthlyHoursInput.value) || 0;
+    const spoolsMonth = parseFloat(spoolsMonthInput.value) || 0;
+    const spoolCost = parseFloat(spoolCostInput.value) || 0;
+    const elecRate = parseFloat(elecRateInput.value) || 0.16;
+    const outsourcePrice = parseFloat(outsourceCostInput.value) || 30;
+
+    const monthlyFilamentCost = spoolsMonth * spoolCost;
+    const monthlyKwh = (selected.avgWattsPla / 1000) * monthlyHours;
+    const monthlyElecCost = monthlyKwh * elecRate;
+    const monthlyMaintenance = 2.50; // ~$30/yr maintenance reserve
+    const monthlyOpEx = monthlyFilamentCost + monthlyElecCost + monthlyMaintenance;
+
+    const year1Filament = monthlyFilamentCost * 12;
+    const year1Elec = monthlyElecCost * 12;
+    const year1Total = hardwareCost + year1Filament + year1Elec + 30;
+
+    // Break-even math:
+    // In-house 100g part costs: 0.1kg * spoolCost + (100g print time ~2.5h electricity)
+    const inHousePartCost = (0.1 * spoolCost) + (2.5 * (selected.avgWattsPla / 1000) * elecRate);
+    const savingsPerPart = Math.max(1, outsourcePrice - inHousePartCost);
+    const breakEvenCount = Math.ceil(hardwareCost / savingsPerPart);
+    const partsPerMonth = (spoolsMonth * 1000) / 100;
+    const breakEvenMonths = partsPerMonth > 0 ? (breakEvenCount / partsPerMonth).toFixed(1) : 'N/A';
+
+    if (tcoYear1Total) tcoYear1Total.textContent = `$${Math.round(year1Total).toLocaleString()}`;
+    if (tcoMonthlyOpEx) tcoMonthlyOpEx.textContent = `$${monthlyOpEx.toFixed(2)}/mo`;
+    if (tcoHardwareDisplay) tcoHardwareDisplay.textContent = `$${hardwareCost.toFixed(2)}`;
+    if (tcoFilamentYearDisplay) tcoFilamentYearDisplay.textContent = `$${year1Filament.toFixed(2)}`;
+    if (tcoElecYearDisplay) tcoElecYearDisplay.textContent = `$${year1Elec.toFixed(2)}`;
+    if (tcoBreakEvenParts) tcoBreakEvenParts.textContent = `${breakEvenCount} Parts`;
+    if (tcoBreakEvenMonths) tcoBreakEvenMonths.textContent = `Reached in ~${breakEvenMonths} months at current usage.`;
+    if (tcoOutsourceVal) tcoOutsourceVal.textContent = outsourcePrice.toString();
+  }
+
+  printerSelect?.addEventListener('change', () => {
+    const selected = printers.find(p => p.slug === printerSelect.value);
+    if (selected) {
+      hardwarePriceInput.value = selected.msrpUsd.toString();
+      updateTCO();
+    }
+  });
+
+  [hardwarePriceInput, monthlyHoursInput, spoolsMonthInput, spoolCostInput, elecRateInput, outsourceCostInput].forEach(inp => {
+    inp?.addEventListener('input', updateTCO);
+  });
+
+  updateTCO();
+</script>

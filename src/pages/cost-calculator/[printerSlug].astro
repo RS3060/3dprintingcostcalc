@@ -1,0 +1,173 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PrintCostCalculator from '../../components/PrintCostCalculator.astro';
+import printers from '../../data/printers.json';
+
+export async function getStaticPaths() {
+  return printers.map((printer) => ({
+    params: { printerSlug: printer.slug },
+    props: { printer },
+  }));
+}
+
+const { printer } = Astro.props;
+
+// Calculate static scenarios for 50g (2h), 150g (5h), 500g (14h)
+const utilityRate = 0.16;
+const spoolPrice = 19.99;
+const costPerGram = spoolPrice / 1000;
+const hourlyDeprec = printer.msrpUsd / printer.defaultLifespanHours;
+
+const scenarios = [
+  {
+    name: 'Small Part / Miniature',
+    grams: 50,
+    hours: 2.0,
+    matCost: 50 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 2.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 2.0,
+  },
+  {
+    name: 'Medium Functional Print',
+    grams: 150,
+    hours: 5.0,
+    matCost: 150 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 5.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 5.0,
+  },
+  {
+    name: 'Large Prototype / Helmet',
+    grams: 500,
+    hours: 14.0,
+    matCost: 500 * costPerGram,
+    elecCost: (printer.avgWattsPla / 1000) * 14.0 * utilityRate,
+    machCost: (hourlyDeprec + printer.hourlyMaintenanceUsd) * 14.0,
+  },
+];
+
+const faqs = [
+  {
+    question: `How much electricity does the ${printer.brand} ${printer.model} use?`,
+    answer: `The ${printer.brand} ${printer.model} consumes an average of ${printer.avgWattsPla} Watts when printing standard PLA (55°C bed). At the US average electricity rate of $0.16/kWh, printing for 1 hour costs approximately $${((printer.avgWattsPla / 1000) * utilityRate).toFixed(4)} (under 3 cents per hour). When printing high-temperature engineering filaments like ABS or ASA at 100°C bed temperatures, power draw averages approximately ${printer.avgWattsAbs} Watts.`
+  },
+  {
+    question: `What is the hourly depreciation cost of the ${printer.brand} ${printer.model}?`,
+    answer: `With an MSRP of $${printer.msrpUsd} and an estimated operational service lifespan of ${printer.defaultLifespanHours.toLocaleString()} print hours, the capital depreciation cost of the ${printer.model} is $${hourlyDeprec.toFixed(3)} per hour. Adding $${printer.hourlyMaintenanceUsd.toFixed(2)}/hr for replacement nozzles, belts, and PEI sheet reserves results in a total hardware wear cost of $${(hourlyDeprec + printer.hourlyMaintenanceUsd).toFixed(3)} per print hour.`
+  },
+  {
+    question: `What build volume does the ${printer.brand} ${printer.model} offer?`,
+    answer: `The ${printer.brand} ${printer.model} features a build volume of ${printer.buildVolumeMm} mm, categorized under ${printer.category} machines.`
+  }
+];
+---
+
+<Layout
+  title={`${printer.brand} ${printer.model} 3D Print Cost Calculator & Wattage Guide`}
+  description={`Calculate exact 3D print costs on the ${printer.brand} ${printer.model}. Features real-world ${printer.avgWattsPla}W power draw, $${printer.msrpUsd} MSRP depreciation, and material pricing.`}
+  keywords={`${printer.model.toLowerCase()} print cost, ${printer.brand.toLowerCase()} cost calculator, 3d print cost calculator ${printer.slug}, ${printer.model.toLowerCase()} wattage`}
+  faqList={faqs}
+  breadcrumbs={[
+    { name: 'Home', item: 'https://3dprintingcostcalc.com/' },
+    { name: 'Printers', item: 'https://3dprintingcostcalc.com/3d-printer-cost-calculator/' },
+    { name: `${printer.brand} ${printer.model}`, item: `https://3dprintingcostcalc.com/cost-calculator/${printer.slug}/` }
+  ]}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <!-- Header -->
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/40">
+        Hardware Profile · {printer.category}
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+        {printer.brand} <span class="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{printer.model}</span> Cost Calculator
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+        Pre-configured engineering specifications for the {printer.brand} {printer.model}. Accurately calculates print job costs based on {printer.avgWattsPla}W real-world power draw, ${printer.msrpUsd} capital amortization, and {printer.defaultLifespanHours}h lifespan.
+      </p>
+    </div>
+
+    <!-- Pre-rendered Static Scenarios Table -->
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white tracking-wide uppercase font-mono text-xs text-cyan-400">
+          Typical Print Job Cost Scenarios on this Machine
+        </h2>
+        <span class="text-xs font-mono text-slate-400">Assumes standard PLA @ $19.99/kg & $0.16/kWh</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-white/5 text-slate-400 font-mono border-b border-white/10">
+            <tr>
+              <th class="py-3 px-4">Print Job Type</th>
+              <th class="py-3 px-4">Filament Weight</th>
+              <th class="py-3 px-4">Est. Print Time</th>
+              <th class="py-3 px-4">Material Cost</th>
+              <th class="py-3 px-4">Electricity Cost</th>
+              <th class="py-3 px-4">Machine Depreciation</th>
+              <th class="py-3 px-4 text-cyan-400 font-bold">Total Base Cost</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono">
+            {scenarios.map((sc) => {
+              const total = sc.matCost + sc.elecCost + sc.machCost;
+              return (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-bold text-white font-sans">{sc.name}</td>
+                  <td class="py-3 px-4">{sc.grams}g</td>
+                  <td class="py-3 px-4">{sc.hours} hrs</td>
+                  <td class="py-3 px-4">${sc.matCost.toFixed(2)}</td>
+                  <td class="py-3 px-4">${sc.elecCost.toFixed(2)}</td>
+                  <td class="py-3 px-4">${sc.machCost.toFixed(2)}</td>
+                  <td class="py-3 px-4 font-bold text-white text-sm bg-cyan-950/20">${total.toFixed(2)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Live Interactive Calculator Pre-loaded with this printer -->
+    <div class="pt-6">
+      <PrintCostCalculator initialPrinterSlug={printer.slug} titleOverride={`Live Calculator Pre-configured for ${printer.brand} ${printer.model}`} />
+    </div>
+
+    <!-- Machine Specifications Card -->
+    <div class="p-6 rounded-2xl bg-[#0e1628] border border-white/10 space-y-4">
+      <h2 class="text-xl font-bold text-white">Machine Profile & Energy Technical Data</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">MSRP Hardware:</span>
+          <span class="text-base font-bold text-white">${printer.msrpUsd}</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">PLA Power Draw:</span>
+          <span class="text-base font-bold text-cyan-400">{printer.avgWattsPla} Watts</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">ABS/ASA Power Draw:</span>
+          <span class="text-base font-bold text-amber-400">{printer.avgWattsAbs} Watts</span>
+        </div>
+        <div class="p-3 rounded-xl bg-[#162035] border border-white/5">
+          <span class="text-slate-400 block mb-1">Build Volume:</span>
+          <span class="text-base font-bold text-white">{printer.buildVolumeMm} mm</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed font-sans">{printer.notes}</p>
+    </div>
+
+    <!-- FAQs -->
+    <div class="space-y-4 pt-6 border-t border-white/10">
+      <h2 class="text-2xl font-bold text-white tracking-tight">{printer.brand} {printer.model} Frequently Asked Questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {faqs.map((faq) => (
+          <div class="p-5 rounded-2xl bg-[#0e1628] border border-white/10 space-y-2">
+            <h3 class="text-sm font-bold text-white">{faq.question}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

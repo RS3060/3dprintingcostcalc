@@ -1,23 +1,297 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import '../styles/global.css';
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+export interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  keywords?: string;
+  faqList?: Array<{ question: string; answer: string }>;
+  breadcrumbs?: Array<{ name: string; item: string }>;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl = Astro.url.href,
+  keywords = 'filament cost calculator, 3d print cost calculator, 3d printing cost calculator, 3d print calculator, 3d printer cost calculator, filament calculator, 3d print price calculator',
+  faqList = [],
+  breadcrumbs = [{ name: 'Home', item: 'https://3dprintingcostcalc.com/' }],
+} = Astro.props;
+
+// Schema graph construction
+const schemaGraph: any[] = [
+  {
+    '@type': 'WebSite',
+    '@id': 'https://3dprintingcostcalc.com/#website',
+    url: 'https://3dprintingcostcalc.com/',
+    name: '3D Printing Cost Calculator',
+    description: 'The definitive client-side 3D print cost, filament weight, electricity, and marketplace price calculator.',
+  },
+  {
+    '@type': 'SoftwareApplication',
+    '@id': `${canonicalUrl}#software`,
+    name: title,
+    url: canonicalUrl,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'All Web Browsers',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    description: description,
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${canonicalUrl}#breadcrumbs`,
+    itemListElement: breadcrumbs.map((b, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: b.name,
+      item: b.item,
+    })),
+  },
+];
+
+if (faqList.length > 0) {
+  schemaGraph.push({
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity: faqList.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  });
+}
+
+const jsonLdContent = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': schemaGraph,
+});
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="3D Printing Cost Calculator" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#080c15" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={jsonLdContent} />
+
+    <!-- Inline script to prevent theme flash -->
+    <script is:inline>
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    </script>
+  </head>
+  <body class="bg-[#080c15] text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+    <!-- Top Decorative RGB Layer Line -->
+    <div class="h-1 w-full layer-line-rgb no-print"></div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 border-b border-white/10 bg-[#080c15]/90 backdrop-blur-md transition-colors no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- Logo & Branding -->
+        <a href="/" class="flex items-center gap-3 group">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21 16-9 5-9-5V8l9-5 9 5v8Z"/>
+              <path d="m3.3 7 8.7 5 8.7-5"/>
+              <path d="M12 12v9"/>
+            </svg>
+          </div>
+          <div>
+            <span class="text-base font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">3DPrintingCostCalc</span>
+            <span class="text-xs block text-slate-400 font-mono tracking-wider uppercase">Pro Maker Suite</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
+          <a href="/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Job Cost</a>
+          <a href="/3d-printer-cost-calculator/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Printer TCO</a>
+          <a href="/filament-cost-calculator/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Filament & Length</a>
+          <a href="/spool-remaining-calculator/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Spool Tare</a>
+          <a href="/multicolor-ams-waste-calculator/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">AMS Waste</a>
+          <a href="/resin-3d-print-cost-calculator/" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-white/5 transition-colors">Resin SLA</a>
+        </nav>
+
+        <!-- Right Side Actions: Theme Toggle & Mobile Menu Trigger -->
+        <div class="flex items-center gap-2">
+          <!-- Light/Dark Toggle -->
+          <button id="themeToggleBtn" aria-label="Toggle color theme" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+            <svg id="themeIconSun" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+            </svg>
+            <svg id="themeIconMoon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+          </button>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobileMenuBtn" aria-label="Open navigation menu" class="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div id="mobileMenuDrawer" class="hidden lg:hidden border-t border-white/10 bg-[#0c1220] px-4 py-3 space-y-1">
+        <a href="/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">3D Print Job Cost Calculator</a>
+        <a href="/3d-printer-cost-calculator/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">3D Printer TCO & Running Cost</a>
+        <a href="/filament-cost-calculator/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">Filament Cost & Length Converter</a>
+        <a href="/spool-remaining-calculator/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">Empty Spool Tare Weight Lookup</a>
+        <a href="/multicolor-ams-waste-calculator/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">Bambu AMS Purge Waste Calculator</a>
+        <a href="/resin-3d-print-cost-calculator/" class="block px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-white/5">Resin 3D Print Cost Calculator</a>
+      </div>
+    </header>
+
+    <!-- Main Content Slot -->
+    <main class="flex-1 print-bed-pattern">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-[#060910] text-slate-400 text-sm py-12 no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <!-- Col 1: About & Privacy -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs">3D</div>
+              <span class="font-semibold text-white">3DPrintingCostCalc.com</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              100% free, client-side 3D printing economics hub for makers, print farms, and Etsy businesses. Drag-and-drop .STL, .3MF, and .GCODE parsing with zero server uploads.
+            </p>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Stateless & 100% Client-Side
+            </div>
+          </div>
+
+          <!-- Col 2: Core Calculators -->
+          <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Calculators</h3>
+            <ul class="space-y-2 text-xs">
+              <li><a href="/" class="hover:text-cyan-400 transition-colors">3D Print Cost Calculator</a></li>
+              <li><a href="/3d-printer-cost-calculator/" class="hover:text-cyan-400 transition-colors">3D Printer TCO & Electricity</a></li>
+              <li><a href="/filament-cost-calculator/" class="hover:text-cyan-400 transition-colors">Filament Cost & Length</a></li>
+              <li><a href="/spool-remaining-calculator/" class="hover:text-cyan-400 transition-colors">Spool Tare Weight Database</a></li>
+              <li><a href="/multicolor-ams-waste-calculator/" class="hover:text-cyan-400 transition-colors">AMS Purge & Poop Optimizer</a></li>
+              <li><a href="/resin-3d-print-cost-calculator/" class="hover:text-cyan-400 transition-colors">Resin SLA Cost Calculator</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Popular Printer Profiles -->
+          <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Machine Profiles</h3>
+            <ul class="space-y-2 text-xs">
+              <li><a href="/cost-calculator/bambu-lab-p1s/" class="hover:text-cyan-400 transition-colors">Bambu Lab P1S Cost Guide</a></li>
+              <li><a href="/cost-calculator/bambu-lab-a1-mini/" class="hover:text-cyan-400 transition-colors">Bambu A1 Mini Cost Guide</a></li>
+              <li><a href="/cost-calculator/bambu-lab-x1-carbon/" class="hover:text-cyan-400 transition-colors">Bambu X1 Carbon Cost Guide</a></li>
+              <li><a href="/cost-calculator/prusa-mk4s/" class="hover:text-cyan-400 transition-colors">Original Prusa MK4S Cost Guide</a></li>
+              <li><a href="/cost-calculator/creality-ender-3-v3-se/" class="hover:text-cyan-400 transition-colors">Creality Ender-3 V3 Cost Guide</a></li>
+              <li><a href="/cost-calculator/elegoo-saturn-4-ultra/" class="hover:text-cyan-400 transition-colors">Elegoo Saturn 4 Ultra Cost</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Materials & Legal -->
+          <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Materials & Legal</h3>
+            <ul class="space-y-2 text-xs">
+              <li><a href="/filament-cost/pla/" class="hover:text-cyan-400 transition-colors">PLA Cost & Density</a></li>
+              <li><a href="/filament-cost/petg/" class="hover:text-cyan-400 transition-colors">PETG Cost & Specs</a></li>
+              <li><a href="/filament-cost/abs/" class="hover:text-cyan-400 transition-colors">ABS Cost & Shrinkage</a></li>
+              <li><a href="/privacy/" class="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms/" class="hover:text-cyan-400 transition-colors">Terms of Service</a></li>
+              <li><a href="/contact/" class="hover:text-cyan-400 transition-colors">Contact Support</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+          <p>© {new Date().getFullYear()} 3DPrintingCostCalc.com. All calculations provided for professional estimation purposes.</p>
+          <p class="text-slate-400">Built for precision makers & print farms worldwide.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Client Script for Theme & Navigation -->
+    <script>
+      const themeBtn = document.getElementById('themeToggleBtn');
+      const sunIcon = document.getElementById('themeIconSun');
+      const moonIcon = document.getElementById('themeIconMoon');
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const mobileDrawer = document.getElementById('mobileMenuDrawer');
+
+      function updateThemeIcons() {
+        const isLight = document.documentElement.classList.contains('light');
+        if (isLight) {
+          sunIcon?.classList.remove('hidden');
+          moonIcon?.classList.add('hidden');
+        } else {
+          sunIcon?.classList.add('hidden');
+          moonIcon?.classList.remove('hidden');
+        }
+      }
+
+      themeBtn?.addEventListener('click', () => {
+        const isLight = document.documentElement.classList.contains('light');
+        if (isLight) {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+          localStorage.setItem('theme', 'light');
+        }
+        updateThemeIcons();
+      });
+
+      mobileBtn?.addEventListener('click', () => {
+        mobileDrawer?.classList.toggle('hidden');
+      });
+
+      updateThemeIcons();
+    </script>
+  </body>
+</html>

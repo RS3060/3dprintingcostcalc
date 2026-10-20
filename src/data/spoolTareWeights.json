@@ -1,0 +1,281 @@
+[
+  {
+    "id": "bambu-reusable-std",
+    "brand": "Bambu Lab",
+    "spoolType": "Reusable Plastic (Clear/White)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 212,
+    "outerDiameterMm": 200,
+    "notes": "Standard injection-molded 2-piece twist-apart reusable spool shipped with Bambu filament."
+  },
+  {
+    "id": "bambu-reusable-hightemp",
+    "brand": "Bambu Lab",
+    "spoolType": "Reusable High-Temp PC Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 248,
+    "outerDiameterMm": 200,
+    "notes": "High-temperature polycarbonate variant designed for baking filament in dryers up to 90°C."
+  },
+  {
+    "id": "bambu-refill-cardboard-core",
+    "brand": "Bambu Lab",
+    "spoolType": "Cardboard Core Only (Refill)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 37,
+    "outerDiameterMm": 85,
+    "notes": "Internal cardboard core tube remaining after an entire refill pack is exhausted."
+  },
+  {
+    "id": "polymaker-cardboard-1kg",
+    "brand": "Polymaker",
+    "spoolType": "Eco Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 140,
+    "outerDiameterMm": 200,
+    "notes": "Standard glued cardboard spool. Requires plastic adapter rings in Bambu AMS to prevent cardboard dust."
+  },
+  {
+    "id": "polymaker-cardboard-3kg",
+    "brand": "Polymaker",
+    "spoolType": "Cardboard Large Spool",
+    "spoolSizeKg": 3.0,
+    "emptyWeightGrams": 385,
+    "outerDiameterMm": 300,
+    "notes": "Heavyweight industrial cardboard spool for bulk 3kg spools."
+  },
+  {
+    "id": "esun-black-plastic",
+    "brand": "eSUN",
+    "spoolType": "Solid Black Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 240,
+    "outerDiameterMm": 200,
+    "notes": "Rigid black polystyrene spool with large hub cutouts."
+  },
+  {
+    "id": "esun-cardboard",
+    "brand": "eSUN",
+    "spoolType": "Eco Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 145,
+    "outerDiameterMm": 200,
+    "notes": "Recycled cardboard spool on recent eSUN ePLA-Matte and ePLA-LW batches."
+  },
+  {
+    "id": "sunlu-black-plastic",
+    "brand": "SUNLU",
+    "spoolType": "Black Ribbed Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 133,
+    "outerDiameterMm": 195,
+    "notes": "Lightweight black plastic spool with radial triangular ribs. One of the lightest 1kg plastic spools."
+  },
+  {
+    "id": "sunlu-clear-plastic",
+    "brand": "SUNLU",
+    "spoolType": "Clear / Translucent Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 155,
+    "outerDiameterMm": 195,
+    "notes": "Translucent plastic spool commonly used for PETG and Silk series."
+  },
+  {
+    "id": "sunlu-wide-hub",
+    "brand": "SUNLU",
+    "spoolType": "Older Wide-Flange Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 195,
+    "outerDiameterMm": 200,
+    "notes": "Older batch plastic spool with thicker outer rims."
+  },
+  {
+    "id": "elegoo-cardboard-1kg",
+    "brand": "Elegoo",
+    "spoolType": "Cardboard Spool (Brown)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 160,
+    "outerDiameterMm": 200,
+    "notes": "Standard brown cardboard spool used on Rapid PLA+ and standard Elegoo PLA/PETG."
+  },
+  {
+    "id": "elegoo-black-plastic-1kg",
+    "brand": "Elegoo",
+    "spoolType": "Black Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 220,
+    "outerDiameterMm": 200,
+    "notes": "Found on early Elegoo filament batches."
+  },
+  {
+    "id": "prusament-honeycomb-core",
+    "brand": "Prusa Research",
+    "spoolType": "Composite Honeycomb (Plastic sides + Cardboard core)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 198,
+    "outerDiameterMm": 200,
+    "notes": "Signature hexagonal skeleton flanges made of recycled plastic pressed onto a thick cardboard core."
+  },
+  {
+    "id": "prusament-refill-core",
+    "brand": "Prusa Research",
+    "spoolType": "Prusament Refill Cardboard Core",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 42,
+    "outerDiameterMm": 90,
+    "notes": "Core only after dispensing a Prusa Refill spool onto an assembled spool."
+  },
+  {
+    "id": "overture-cardboard-1kg",
+    "brand": "Overture",
+    "spoolType": "Eco Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 147,
+    "outerDiameterMm": 200,
+    "notes": "Standard Overture brown cardboard spool with embossed remaining meters scale."
+  },
+  {
+    "id": "overture-clear-plastic",
+    "brand": "Overture",
+    "spoolType": "Clear Plastic (Older Gen)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 235,
+    "outerDiameterMm": 200,
+    "notes": "Legacy transparent plastic spool used before Overture transitioned to cardboard."
+  },
+  {
+    "id": "hatchbox-black-plastic",
+    "brand": "Hatchbox",
+    "spoolType": "Solid Black Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 225,
+    "outerDiameterMm": 200,
+    "notes": "Durable heavy-duty black plastic spool with large smooth sidewall."
+  },
+  {
+    "id": "anycubic-black-plastic",
+    "brand": "Anycubic",
+    "spoolType": "Black Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 210,
+    "outerDiameterMm": 200,
+    "notes": "Standard black plastic spool for Anycubic Silk and High-Speed PLA."
+  },
+  {
+    "id": "anycubic-cardboard",
+    "brand": "Anycubic",
+    "spoolType": "Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 150,
+    "outerDiameterMm": 200,
+    "notes": "Newer eco-packaging series."
+  },
+  {
+    "id": "creality-white-plastic",
+    "brand": "Creality",
+    "spoolType": "White / Grey Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 185,
+    "outerDiameterMm": 200,
+    "notes": "CR-Series and Ender Series filament plastic spool."
+  },
+  {
+    "id": "creality-hyper-cardboard",
+    "brand": "Creality",
+    "spoolType": "Hyper PLA Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 145,
+    "outerDiameterMm": 200,
+    "notes": "Lightweight cardboard spool used with high-speed Hyper PLA."
+  },
+  {
+    "id": "inland-cardboard",
+    "brand": "Inland (Micro Center)",
+    "spoolType": "Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 140,
+    "outerDiameterMm": 200,
+    "notes": "Standard brown cardboard spool from Micro Center."
+  },
+  {
+    "id": "inland-clear-plastic",
+    "brand": "Inland (Micro Center)",
+    "spoolType": "Clear Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 220,
+    "outerDiameterMm": 200,
+    "notes": "Earlier Inland plastic spool (often manufactured by eSUN)."
+  },
+  {
+    "id": "matterhackers-build-series",
+    "brand": "MatterHackers",
+    "spoolType": "Build Series Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 215,
+    "outerDiameterMm": 200,
+    "notes": "Solid dark plastic spool used on MH Build Series PLA & ABS."
+  },
+  {
+    "id": "matterhackers-pro-series",
+    "brand": "MatterHackers",
+    "spoolType": "Pro Series Heavy Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 250,
+    "outerDiameterMm": 200,
+    "notes": "Heavy-duty plastic spool engineered for precision winding on Pro series Nylon & TPU."
+  },
+  {
+    "id": "eryone-cardboard",
+    "brand": "ERYONE",
+    "spoolType": "Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 152,
+    "outerDiameterMm": 200,
+    "notes": "Printed cardboard spool for Dual-Color and Tri-Color Silk PLA."
+  },
+  {
+    "id": "eryone-clear-plastic",
+    "brand": "ERYONE",
+    "spoolType": "Clear Plastic Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 230,
+    "outerDiameterMm": 200,
+    "notes": "Clear plastic spool with wide edge rim."
+  },
+  {
+    "id": "formfutura-cardboard",
+    "brand": "FormFutura",
+    "spoolType": "EasyFil Cardboard Spool",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 145,
+    "outerDiameterMm": 200,
+    "notes": "European recycled cardboard spool."
+  },
+  {
+    "id": "colorfabb-clear-plastic",
+    "brand": "colorFabb",
+    "spoolType": "Clear Rigid Plastic Spool",
+    "spoolSizeKg": 0.75,
+    "emptyWeightGrams": 210,
+    "outerDiameterMm": 200,
+    "notes": "Clear spool for 750g specialty filaments (nGen, XT-CF20)."
+  },
+  {
+    "id": "generic-cardboard-avg",
+    "brand": "Generic / Unlisted",
+    "spoolType": "Average Cardboard Spool (1kg)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 150,
+    "outerDiameterMm": 200,
+    "notes": "Average tare weight for most modern 1kg cardboard spools (±15g)."
+  },
+  {
+    "id": "generic-plastic-avg",
+    "brand": "Generic / Unlisted",
+    "spoolType": "Average Plastic Spool (1kg)",
+    "spoolSizeKg": 1.0,
+    "emptyWeightGrams": 225,
+    "outerDiameterMm": 200,
+    "notes": "Average tare weight for traditional 1kg rigid plastic spools (±25g)."
+  }
+]

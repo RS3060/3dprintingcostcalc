@@ -1,0 +1,54 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Terms of Service | 3DPrintingCostCalc.com"
+  description="Terms of service and computational disclaimer for 3DPrintingCostCalc.com."
+  breadcrumbs={[
+    { name: 'Home', item: 'https://3dprintingcostcalc.com/' },
+    { name: 'Terms of Service', item: 'https://3dprintingcostcalc.com/terms/' }
+  ]}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
+    <div class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Terms of Service</h1>
+      <p class="text-xs text-slate-500 font-mono">Effective Date: October 2026</p>
+    </div>
+
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">1. Acceptance of Terms</h2>
+      <p>
+        By accessing or using 3DPrintingCostCalc.com, you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use our calculators or tools.
+      </p>
+    </section>
+
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">2. Calculation Disclaimer & Accuracy</h2>
+      <p>
+        All calculations, mesh volume approximations, filament estimations, electricity projections, and marketplace fee models provided on this site are for engineering estimation and reference purposes only. Real-world 3D printing results may vary due to ambient temperature, machine calibration, specific slicer acceleration parameters, moisture content in filament, and marketplace policy updates. 3DPrintingCostCalc.com makes no warranties regarding financial outcomes or exact print tolerances.
+      </p>
+    </section>
+
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">3. Intellectual Property of Uploaded Models</h2>
+      <p>
+        You retain 100% full ownership and intellectual property rights over any 3D model files (.stl, .3mf, .gcode, .obj) loaded into our browser-based inspector. Because our tools process files entirely within your local browser's memory without server transmission, no license or ownership transfer of your 3D assets occurs.
+      </p>
+    </section>
+
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">4. Modifications to the Service</h2>
+      <p>
+        We reserve the right to modify, update, or discontinue features of this website at any time without prior notice.
+      </p>
+    </section>
+
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">5. Governing Law</h2>
+      <p>
+        These Terms shall be governed and construed in accordance with applicable laws, without regard to conflict of law principles.
+      </p>
+    </section>
+  </div>
+</Layout>

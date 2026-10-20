@@ -1,0 +1,1116 @@
+---
+import printersData from '../data/printers.json';
+import materialsData from '../data/materials.json';
+
+export interface Props {
+  initialPrinterSlug?: string;
+  initialMaterialSlug?: string;
+  titleOverride?: string;
+}
+
+const {
+  initialPrinterSlug = 'bambu-lab-p1s',
+  initialMaterialSlug = 'pla',
+  titleOverride,
+} = Astro.props;
+
+const selectedPrinter = printersData.find(p => p.slug === initialPrinterSlug) || printersData[0];
+const selectedMaterial = materialsData.find(m => m.slug === initialMaterialSlug) || materialsData[0];
+---
+
+<div id="calculatorRoot" class="w-full" data-initial-printer={initialPrinterSlug} data-initial-material={initialMaterialSlug}>
+  <!-- Top Banner / Title if provided -->
+  {titleOverride && (
+    <div class="mb-6">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{titleOverride}</h2>
+    </div>
+  )}
+
+  <!-- Two Column Layout: Controls (Left) and Results / Waterfall (Right) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- LEFT COLUMN: Inputs & File Drop (7 Cols) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- 1. Client-Side 3D File Drag & Drop Zone -->
+      <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl relative overflow-hidden group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-cyan-400">Client-Side File Inspector</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
+            100% Private · Zero Uploads
+          </span>
+        </div>
+
+        <!-- Drag Target -->
+        <div
+          id="dropZone"
+          tabindex="0"
+          role="button"
+          aria-label="Upload 3D model file: STL, 3MF, GCODE, or OBJ"
+          class="border-2 border-dashed border-cyan-500/30 hover:border-cyan-400 hover:bg-cyan-500/5 rounded-xl p-6 text-center cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        >
+          <input
+            type="file"
+            id="fileInput"
+            class="hidden"
+            accept=".stl,.3mf,.gcode,.bgcode,.obj"
+          />
+          <div class="flex flex-col items-center justify-center space-y-2">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" x2="12" y1="3" y2="15"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-slate-200">
+              Drop your <span class="text-cyan-400 font-semibold">.STL, .3MF, .GCODE, .BGCODE</span> or <span class="text-cyan-400 font-semibold">.OBJ</span> here
+            </p>
+            <p class="text-xs text-slate-400">
+              or click to browse from your computer. Parsed instantly in browser memory under 100ms.
+            </p>
+          </div>
+        </div>
+
+        <!-- Parsed File Status Card (Hidden by default until file dropped) -->
+        <div id="fileInfoCard" class="hidden mt-4 p-4 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 font-mono text-cyan-300 font-semibold">
+              <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span id="parsedFileName">model.stl</span>
+            </div>
+            <span id="parsedFileTypeBadge" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[11px] font-mono">
+              Binary STL
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-300 font-mono text-[11px]">
+            <div>
+              <span class="text-slate-400 block">File Size:</span>
+              <span id="parsedFileSize" class="font-bold text-white">0 KB</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block">Calculated Grams:</span>
+              <span id="parsedFilamentGrams" class="font-bold text-cyan-400">0.0g</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block">Est. Print Time:</span>
+              <span id="parsedPrintTime" class="font-bold text-white">0h 0m</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block">Mesh Volume:</span>
+              <span id="parsedMeshVol" class="font-bold text-white">0 cm³</span>
+            </div>
+          </div>
+
+          <!-- Slicer vs Mesh info note -->
+          <p id="parsedNote" class="mt-2 text-[11px] text-cyan-300/80 italic">
+            Exact slicer metadata extracted directly from file headers.
+          </p>
+
+          <!-- Secondary sliders if unsliced mesh (.stl / .obj / raw .3mf) -->
+          <div id="meshAdjustControls" class="hidden mt-3 pt-3 border-t border-cyan-500/20 space-y-3">
+            <div class="flex items-center justify-between text-[11px] text-slate-300">
+              <span class="font-semibold text-cyan-300">Slicer Simulation Sliders:</span>
+              <span class="text-slate-400">Adjust to match your slicer profile</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="wallLoopsInput" class="block text-[11px] text-slate-400 mb-1">Wall Loops: <span id="wallLoopsVal" class="text-cyan-400 font-bold">2</span></label>
+                <input type="range" id="wallLoopsInput" min="1" max="6" value="2" class="w-full h-1.5 bg-slate-700 rounded-lg" />
+              </div>
+              <div>
+                <label for="infillInput" class="block text-[11px] text-slate-400 mb-1">Infill Density: <span id="infillVal" class="text-cyan-400 font-bold">15%</span></label>
+                <input type="range" id="infillInput" min="0" max="100" step="5" value="15" class="w-full h-1.5 bg-slate-700 rounded-lg" />
+              </div>
+              <div>
+                <label for="supportSelect" class="block text-[11px] text-slate-400 mb-1">Supports:</label>
+                <select id="supportSelect" class="w-full bg-[#080c15] border border-white/10 rounded px-2 py-1 text-[11px] text-white">
+                  <option value="1.0">None (1.0x)</option>
+                  <option value="1.08">Light / Tree (1.08x)</option>
+                  <option value="1.18">Heavy (1.18x)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Hardware & Material Preset Selectors -->
+      <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">1. Machine & Material Presets</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Printer Selector -->
+          <div>
+            <label for="printerSelect" class="block text-xs font-medium text-slate-400 mb-1">
+              3D Printer Model:
+            </label>
+            <select
+              id="printerSelect"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              {printersData.map((printer) => (
+                <option value={printer.slug} selected={printer.slug === selectedPrinter.slug}>
+                  {printer.brand} - {printer.model} ({printer.avgWattsPla}W avg)
+                </option>
+              ))}
+            </select>
+            <p id="printerPresetSummary" class="text-[11px] text-slate-400 mt-1 font-mono">
+              Watts: {selectedPrinter.avgWattsPla}W · MSRP: ${selectedPrinter.msrpUsd} · Lifespan: {selectedPrinter.defaultLifespanHours}h
+            </p>
+          </div>
+
+          <!-- Material Selector -->
+          <div>
+            <label for="materialSelect" class="block text-xs font-medium text-slate-400 mb-1">
+              Filament / Resin Material:
+            </label>
+            <select
+              id="materialSelect"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              {materialsData.map((material) => (
+                <option value={material.slug} selected={material.slug === selectedMaterial.slug}>
+                  {material.name} ({material.densityGcm3} g/cm³)
+                </option>
+              ))}
+            </select>
+            <p id="materialPresetSummary" class="text-[11px] text-slate-400 mt-1 font-mono">
+              Density: {selectedMaterial.densityGcm3} g/cm³ · Avg Price: ${selectedMaterial.defaultPricePerKgUsd}/kg
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Primary Core Inputs (Manual Sliders & Numbers) -->
+      <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-5">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">2. Job Parameters</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Spool Price -->
+          <div>
+            <label for="spoolPriceInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Spool Price ($)</span>
+              <span class="text-slate-400">e.g. $19.99</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <input
+                type="number"
+                id="spoolPriceInput"
+                step="0.01"
+                min="0"
+                value="19.99"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl pl-7 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+          </div>
+
+          <!-- Spool Size -->
+          <div>
+            <label for="spoolWeightInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Spool Weight (grams)</span>
+              <span class="text-slate-400">1kg = 1000g</span>
+            </label>
+            <input
+              type="number"
+              id="spoolWeightInput"
+              step="50"
+              min="1"
+              value="1000"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            />
+          </div>
+
+          <!-- Print Weight (Grams) -->
+          <div>
+            <label for="printWeightInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Print Weight (grams)</span>
+              <span id="printWeightGramLive" class="text-cyan-400 font-mono">85g</span>
+            </label>
+            <input
+              type="number"
+              id="printWeightInput"
+              step="0.1"
+              min="0"
+              value="85"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            />
+          </div>
+
+          <!-- Purge / AMS Waste (Grams) -->
+          <div>
+            <label for="purgeWasteInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Purge / Support Waste (g)</span>
+              <span class="text-slate-400">AMS poop or tree supports</span>
+            </label>
+            <input
+              type="number"
+              id="purgeWasteInput"
+              step="0.1"
+              min="0"
+              value="0"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            />
+          </div>
+
+          <!-- Print Time (Hours) -->
+          <div>
+            <label for="printHoursInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Print Time (Hours)</span>
+              <span id="printTimeLive" class="text-cyan-400 font-mono">3.5 hrs</span>
+            </label>
+            <input
+              type="number"
+              id="printHoursInput"
+              step="0.1"
+              min="0"
+              value="3.5"
+              class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            />
+          </div>
+
+          <!-- Electricity Rate ($/kWh) -->
+          <div>
+            <label for="electricityRateInput" class="flex justify-between text-xs font-medium text-slate-300 mb-1">
+              <span>Electricity Cost ($/kWh)</span>
+              <span class="text-slate-400">US Avg ~ $0.16</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <input
+                type="number"
+                id="electricityRateInput"
+                step="0.01"
+                min="0"
+                value="0.16"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl pl-7 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Advanced Cost & Overhead Accordion -->
+      <div class="bg-[#0e1628] border border-white/10 rounded-2xl shadow-xl overflow-hidden">
+        <button
+          type="button"
+          id="advancedToggleBtn"
+          class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors focus:outline-none"
+        >
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+            <span class="text-sm font-semibold uppercase tracking-wider text-slate-200">
+              3. Advanced Overhead & Labor Settings
+            </span>
+          </div>
+          <svg id="advancedArrow" class="w-5 h-5 text-slate-400 transform transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        <div id="advancedContent" class="hidden px-5 pb-5 pt-2 border-t border-white/5 space-y-4">
+          <p class="text-xs text-slate-400">
+            Professional print farms factor in machine depreciation, failure rates, post-processing labor, and shipping packaging to ensure profitable pricing.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Printer Purchase Price -->
+            <div>
+              <label for="printerPriceInput" class="block text-xs font-medium text-slate-300 mb-1">Printer Purchase Price ($)</label>
+              <input
+                type="number"
+                id="printerPriceInput"
+                step="10"
+                min="0"
+                value={selectedPrinter.msrpUsd}
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Lifespan Hours -->
+            <div>
+              <label for="lifespanInput" class="block text-xs font-medium text-slate-300 mb-1">Expected Lifespan (Hours)</label>
+              <input
+                type="number"
+                id="lifespanInput"
+                step="100"
+                min="500"
+                value={selectedPrinter.defaultLifespanHours}
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Hourly Maintenance / Nozzle Reserve -->
+            <div>
+              <label for="maintenanceInput" class="block text-xs font-medium text-slate-300 mb-1">Hourly Maintenance ($/hr)</label>
+              <input
+                type="number"
+                id="maintenanceInput"
+                step="0.01"
+                min="0"
+                value={selectedPrinter.hourlyMaintenanceUsd}
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Failure Rate % -->
+            <div>
+              <label for="failureRateInput" class="block text-xs font-medium text-slate-300 mb-1">Failure Risk Buffer (%)</label>
+              <input
+                type="number"
+                id="failureRateInput"
+                step="1"
+                min="0"
+                max="50"
+                value="5"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Post-Processing Labor Minutes -->
+            <div>
+              <label for="laborMinutesInput" class="block text-xs font-medium text-slate-300 mb-1">Prep & Post-Processing (Mins)</label>
+              <input
+                type="number"
+                id="laborMinutesInput"
+                step="1"
+                min="0"
+                value="10"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Labor Rate $/hr -->
+            <div>
+              <label for="laborRateInput" class="block text-xs font-medium text-slate-300 mb-1">Hourly Labor Rate ($/hr)</label>
+              <input
+                type="number"
+                id="laborRateInput"
+                step="1"
+                min="0"
+                value="20"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Hardware & Fasteners -->
+            <div>
+              <label for="hardwareCostInput" class="block text-xs font-medium text-slate-300 mb-1">Hardware / Magnets / Inserts ($)</label>
+              <input
+                type="number"
+                id="hardwareCostInput"
+                step="0.1"
+                min="0"
+                value="0.50"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <!-- Packaging Box -->
+            <div>
+              <label for="packagingCostInput" class="block text-xs font-medium text-slate-300 mb-1">Shipping Box & Packaging ($)</label>
+              <input
+                type="number"
+                id="packagingCostInput"
+                step="0.1"
+                min="0"
+                value="1.25"
+                class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Results Card, Waterfall & Seller Margins (5 Cols) -->
+    <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+
+      <!-- Primary Results Card -->
+      <div class="bg-gradient-to-b from-[#131d33] to-[#0c1424] border border-cyan-500/30 rounded-2xl p-6 shadow-2xl glow-cyan relative overflow-hidden">
+        <!-- Top accent beam -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400"></div>
+
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-300 font-semibold">Total Landed Production Cost</span>
+          <span class="text-xs font-mono text-slate-400" id="costPerGramBadge">$0.0200/g</span>
+        </div>
+
+        <!-- Big Cost Display -->
+        <div class="flex items-baseline gap-2 mb-4">
+          <span class="text-4xl sm:text-5xl font-black tracking-tight text-white font-mono" id="totalLandedCostDisplay">
+            $7.85
+          </span>
+          <span class="text-sm font-medium text-slate-400">USD</span>
+        </div>
+
+        <!-- Cost Breakdown Table -->
+        <div class="border-t border-white/10 pt-3 space-y-2 text-xs font-mono">
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Filament Material:</span>
+            <span id="costMaterialDisplay" class="font-bold text-white">$1.70</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Electricity (kWh):</span>
+            <span id="costElectricityDisplay" class="font-bold text-white">$0.07</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Machine Wear & Depr.:</span>
+            <span id="costMachineDisplay" class="font-bold text-white">$0.94</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Failure Risk Reserve (5%):</span>
+            <span id="costFailureDisplay" class="font-bold text-white">$0.14</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-400">Labor, Inserts & Packaging:</span>
+            <span id="costLaborDisplay" class="font-bold text-white">$5.00</span>
+          </div>
+        </div>
+
+        <!-- Stacked Waterfall Visual Bar -->
+        <div class="mt-4">
+          <div class="text-[11px] text-slate-400 mb-1 flex justify-between font-mono">
+            <span>Cost Distribution:</span>
+            <span id="costDistributionLabel">Material vs Overhead</span>
+          </div>
+          <div class="h-2.5 w-full bg-slate-800 rounded-full overflow-hidden flex">
+            <div id="barMaterial" class="bg-cyan-500 h-full" style="width: 25%" title="Material"></div>
+            <div id="barElec" class="bg-amber-500 h-full" style="width: 5%" title="Electricity"></div>
+            <div id="barMachine" class="bg-blue-500 h-full" style="width: 15%" title="Machine Wear"></div>
+            <div id="barLabor" class="bg-emerald-500 h-full" style="width: 45%" title="Labor"></div>
+            <div id="barOther" class="bg-violet-500 h-full" style="width: 10%" title="Packaging & Other"></div>
+          </div>
+          <div class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[10px] text-slate-400 font-mono">
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-500"></span>Mat</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Power</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Machine</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Labor</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500"></span>Pack</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commercial Marketplace Waterfall Card -->
+      <div class="bg-[#0e1628] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Commercial Seller Pricing</h3>
+          <span class="text-xs font-mono text-cyan-400" id="multiplierLabel">2.5x Markup</span>
+        </div>
+
+        <!-- Markup Slider -->
+        <div>
+          <label for="markupSlider" class="flex justify-between text-xs text-slate-400 mb-1">
+            <span>Client Markup Multiplier:</span>
+            <span id="targetMarginLabel" class="text-emerald-400 font-mono">60% Target Margin</span>
+          </label>
+          <input
+            type="range"
+            id="markupSlider"
+            min="1.2"
+            max="5.0"
+            step="0.1"
+            value="2.5"
+            class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer"
+          />
+        </div>
+
+        <!-- Offsite Ads Toggle for Etsy -->
+        <div class="flex items-center justify-between text-xs text-slate-300 pt-1">
+          <label for="etsyAdsCheckbox" class="cursor-pointer flex items-center gap-2">
+            <input type="checkbox" id="etsyAdsCheckbox" class="rounded bg-slate-800 border-white/20 text-cyan-500 focus:ring-cyan-400" />
+            <span>Include Etsy Offsite Ads fee (+15%)</span>
+          </label>
+        </div>
+
+        <!-- Platform Comparison Grid -->
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <!-- Direct Invoice -->
+          <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
+            <span class="font-semibold text-slate-200 block">Direct / Local</span>
+            <div class="text-lg font-mono font-bold text-white" id="directPriceVal">$19.63</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="directProfitVal">+$11.78 profit</div>
+            <span class="text-[10px] text-slate-400 block">0% fee deduction</span>
+          </div>
+
+          <!-- Etsy -->
+          <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
+            <span class="font-semibold text-orange-400 block">Etsy Store</span>
+            <div class="text-lg font-mono font-bold text-white" id="etsyPriceVal">$22.18</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="etsyProfitVal">+$11.78 profit</div>
+            <span class="text-[10px] text-slate-400 block" id="etsyFeeVal">~$2.55 Etsy cut</span>
+          </div>
+
+          <!-- eBay -->
+          <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
+            <span class="font-semibold text-blue-400 block">eBay</span>
+            <div class="text-lg font-mono font-bold text-white" id="ebayPriceVal">$23.09</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="ebayProfitVal">+$11.78 profit</div>
+            <span class="text-[10px] text-slate-400 block" id="ebayFeeVal">~$3.46 eBay cut</span>
+          </div>
+
+          <!-- Shopify -->
+          <div class="p-3 rounded-xl bg-[#162035] border border-white/5 space-y-1">
+            <span class="font-semibold text-emerald-400 block">Shopify / Web</span>
+            <div class="text-lg font-mono font-bold text-white" id="shopifyPriceVal">$20.52</div>
+            <div class="text-[11px] text-emerald-400 font-mono" id="shopifyProfitVal">+$11.78 profit</div>
+            <span class="text-[10px] text-slate-400 block" id="shopifyFeeVal">~$0.89 Stripe cut</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons: Share & PDF Quote -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-2">
+          <button
+            type="button"
+            id="shareQuoteBtn"
+            class="flex-1 py-2.5 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors shadow-lg shadow-cyan-600/20"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" x2="12" y1="2" y2="15"/>
+            </svg>
+            <span>Copy Quote Link</span>
+          </button>
+
+          <button
+            type="button"
+            id="printQuoteBtn"
+            class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs tracking-wide flex items-center justify-center gap-1.5 transition-colors border border-white/10"
+          >
+            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect width="12" height="8" x="6" y="14"/>
+            </svg>
+            <span>Print PDF Quote</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Share Toast Alert -->
+  <div id="shareToast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-cyan-500 text-black px-4 py-2.5 rounded-xl font-medium text-xs shadow-2xl flex items-center gap-2">
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span>Shareable URL with current parameters copied to clipboard!</span>
+  </div>
+
+  <!-- Printable Client Invoice Modal / Print Template -->
+  <div id="quoteInvoiceModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-4 overflow-y-auto no-print">
+    <div class="max-w-2xl mx-auto bg-white text-slate-900 rounded-2xl p-8 shadow-2xl my-8 relative">
+      <button id="closeInvoiceBtn" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800 no-print">
+        ✕
+      </button>
+
+      <!-- Invoice Header -->
+      <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
+        <div>
+          <h2 class="text-2xl font-black tracking-tight text-slate-900">3D PRINTING SERVICE QUOTE</h2>
+          <p class="text-xs text-slate-500 font-mono mt-1">Generated via 3DPrintingCostCalc.com</p>
+        </div>
+        <div class="text-right text-xs text-slate-500 font-mono">
+          <p>Date: <span id="invoiceDate"></span></p>
+          <p>Quote Ref: <span id="invoiceRef">#3DP-9481</span></p>
+          <p>Valid For: 14 Days</p>
+        </div>
+      </div>
+
+      <!-- Item Specifications Table -->
+      <table class="w-full text-xs mb-6 border-collapse">
+        <thead>
+          <tr class="border-b border-slate-200 text-slate-500 text-left">
+            <th class="py-2">Description</th>
+            <th class="py-2">Material</th>
+            <th class="py-2">Filament Weight</th>
+            <th class="py-2">Est. Time</th>
+            <th class="py-2 text-right">Total Price</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 font-mono">
+          <tr>
+            <td class="py-3 font-semibold text-slate-800" id="invoiceModelName">Custom 3D Print Job</td>
+            <td class="py-3 text-slate-600" id="invoiceMaterialName">PLA</td>
+            <td class="py-3 text-slate-600" id="invoiceWeight">85g</td>
+            <td class="py-3 text-slate-600" id="invoiceTime">3.5 hrs</td>
+            <td class="py-3 text-right font-bold text-slate-900 text-sm" id="invoicePrice">$19.63</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Notes & Terms -->
+      <div class="border-t border-slate-200 pt-4 text-[11px] text-slate-500 space-y-1">
+        <p><strong>Terms:</strong> Standard FDM 3D printing tolerances are ±0.2mm. Surface finish includes standard 0.2mm layer lines.</p>
+        <p>This quote is based on current material density, post-processing specs, and machine schedule availability.</p>
+      </div>
+
+      <!-- Print Action inside modal -->
+      <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end gap-3 no-print">
+        <button id="triggerPrintBtn" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-medium text-xs hover:bg-slate-800">
+          Print or Save to PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculate3DPrintCost, DEFAULT_COST_INPUTS } from '../utils/costMath';
+  import { parse3DFile, estimateMeshWeightAndTime, DEFAULT_MESH_PARAMS } from '../utils/fileParser';
+  import printers from '../data/printers.json';
+  import materials from '../data/materials.json';
+
+  // Elements
+  const root = document.getElementById('calculatorRoot');
+  const printerSelect = document.getElementById('printerSelect') as HTMLSelectElement;
+  const materialSelect = document.getElementById('materialSelect') as HTMLMaterialElement | any;
+  const printerSummary = document.getElementById('printerPresetSummary');
+  const materialSummary = document.getElementById('materialPresetSummary');
+
+  // Primary Inputs
+  const spoolPriceInput = document.getElementById('spoolPriceInput') as HTMLInputElement;
+  const spoolWeightInput = document.getElementById('spoolWeightInput') as HTMLInputElement;
+  const printWeightInput = document.getElementById('printWeightInput') as HTMLInputElement;
+  const purgeWasteInput = document.getElementById('purgeWasteInput') as HTMLInputElement;
+  const printHoursInput = document.getElementById('printHoursInput') as HTMLInputElement;
+  const electricityRateInput = document.getElementById('electricityRateInput') as HTMLInputElement;
+
+  // Advanced Inputs
+  const printerPriceInput = document.getElementById('printerPriceInput') as HTMLInputElement;
+  const lifespanInput = document.getElementById('lifespanInput') as HTMLInputElement;
+  const maintenanceInput = document.getElementById('maintenanceInput') as HTMLInputElement;
+  const failureRateInput = document.getElementById('failureRateInput') as HTMLInputElement;
+  const laborMinutesInput = document.getElementById('laborMinutesInput') as HTMLInputElement;
+  const laborRateInput = document.getElementById('laborRateInput') as HTMLInputElement;
+  const hardwareCostInput = document.getElementById('hardwareCostInput') as HTMLInputElement;
+  const packagingCostInput = document.getElementById('packagingCostInput') as HTMLInputElement;
+
+  // Commercial Sliders
+  const markupSlider = document.getElementById('markupSlider') as HTMLInputElement;
+  const etsyAdsCheckbox = document.getElementById('etsyAdsCheckbox') as HTMLInputElement;
+  const multiplierLabel = document.getElementById('multiplierLabel');
+  const targetMarginLabel = document.getElementById('targetMarginLabel');
+
+  // Displays
+  const totalLandedCostDisplay = document.getElementById('totalLandedCostDisplay');
+  const costPerGramBadge = document.getElementById('costPerGramBadge');
+  const costMaterialDisplay = document.getElementById('costMaterialDisplay');
+  const costElectricityDisplay = document.getElementById('costElectricityDisplay');
+  const costMachineDisplay = document.getElementById('costMachineDisplay');
+  const costFailureDisplay = document.getElementById('costFailureDisplay');
+  const costLaborDisplay = document.getElementById('costLaborDisplay');
+  const printWeightGramLive = document.getElementById('printWeightGramLive');
+  const printTimeLive = document.getElementById('printTimeLive');
+
+  // Bars
+  const barMaterial = document.getElementById('barMaterial');
+  const barElec = document.getElementById('barElec');
+  const barMachine = document.getElementById('barMachine');
+  const barLabor = document.getElementById('barLabor');
+  const barOther = document.getElementById('barOther');
+
+  // Platforms
+  const directPriceVal = document.getElementById('directPriceVal');
+  const directProfitVal = document.getElementById('directProfitVal');
+  const etsyPriceVal = document.getElementById('etsyPriceVal');
+  const etsyProfitVal = document.getElementById('etsyProfitVal');
+  const etsyFeeVal = document.getElementById('etsyFeeVal');
+  const ebayPriceVal = document.getElementById('ebayPriceVal');
+  const ebayProfitVal = document.getElementById('ebayProfitVal');
+  const ebayFeeVal = document.getElementById('ebayFeeVal');
+  const shopifyPriceVal = document.getElementById('shopifyPriceVal');
+  const shopifyProfitVal = document.getElementById('shopifyProfitVal');
+  const shopifyFeeVal = document.getElementById('shopifyFeeVal');
+
+  // Advanced accordion
+  const advancedToggleBtn = document.getElementById('advancedToggleBtn');
+  const advancedContent = document.getElementById('advancedContent');
+  const advancedArrow = document.getElementById('advancedArrow');
+
+  // File Drop Elements
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+  const fileInfoCard = document.getElementById('fileInfoCard');
+  const parsedFileName = document.getElementById('parsedFileName');
+  const parsedFileTypeBadge = document.getElementById('parsedFileTypeBadge');
+  const parsedFileSize = document.getElementById('parsedFileSize');
+  const parsedFilamentGrams = document.getElementById('parsedFilamentGrams');
+  const parsedPrintTime = document.getElementById('parsedPrintTime');
+  const parsedMeshVol = document.getElementById('parsedMeshVol');
+  const parsedNote = document.getElementById('parsedNote');
+  const meshAdjustControls = document.getElementById('meshAdjustControls');
+  const wallLoopsInput = document.getElementById('wallLoopsInput') as HTMLInputElement;
+  const wallLoopsVal = document.getElementById('wallLoopsVal');
+  const infillInput = document.getElementById('infillInput') as HTMLInputElement;
+  const infillVal = document.getElementById('infillVal');
+  const supportSelect = document.getElementById('supportSelect') as HTMLSelectElement;
+
+  // Share & PDF Elements
+  const shareQuoteBtn = document.getElementById('shareQuoteBtn');
+  const shareToast = document.getElementById('shareToast');
+  const printQuoteBtn = document.getElementById('printQuoteBtn');
+  const quoteInvoiceModal = document.getElementById('quoteInvoiceModal');
+  const closeInvoiceBtn = document.getElementById('closeInvoiceBtn');
+  const triggerPrintBtn = document.getElementById('triggerPrintBtn');
+  const invoiceDate = document.getElementById('invoiceDate');
+  const invoiceRef = document.getElementById('invoiceRef');
+  const invoiceModelName = document.getElementById('invoiceModelName');
+  const invoiceMaterialName = document.getElementById('invoiceMaterialName');
+  const invoiceWeight = document.getElementById('invoiceWeight');
+  const invoiceTime = document.getElementById('invoiceTime');
+  const invoicePrice = document.getElementById('invoicePrice');
+
+  let currentMeshVolume = 0;
+  let currentSurfaceArea = 0;
+  let currentActiveFile: File | null = null;
+
+  // Get active printer & material objects
+  function getActivePrinter() {
+    const slug = printerSelect.value;
+    return printers.find(p => p.slug === slug) || printers[0];
+  }
+
+  function getActiveMaterial() {
+    const slug = materialSelect.value;
+    return materials.find(m => m.slug === slug) || materials[0];
+  }
+
+  // Recalculate
+  function updateCalculations() {
+    const activePrinter = getActivePrinter();
+    const activeMaterial = getActiveMaterial();
+
+    const spoolPriceUsd = parseFloat(spoolPriceInput.value) || 0;
+    const spoolWeightGrams = parseFloat(spoolWeightInput.value) || 1000;
+    const printWeightGrams = parseFloat(printWeightInput.value) || 0;
+    const purgeWasteGrams = parseFloat(purgeWasteInput.value) || 0;
+    const printTimeHours = parseFloat(printHoursInput.value) || 0;
+    const electricityRateKwh = parseFloat(electricityRateInput.value) || 0.16;
+
+    const printerPriceUsd = parseFloat(printerPriceInput.value) || activePrinter.msrpUsd;
+    const expectedLifespanHours = parseFloat(lifespanInput.value) || activePrinter.defaultLifespanHours;
+    const hourlyMaintenanceUsd = parseFloat(maintenanceInput.value) || activePrinter.hourlyMaintenanceUsd;
+    const failureRatePercent = parseFloat(failureRateInput.value) || 0;
+    const postProcessingMinutes = parseFloat(laborMinutesInput.value) || 0;
+    const hourlyLaborRateUsd = parseFloat(laborRateInput.value) || 0;
+    const hardwareCostUsd = parseFloat(hardwareCostInput.value) || 0;
+    const packagingCostUsd = parseFloat(packagingCostInput.value) || 0;
+    const markupMultiplier = parseFloat(markupSlider.value) || 2.5;
+    const etsyOffsiteAds = etsyAdsCheckbox.checked;
+
+    const powerWatts = activePrinter.avgWattsPla * (activeMaterial.powerMultiplier || 1.0);
+
+    const results = calculate3DPrintCost({
+      spoolPriceUsd,
+      spoolWeightGrams,
+      printWeightGrams,
+      purgeWasteGrams,
+      printTimeHours,
+      printerPowerWatts: powerWatts,
+      electricityRateKwh,
+      printerPriceUsd,
+      expectedLifespanHours,
+      hourlyMaintenanceUsd,
+      failureRatePercent,
+      postProcessingMinutes,
+      hourlyLaborRateUsd,
+      hardwareCostUsd,
+      packagingCostUsd,
+      markupMultiplier,
+      etsyOffsiteAds,
+    });
+
+    // Update Live UI
+    if (totalLandedCostDisplay) totalLandedCostDisplay.textContent = `$${results.totalLandedCost.toFixed(2)}`;
+    if (costPerGramBadge) costPerGramBadge.textContent = `$${results.costPerGram.toFixed(4)}/g`;
+    if (costMaterialDisplay) costMaterialDisplay.textContent = `$${results.materialCost.toFixed(2)}`;
+    if (costElectricityDisplay) costElectricityDisplay.textContent = `$${results.electricityCost.toFixed(2)}`;
+    if (costMachineDisplay) costMachineDisplay.textContent = `$${results.machineWearCost.toFixed(2)}`;
+    if (costFailureDisplay) costFailureDisplay.textContent = `$${results.failureBufferCost.toFixed(2)}`;
+    if (costLaborDisplay) costLaborDisplay.textContent = `$${(results.laborCost + results.hardwareCost + results.packagingCost).toFixed(2)}`;
+
+    if (printWeightGramLive) printWeightGramLive.textContent = `${results.totalFilamentGrams}g`;
+    if (printTimeLive) printTimeLive.textContent = `${printTimeHours} hrs`;
+
+    // Multiplier Labels
+    if (multiplierLabel) multiplierLabel.textContent = `${markupMultiplier.toFixed(1)}x Markup`;
+    if (targetMarginLabel) targetMarginLabel.textContent = `${results.directMarginPercent}% Target Margin`;
+
+    // Visual Waterfall Bar
+    if (barMaterial) barMaterial.style.width = `${results.percentages.material}%`;
+    if (barElec) barElec.style.width = `${results.percentages.electricity}%`;
+    if (barMachine) barMachine.style.width = `${results.percentages.machine}%`;
+    if (barLabor) barLabor.style.width = `${results.percentages.labor}%`;
+    if (barOther) barOther.style.width = `${results.percentages.other + results.percentages.failure}%`;
+
+    // Platform Breakdown
+    if (directPriceVal) directPriceVal.textContent = `$${results.platforms.direct.recommendedPrice.toFixed(2)}`;
+    if (directProfitVal) directProfitVal.textContent = `+$${results.platforms.direct.netProfit.toFixed(2)} profit`;
+
+    if (etsyPriceVal) etsyPriceVal.textContent = `$${results.platforms.etsy.recommendedPrice.toFixed(2)}`;
+    if (etsyProfitVal) etsyProfitVal.textContent = `+$${results.platforms.etsy.netProfit.toFixed(2)} profit`;
+    if (etsyFeeVal) etsyFeeVal.textContent = `~$${results.platforms.etsy.platformFees.toFixed(2)} Etsy cut`;
+
+    if (ebayPriceVal) ebayPriceVal.textContent = `$${results.platforms.ebay.recommendedPrice.toFixed(2)}`;
+    if (ebayProfitVal) ebayProfitVal.textContent = `+$${results.platforms.ebay.netProfit.toFixed(2)} profit`;
+    if (ebayFeeVal) ebayFeeVal.textContent = `~$${results.platforms.ebay.platformFees.toFixed(2)} eBay cut`;
+
+    if (shopifyPriceVal) shopifyPriceVal.textContent = `$${results.platforms.shopify.recommendedPrice.toFixed(2)}`;
+    if (shopifyProfitVal) shopifyProfitVal.textContent = `+$${results.platforms.shopify.netProfit.toFixed(2)} profit`;
+    if (shopifyFeeVal) shopifyFeeVal.textContent = `~$${results.platforms.shopify.platformFees.toFixed(2)} Stripe cut`;
+
+    // Update Invoice Preview Fields
+    if (invoiceModelName) invoiceModelName.textContent = currentActiveFile ? currentActiveFile.name : 'Custom 3D Print Job';
+    if (invoiceMaterialName) invoiceMaterialName.textContent = activeMaterial.name;
+    if (invoiceWeight) invoiceWeight.textContent = `${results.totalFilamentGrams}g`;
+    if (invoiceTime) invoiceTime.textContent = `${printTimeHours} hrs`;
+    if (invoicePrice) invoicePrice.textContent = `$${results.platforms.direct.recommendedPrice.toFixed(2)}`;
+  }
+
+  // Handle printer selection change
+  printerSelect?.addEventListener('change', () => {
+    const printer = getActivePrinter();
+    if (printerSummary) {
+      printerSummary.textContent = `Watts: ${printer.avgWattsPla}W · MSRP: $${printer.msrpUsd} · Lifespan: ${printer.defaultLifespanHours}h`;
+    }
+    printerPriceInput.value = printer.msrpUsd.toString();
+    lifespanInput.value = printer.defaultLifespanHours.toString();
+    maintenanceInput.value = printer.hourlyMaintenanceUsd.toString();
+    updateCalculations();
+  });
+
+  // Handle material selection change
+  materialSelect?.addEventListener('change', () => {
+    const mat = getActiveMaterial();
+    if (materialSummary) {
+      materialSummary.textContent = `Density: ${mat.densityGcm3} g/cm³ · Avg Price: $${mat.defaultPricePerKgUsd}/kg`;
+    }
+    spoolPriceInput.value = mat.defaultPricePerKgUsd.toString();
+
+    // If an unsliced mesh is loaded, recalculate weight with new density
+    if (currentMeshVolume > 0) {
+      recomputeMeshEstimation();
+    } else {
+      updateCalculations();
+    }
+  });
+
+  // Recompute mesh estimation from sliders
+  function recomputeMeshEstimation() {
+    const activeMat = getActiveMaterial();
+    const activePrinter = getActivePrinter();
+
+    const wallLoops = parseInt(wallLoopsInput.value, 10) || 2;
+    const infillRatio = (parseInt(infillInput.value, 10) || 15) / 100.0;
+    const supportMultiplier = parseFloat(supportSelect.value) || 1.0;
+
+    const estimated = estimateMeshWeightAndTime(currentMeshVolume, currentSurfaceArea, {
+      wallLoops,
+      infillRatio,
+      materialDensity: activeMat.densityGcm3,
+      supportMultiplier,
+      volumetricFlowMm3s: activePrinter.effectiveFlowMm3s,
+    });
+
+    printWeightInput.value = estimated.filamentGrams.toString();
+    printHoursInput.value = estimated.printTimeHours.toString();
+
+    if (parsedFilamentGrams) parsedFilamentGrams.textContent = `${estimated.filamentGrams}g`;
+    if (parsedPrintTime) parsedPrintTime.textContent = `${estimated.printTimeHours} hrs`;
+
+    updateCalculations();
+  }
+
+  // Sliders for unsliced meshes
+  wallLoopsInput?.addEventListener('input', () => {
+    if (wallLoopsVal) wallLoopsVal.textContent = wallLoopsInput.value;
+    recomputeMeshEstimation();
+  });
+
+  infillInput?.addEventListener('input', () => {
+    if (infillVal) infillVal.textContent = `${infillInput.value}%`;
+    recomputeMeshEstimation();
+  });
+
+  supportSelect?.addEventListener('change', () => {
+    recomputeMeshEstimation();
+  });
+
+  // File Drop Handling
+  async function handleDroppedFile(file: File) {
+    currentActiveFile = file;
+    const activeMat = getActiveMaterial();
+    const activePrinter = getActivePrinter();
+
+    if (fileInfoCard) fileInfoCard.classList.remove('hidden');
+    if (parsedFileName) parsedFileName.textContent = file.name;
+    if (parsedFileSize) parsedFileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+
+    try {
+      const parsed = await parse3DFile(file, {
+        wallLoops: parseInt(wallLoopsInput.value, 10) || 2,
+        infillRatio: (parseInt(infillInput.value, 10) || 15) / 100,
+        materialDensity: activeMat.densityGcm3,
+        supportMultiplier: parseFloat(supportSelect.value) || 1.0,
+        volumetricFlowMm3s: activePrinter.effectiveFlowMm3s,
+      });
+
+      if (parsedFileTypeBadge) parsedFileTypeBadge.textContent = parsed.fileType.toUpperCase();
+      if (parsedFilamentGrams) parsedFilamentGrams.textContent = `${parsed.filamentGrams}g`;
+      if (parsedPrintTime) parsedPrintTime.textContent = `${parsed.printTimeHours} hrs`;
+      if (parsedMeshVol) parsedMeshVol.textContent = parsed.volumeCm3 ? `${parsed.volumeCm3} cm³` : 'N/A';
+
+      printWeightInput.value = parsed.filamentGrams.toString();
+      printHoursInput.value = parsed.printTimeHours.toString();
+
+      if (parsed.isSliced) {
+        if (meshAdjustControls) meshAdjustControls.classList.add('hidden');
+        if (parsedNote) {
+          parsedNote.textContent = parsed.slicerName
+            ? `Exact metadata extracted from ${parsed.slicerName}. Includes full toolpath & purge details.`
+            : `Exact slicer metadata extracted directly from file headers.`;
+        }
+        currentMeshVolume = 0;
+        currentSurfaceArea = 0;
+      } else {
+        // Raw mesh (.stl, .obj, raw .3mf)
+        currentMeshVolume = parsed.volumeCm3 || 0;
+        currentSurfaceArea = parsed.surfaceAreaCm2 || 0;
+        if (meshAdjustControls) meshAdjustControls.classList.remove('hidden');
+        if (parsedNote) {
+          parsedNote.textContent = `Raw 3D mesh analyzed via signed tetrahedron physics (${parsed.triangleCount?.toLocaleString()} triangles). Adjust wall and infill sliders below for real-time simulation.`;
+        }
+      }
+
+      updateCalculations();
+    } catch (err: any) {
+      alert(`File analysis error: ${err.message || 'Unable to parse file'}`);
+    }
+  }
+
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-cyan-400', 'bg-cyan-500/10');
+  });
+
+  dropZone?.addEventListener('dragleave', () => {
+    dropZone.classList.remove('border-cyan-400', 'bg-cyan-500/10');
+  });
+
+  dropZone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-cyan-400', 'bg-cyan-500/10');
+    if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+      handleDroppedFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  dropZone?.addEventListener('click', () => {
+    fileInput?.click();
+  });
+
+  dropZone?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput?.click();
+    }
+  });
+
+  fileInput?.addEventListener('change', () => {
+    if (fileInput.files && fileInput.files.length > 0) {
+      handleDroppedFile(fileInput.files[0]);
+    }
+  });
+
+  // Advanced accordion toggle
+  advancedToggleBtn?.addEventListener('click', () => {
+    advancedContent?.classList.toggle('hidden');
+    advancedArrow?.classList.toggle('rotate-180');
+  });
+
+  // Event listeners for recalculating
+  [
+    spoolPriceInput,
+    spoolWeightInput,
+    printWeightInput,
+    purgeWasteInput,
+    printHoursInput,
+    electricityRateInput,
+    printerPriceInput,
+    lifespanInput,
+    maintenanceInput,
+    failureRateInput,
+    laborMinutesInput,
+    laborRateInput,
+    hardwareCostInput,
+    packagingCostInput,
+    markupSlider,
+  ].forEach(input => {
+    input?.addEventListener('input', updateCalculations);
+  });
+
+  etsyAdsCheckbox?.addEventListener('change', updateCalculations);
+
+  // Share quote button
+  shareQuoteBtn?.addEventListener('click', () => {
+    const params = new URLSearchParams({
+      printer: printerSelect.value,
+      mat: materialSelect.value,
+      price: spoolPriceInput.value,
+      weight: printWeightInput.value,
+      time: printHoursInput.value,
+      power: electricityRateInput.value,
+      markup: markupSlider.value,
+    });
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      if (shareToast) {
+        shareToast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          shareToast.classList.add('translate-y-20', 'opacity-0');
+        }, 3000);
+      }
+    });
+  });
+
+  // Client PDF Quote Invoice Modal
+  printQuoteBtn?.addEventListener('click', () => {
+    if (invoiceDate) invoiceDate.textContent = new Date().toLocaleDateString();
+    if (invoiceRef) invoiceRef.textContent = `#3DP-${Math.floor(1000 + Math.random() * 9000)}`;
+    if (quoteInvoiceModal) quoteInvoiceModal.classList.remove('hidden');
+  });
+
+  closeInvoiceBtn?.addEventListener('click', () => {
+    if (quoteInvoiceModal) quoteInvoiceModal.classList.add('hidden');
+  });
+
+  triggerPrintBtn?.addEventListener('click', () => {
+    window.print();
+  });
+
+  // Load URL query params if present on initial load
+  function loadUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('printer')) printerSelect.value = urlParams.get('printer')!;
+    if (urlParams.has('mat')) materialSelect.value = urlParams.get('mat')!;
+    if (urlParams.has('price')) spoolPriceInput.value = urlParams.get('price')!;
+    if (urlParams.has('weight')) printWeightInput.value = urlParams.get('weight')!;
+    if (urlParams.has('time')) printHoursInput.value = urlParams.get('time')!;
+    if (urlParams.has('power')) electricityRateInput.value = urlParams.get('power')!;
+    if (urlParams.has('markup')) markupSlider.value = urlParams.get('markup')!;
+  }
+
+  loadUrlParams();
+  updateCalculations();
+</script>

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-page: #080c15;
+    --bg-surface: #0f1728;
+    --bg-surface-elevated: #162035;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(34, 211, 238, 0.25);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --color-cyan: #06b6d4;
+    --color-emerald: #10b981;
+    --color-amber: #f59e0b;
+    --color-violet: #8b5cf6;
+  }
+
+  html.light {
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f1f5f9;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-highlight: rgba(14, 165, 233, 0.35);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Numeric tabular alignment for fast live numbers */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* 3D Print Bed Isometric Grid Motif */
+.print-bed-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+html.light .print-bed-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+/* Glowing Neon Layer Line Accents */
+.glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.25);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.25);
+}
+
+/* Laser toolpath wireframe accent line */
+.layer-line-rgb {
+  background: linear-gradient(90deg, #06b6d4 0%, #3b82f6 33%, #8b5cf6 66%, #ec4899 100%);
+}
+
+/* Custom interactive slider styling */
+input[type="range"] {
+  accent-color: #06b6d4;
+}
+
+/* Print Invoice Stylesheet for 1-Click Client Quote Export */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header, footer, .no-print, nav, #embedModal, #shareToast {
+    display: none !important;
+  }
+
+  #quoteInvoiceModal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+}
