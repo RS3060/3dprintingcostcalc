@@ -335,15 +335,25 @@ html.light .glow-cyan {
 }
 
 /* Light mode badges and callout boxes */
+html.light .bg-cyan-950\/70,
+html.light .bg-cyan-950\/80,
 html.light .bg-cyan-950\/60,
-html.light .bg-cyan-950\/40 {
-  background-color: #f0f9ff !important;
-  border-color: #bae6fd !important;
+html.light .bg-cyan-950\/40,
+html.light #badgeStatus404 {
+  background-color: #e0f2fe !important;
+  border-color: #7dd3fc !important;
   color: #0369a1 !important;
 }
+html.light .bg-cyan-950\/70 *,
+html.light .bg-cyan-950\/80 *,
 html.light .bg-cyan-950\/60 *,
-html.light .bg-cyan-950\/40 * {
+html.light .bg-cyan-950\/40 *,
+html.light #badgeStatus404 * {
   color: #0369a1 !important;
+}
+html.light #badgeStatus404 span.animate-ping,
+html.light #badgeStatus404 span.bg-cyan-400 {
+  background-color: #0284c7 !important;
 }
 
 html.light .bg-emerald-950\/60,
