@@ -175,6 +175,10 @@ export const ALL_LOCALES: LocaleCode[] = [
 export function getCleanPath(pathname: string): string {
   let clean = pathname.replace(/\/+$/, '') || '/';
   
+  if (clean === '/404' || clean.startsWith('/404')) {
+    return '/';
+  }
+  
   for (const loc of NON_DEFAULT_LOCALES) {
     if (clean === `/${loc}`) {
       return '/';
