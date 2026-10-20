@@ -7,6 +7,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://3dprintingcostcalc.com',
   output: 'static',
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

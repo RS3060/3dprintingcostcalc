@@ -79,15 +79,20 @@ input[type="range"] {
 }
 
 /* =========================================================
-   COMPREHENSIVE SITE-WIDE LIGHT MODE OVERRIDES
+   COMPREHENSIVE SITE-WIDE LIGHT MODE & CONTRAST OVERRIDES
    ========================================================= */
+/* Dark mode low-contrast fix for slate-500 on #0e1628 surfaces */
+html:not(.light) .text-slate-500 {
+  color: #94a3b8 !important; /* ensures >= 4.5:1 contrast on dark surfaces */
+}
+
 html.light body {
   background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
 html.light header {
-  background-color: rgba(255, 255, 255, 0.92) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
   border-color: #e2e8f0 !important;
 }
 
@@ -98,7 +103,7 @@ html.light header nav a {
 }
 
 html.light header nav a:hover {
-  color: #0891b2 !important;
+  color: #0e7490 !important;
   background-color: #f1f5f9 !important;
 }
 
@@ -114,21 +119,21 @@ html.light #mobileMenuDrawer a {
 html.light footer {
   background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
-  color: #475569 !important;
+  color: #334155 !important;
 }
 
 html.light footer h3,
 html.light footer span.text-white,
 html.light footer p {
-  color: #334155 !important;
+  color: #1e293b !important;
 }
 
 html.light footer a {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 html.light footer a:hover {
-  color: #0891b2 !important;
+  color: #0e7490 !important;
 }
 
 /* Light mode card surfaces */
@@ -138,7 +143,7 @@ html.light .bg-\[\#0c1220\],
 html.light .bg-\[\#060910\],
 html.light .bg-\[\#080c15\] {
   background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
 }
 
@@ -149,7 +154,7 @@ html.light .bg-\[\#0c1424\],
 html.light .bg-black\/30,
 html.light .bg-black\/40 {
   background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
   color: #0f172a !important;
 }
 
@@ -172,11 +177,11 @@ html.light input[type="text"]:focus,
 html.light input[type="number"]:focus,
 html.light select:focus {
   background-color: #ffffff !important;
-  border-color: #06b6d4 !important;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2) !important;
+  border-color: #0891b2 !important;
+  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2) !important;
 }
 
-/* Light mode text contrast fixes */
+/* Light mode text contrast fixes (WCAG AA & AAA compliant) */
 html.light .text-white {
   color: #0f172a !important;
 }
@@ -188,17 +193,94 @@ html.light .text-slate-300 {
 }
 
 html.light .text-slate-400 {
-  color: #64748b !important;
+  color: #334155 !important; /* contrast ~9.6:1 on white */
 }
 
 html.light .text-slate-500 {
-  color: #475569 !important;
+  color: #1e293b !important; /* contrast >12:1 on white */
+}
+
+/* Preserving readable white text on dark buttons and badges in light mode */
+html.light button.bg-slate-900,
+html.light button.bg-slate-800,
+html.light button.bg-slate-700,
+html.light button.bg-cyan-600,
+html.light button.bg-blue-600,
+html.light button.bg-emerald-600,
+html.light #triggerPrintBtn,
+html.light #printQuoteBtn,
+html.light #shareConfigBtn,
+html.light .btn-dark,
+html.light .bg-slate-900 button,
+html.light .bg-slate-800 button {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #334155 !important;
+}
+
+html.light button.bg-slate-900 *,
+html.light button.bg-slate-800 *,
+html.light button.bg-slate-700 *,
+html.light #triggerPrintBtn *,
+html.light #printQuoteBtn *,
+html.light #shareConfigBtn *,
+html.light .btn-dark * {
+  color: #ffffff !important;
+}
+
+/* High contrast accent colors for light mode (replaces unreadable neon colors) */
+html.light .text-cyan-400,
+html.light .text-cyan-300,
+html.light .text-cyan-500 {
+  color: #0e7490 !important; /* cyan-700: 5.1:1 on white */
+}
+
+html.light .text-emerald-400,
+html.light .text-emerald-300 {
+  color: #047857 !important; /* emerald-700: 5.2:1 on white */
+}
+
+html.light .text-violet-400,
+html.light .text-violet-300,
+html.light .text-purple-400,
+html.light .text-purple-300 {
+  color: #6d28d9 !important; /* violet-700: 6.2:1 on white */
+}
+
+html.light .text-blue-400,
+html.light .text-blue-300 {
+  color: #1d4ed8 !important; /* blue-700: 6.5:1 on white */
+}
+
+html.light .text-pink-400,
+html.light .text-pink-300,
+html.light .text-rose-400,
+html.light .text-rose-300 {
+  color: #be185d !important; /* pink-700: 5.2:1 on white */
+}
+
+html.light .text-red-400,
+html.light .text-red-300 {
+  color: #b91c1c !important; /* red-700: 5.7:1 on white */
+}
+
+html.light .text-orange-400,
+html.light .text-orange-300,
+html.light .text-amber-400,
+html.light .text-amber-300 {
+  color: #c2410c !important; /* orange-700: 5.1:1 on white */
+}
+
+/* Preserve bright icon/text in dark badges or gradient icons */
+html.light .bg-gradient-to-br svg,
+html.light .bg-gradient-to-r svg {
+  color: #ffffff !important;
 }
 
 html.light .border-white\/10,
 html.light .border-white\/5,
 html.light .border-white\/20 {
-  border-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
 }
 
 html.light .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
@@ -212,12 +294,12 @@ html.light .bg-white\/5 {
 
 html.light .bg-white\/\[0\.02\] {
   background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
 }
 
 html.light thead {
   background-color: #f1f5f9 !important;
-  color: #475569 !important;
+  color: #1e293b !important;
 }
 
 html.light tbody tr:hover {
@@ -228,80 +310,168 @@ html.light .glow-cyan {
   box-shadow: 0 4px 25px -2px rgba(6, 182, 212, 0.15) !important;
 }
 
-/* Light mode badges */
+/* Light mode badges and callout boxes */
 html.light .bg-cyan-950\/60,
 html.light .bg-cyan-950\/40 {
-  background-color: #e0f2fe !important;
-  border-color: #7dd3fc !important;
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0369a1 !important;
+}
+html.light .bg-cyan-950\/60 *,
+html.light .bg-cyan-950\/40 * {
   color: #0369a1 !important;
 }
 
 html.light .bg-emerald-950\/60,
 html.light .bg-emerald-950\/40 {
-  background-color: #d1fae5 !important;
-  border-color: #6ee7b7 !important;
-  color: #047857 !important;
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #166534 !important;
+}
+html.light .bg-emerald-950\/60 *,
+html.light .bg-emerald-950\/40 * {
+  color: #166534 !important;
+}
+html.light .bg-emerald-950\/60 .text-white,
+html.light .bg-emerald-950\/40 .text-white {
+  color: #14532d !important;
 }
 
-html.light .bg-blue-950\/60 {
-  background-color: #dbeafe !important;
-  border-color: #93c5fd !important;
-  color: #1d4ed8 !important;
+html.light .bg-blue-950\/60,
+html.light .bg-blue-950\/40 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1e40af !important;
+}
+html.light .bg-blue-950\/60 *,
+html.light .bg-blue-950\/40 * {
+  color: #1e40af !important;
+}
+html.light .bg-blue-950\/60 .text-white,
+html.light .bg-blue-950\/40 .text-white {
+  color: #1e3a8a !important;
 }
 
-html.light .bg-violet-950\/60 {
-  background-color: #ede9fe !important;
-  border-color: #c4b5fd !important;
-  color: #6d28d9 !important;
+html.light .bg-violet-950\/60,
+html.light .bg-violet-950\/40,
+html.light .bg-purple-950\/60,
+html.light .bg-purple-950\/40 {
+  background-color: #f5f3ff !important;
+  border-color: #ddd6fe !important;
+  color: #5b21b6 !important;
+}
+html.light .bg-violet-950\/60 *,
+html.light .bg-violet-950\/40 *,
+html.light .bg-purple-950\/60 *,
+html.light .bg-purple-950\/40 * {
+  color: #5b21b6 !important;
+}
+html.light .bg-violet-950\/60 .text-white,
+html.light .bg-violet-950\/40 .text-white,
+html.light .bg-purple-950\/60 .text-white,
+html.light .bg-purple-950\/40 .text-white {
+  color: #4c1d95 !important;
 }
 
-html.light .bg-pink-950\/60 {
-  background-color: #fce7f3 !important;
+html.light .bg-pink-950\/60,
+html.light .bg-pink-950\/40,
+html.light .bg-rose-950\/60,
+html.light .bg-rose-950\/40 {
+  background-color: #fdf2f8 !important;
   border-color: #fbcfe8 !important;
-  color: #be185d !important;
+  color: #9d174d !important;
+}
+html.light .bg-pink-950\/60 *,
+html.light .bg-pink-950\/40 *,
+html.light .bg-rose-950\/60 *,
+html.light .bg-rose-950\/40 * {
+  color: #9d174d !important;
+}
+html.light .bg-pink-950\/60 .text-white,
+html.light .bg-pink-950\/40 .text-white,
+html.light .bg-rose-950\/60 .text-white,
+html.light .bg-rose-950\/40 .text-white {
+  color: #831843 !important;
 }
 
-html.light .bg-red-950\/60 {
-  background-color: #fee2e2 !important;
-  border-color: #fca5a5 !important;
-  color: #b91c1c !important;
+html.light .bg-red-950\/60,
+html.light .bg-red-950\/40 {
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+html.light .bg-red-950\/60 *,
+html.light .bg-red-950\/40 * {
+  color: #991b1b !important;
+}
+html.light .bg-red-950\/60 .text-white,
+html.light .bg-red-950\/40 .text-white {
+  color: #7f1d1d !important;
 }
 
 /* =========================================================
-   PRINT STYLESHEET: PRINTS ONLY THE INVOICE QUOTE POPUP
+   PRINT STYLESHEET: PRINTS ONLY THE INVOICE QUOTE (EXACTLY 1 PAGE)
    ========================================================= */
 @media print {
-  /* Hide every single element on the page */
-  body * {
-    visibility: hidden !important;
+  @page {
+    size: portrait;
+    margin: 10mm;
   }
 
-  /* Make ONLY the printable invoice and its children visible */
-  #printableInvoiceCard,
-  #printableInvoiceCard * {
-    visibility: visible !important;
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
-  /* Position invoice at absolute top left, full width, zero margins */
-  #printableInvoiceCard {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
+  /* When printing quote modal: hide everything else in body */
+  body.printing-quote > *:not(#quoteInvoiceModal) {
+    display: none !important;
+  }
+
+  /* Hide headers, footers, ribbons, buttons */
+  header,
+  footer,
+  nav,
+  .layer-line-rgb,
+  .no-print,
+  #closeInvoiceBtn,
+  #triggerPrintBtn,
+  #shareToast {
+    display: none !important;
+  }
+
+  body.printing-quote #quoteInvoiceModal {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  body.printing-quote #printableInvoiceCard {
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding: 30px !important;
+    padding: 24px !important;
     background: #ffffff !important;
-    color: #000000 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
     box-shadow: none !important;
-    border: none !important;
-    z-index: 999999 !important;
-  }
-
-  /* Explicitly hide the close and print buttons inside modal during print */
-  #closeInvoiceBtn,
-  #triggerPrintBtn,
-  .no-print {
-    display: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }

@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout
   title="Terms of Service | 3DPrintingCostCalc.com"
-  description="Terms of service and computational disclaimer for 3DPrintingCostCalc.com."
+  description="Terms of service, engineering calculation disclaimers, and user agreements for 3DPrintingCostCalc.com."
   breadcrumbs={[
     { name: 'Home', item: 'https://3dprintingcostcalc.com/' },
     { name: 'Terms of Service', item: 'https://3dprintingcostcalc.com/terms/' }
@@ -13,42 +13,170 @@ import Layout from '../../layouts/Layout.astro';
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-slate-300">
     <div class="space-y-2">
       <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Terms of Service</h1>
-      <p class="text-xs text-slate-500 font-mono">Effective Date: October 2026</p>
+      <p class="text-xs text-slate-400 font-mono">Last Updated: October 2026</p>
     </div>
 
+    <!-- Highlight Box -->
+    <div class="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 leading-relaxed">
+      <strong>Agreement Summary:</strong> 3DPrintingCostCalc.com is a free engineering estimation and pricing calculator for 3D printing makers, print farms, and businesses. By accessing our website, you agree to these terms, our calculation disclaimers, and understand that all estimates must be verified against your specific equipment, materials, and operating parameters.
+    </div>
+
+    <!-- 1. Acceptance of Terms -->
     <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">1. Acceptance of Terms</h2>
+      <h2 class="text-xl font-bold text-white">1. Acceptance of Terms & Eligibility</h2>
       <p>
-        By accessing or using 3DPrintingCostCalc.com, you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use our calculators or tools.
+        By accessing or using 3DPrintingCostCalc.com (including all subpages, calculators, embedded tools, and downloadable quote templates), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree with any part of these terms, you must discontinue use of the website immediately.
       </p>
     </section>
 
+    <!-- 2. Nature of the Service -->
     <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">2. Calculation Disclaimer & Accuracy</h2>
+      <h2 class="text-xl font-bold text-white">2. Nature and Purpose of the Service</h2>
       <p>
-        All calculations, mesh volume approximations, filament estimations, electricity projections, and marketplace fee models provided on this site are for engineering estimation and reference purposes only. Real-world 3D printing results may vary due to ambient temperature, machine calibration, specific slicer acceleration parameters, moisture content in filament, and marketplace policy updates. 3DPrintingCostCalc.com makes no warranties regarding financial outcomes or exact print tolerances.
+        3DPrintingCostCalc.com provides computational utilities designed to estimate additive manufacturing parameters, including raw material costs, electrical energy consumption, machine capital depreciation, maintenance reserves, post-processing labor, and commercial marketplace pricing models. All calculators are provided free of charge for reference, educational, and business estimation purposes.
       </p>
     </section>
 
+    <!-- 3. Technical Calculation Disclaimer -->
     <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">3. Intellectual Property of Uploaded Models</h2>
+      <h2 class="text-xl font-bold text-white">3. Technical Calculation Disclaimer & Physical Tolerances</h2>
       <p>
-        You retain 100% full ownership and intellectual property rights over any 3D model files (.stl, .3mf, .gcode, .obj) loaded into our browser-based inspector. Because our tools process files entirely within your local browser's memory without server transmission, no license or ownership transfer of your 3D assets occurs.
+        While our mathematical formulas and slicer parsing algorithms are built according to modern additive manufacturing engineering standards, real-world 3D printing involves numerous physical variables that cannot be fully predicted by browser-based geometry inspection alone:
+      </p>
+      <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
+        <li><strong>Material Density & Batch Variations:</strong> Polymer densities (e.g., PLA at 1.24 g/cm³, PETG at 1.27 g/cm³, ABS at 1.04 g/cm³) may fluctuate by ±3% to 5% across different filament manufacturers, pigment loadings, and filler contents (e.g., carbon fiber, wood, or glow particles).</li>
+        <li><strong>Infill & Geometry Approximations:</strong> Volume estimates from raw STL and OBJ meshes assume uniform internal infill geometries (such as Gyroid, Grid, or Honeycomb). Slicer-generated wall perimeters, solid top/bottom layers, support interface densities, and adaptive layer heights will impact final printed part weight.</li>
+        <li><strong>Machine Kinematics & Slicing Acceleration:</strong> Print time estimates derived from G-code headers reflect slicer simulations. Machine-level acceleration, jerk limits, bed leveling routines, nozzle purge cycles, and firmware flow rate ceilings will cause variations in actual cycle durations.</li>
+        <li><strong>Resin SLA/DLP Variables:</strong> Liquid photopolymer calculations include estimated support overhead and isopropyl alcohol (IPA) bath depletion. Part orientation, hollowing drain hole efficiency, internal resin entrapment, and FEP release film degradation may influence consumption.</li>
+      </ul>
+      <p>
+        Users are advised to conduct physical test prints and weigh prototypes on calibrated scales to verify baseline values prior to fulfilling high-volume production orders.
       </p>
     </section>
 
+    <!-- 4. Commercial & Financial Disclaimer -->
     <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">4. Modifications to the Service</h2>
+      <h2 class="text-xl font-bold text-white">4. Commercial Pricing, Marketplace Fees & Financial Disclaimer</h2>
       <p>
-        We reserve the right to modify, update, or discontinue features of this website at any time without prior notice.
+        Our commercial seller pricing calculators offer suggested retail quotes and breakdown platform fees for third-party marketplaces such as Etsy, eBay, and Shopify.
+      </p>
+      <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
+        <li>Marketplace fee structures (transaction fees, payment processing fees, listing fees, regulatory operating fees, and currency conversions) change periodically and may vary by geographic territory and seller tier.</li>
+        <li>3DPrintingCostCalc.com does not guarantee profitability, business success, or accuracy of third-party fee projections.</li>
+        <li>You retain sole legal and commercial responsibility for setting customer prices, collecting appropriate sales taxes/VAT, managing shipping logistics, and fulfilling client contracts.</li>
+      </ul>
+    </section>
+
+    <!-- 5. No Safety, Aerospace, or Medical Warranties -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">5. No Safety, Structural, or Medical Warranties</h2>
+      <p>
+        Calculations and material properties listed on this website do not certify the structural integrity, impact resistance, tensile strength, flame retardancy, chemical compatibility, or food safety of parts printed with any material. 3DPrintingCostCalc.com makes no representation that parts manufactured with our guidance are suitable for load-bearing, automotive, aerospace, or medical applications.
       </p>
     </section>
 
+    <!-- 6. Intellectual Property of User Models -->
     <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
-      <h2 class="text-xl font-bold text-white">5. Governing Law</h2>
+      <h2 class="text-xl font-bold text-white">6. Intellectual Property of User 3D Models & Files</h2>
       <p>
-        These Terms shall be governed and construed in accordance with applicable laws, without regard to conflict of law principles.
+        You retain 100% complete and uncompromised intellectual property rights and copyrights over any 3D model files (.stl, .3mf, .gcode, .bgcode, .obj) loaded into our browser-based inspector.
       </p>
+      <p>
+        Because all file inspection and calculation occurs exclusively in client-side volatile memory on your local machine with zero data transmitted to our servers, you do not grant 3DPrintingCostCalc.com any license, title, or interest in your proprietary designs, patents, or trade secrets.
+      </p>
+    </section>
+
+    <!-- 7. Website Intellectual Property & Trademarks -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">7. Website Intellectual Property & Third-Party Trademarks</h2>
+      <p>
+        All website code, calculation algorithms, interactive tools, visual designs, stylesheets, graphics, and editorial content on 3DPrintingCostCalc.com are protected by international copyright, trademark, and intellectual property laws.
+      </p>
+      <p>
+        Third-party trademarks, brand names, and printer model designations (including Bambu Lab, Prusa Research, Creality, Elegoo, Anycubic, Voron Design, Polymaker, Sunlu, and eSUN) are the property of their respective trademark holders. Reference to these brands is strictly nominative to provide accurate compatibility information and hardware preset guidance for users.
+      </p>
+    </section>
+
+    <!-- 8. Acceptable Use -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">8. Acceptable Use & Prohibited Conduct</h2>
+      <p>
+        When using 3DPrintingCostCalc.com, you agree that you will not:
+      </p>
+      <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
+        <li>Attempt to disrupt, degrade, overload, or compromise the availability or security of our web infrastructure.</li>
+        <li>Deploy automated scrapers, bots, or data harvesting scripts to duplicate our proprietary databases or calculators without express written authorization.</li>
+        <li>Frame, mirror, or repackage our computational tools within another commercial application without attribution.</li>
+      </ul>
+    </section>
+
+    <!-- 9. Limitation of Liability -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">9. Limitation of Liability</h2>
+      <p>
+        TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, 3DPRINTINGCOSTCALC.COM AND ITS OPERATORS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO:
+      </p>
+      <ul class="list-disc pl-5 space-y-1.5 text-slate-300">
+        <li>Physical 3D printer hardware damage, nozzle clogs, hotend thermal runaway, or stepper motor failure;</li>
+        <li>Wasted filament, depleted photopolymer resin, or failed batch production runs;</li>
+        <li>Lost business revenue, missed delivery deadlines, or financial miscalculations on marketplace sales;</li>
+        <li>Any inaccuracies or omissions in default machine wattages, material densities, or community spool tare weights.</li>
+      </ul>
+      <p>
+        THE WEBSITE AND ALL TOOLS ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+      </p>
+    </section>
+
+    <!-- 10. Indemnification -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">10. Indemnification</h2>
+      <p>
+        You agree to defend, indemnify, and hold harmless 3DPrintingCostCalc.com, its contributors, and operators from and against any claims, liabilities, damages, judgments, awards, losses, costs, or expenses (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the website's calculations for commercial manufacturing.
+      </p>
+    </section>
+
+    <!-- 11. Third-Party Links -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">11. Third-Party Services & External Links</h2>
+      <p>
+        Our website may contain links to external sites, slicer documentation, filament suppliers, and e-commerce platforms. We do not control or endorse the content, privacy practices, or terms of any third-party websites, and you access them at your own discretion.
+      </p>
+    </section>
+
+    <!-- 12. Modifications -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">12. Modifications to Terms and Services</h2>
+      <p>
+        We reserve the right to revise or update these Terms of Service at any time without prior notice. Changes take effect immediately upon posting to this page. Continued use of 3DPrintingCostCalc.com following any revisions constitutes your acceptance of the updated terms.
+      </p>
+    </section>
+
+    <!-- 13. Governing Law & Dispute Resolution -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">13. Governing Law & Dispute Resolution</h2>
+      <p>
+        These Terms shall be governed by and construed in accordance with applicable laws, without giving effect to any principles of conflicts of law. Any legal action or proceeding arising out of these terms shall be resolved through good-faith informal negotiations prior to any formal dispute proceedings.
+      </p>
+    </section>
+
+    <!-- 14. Severability & Entire Agreement -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">14. Severability & Entire Agreement</h2>
+      <p>
+        If any provision of these Terms is found to be unlawful, void, or for any reason unenforceable, that provision shall be deemed severable and shall not affect the validity and enforceability of any remaining provisions. These Terms constitute the entire agreement between you and 3DPrintingCostCalc.com regarding the use of our services.
+      </p>
+    </section>
+
+    <!-- 15. Contact Details -->
+    <section class="space-y-3 text-xs sm:text-sm leading-relaxed">
+      <h2 class="text-xl font-bold text-white">15. Contact Information</h2>
+      <p>
+        For inquiries regarding these Terms of Service or our engineering disclaimers, please contact:
+      </p>
+      <div class="p-4 rounded-xl bg-[#0e1628] border border-white/10 font-mono text-xs">
+        <p>Email: <a href="mailto:support@3dprintingcostcalc.com" class="text-cyan-400 underline hover:text-cyan-300">support@3dprintingcostcalc.com</a></p>
+        <p class="text-slate-400 mt-1">Website: <a href="https://3dprintingcostcalc.com" class="text-cyan-400 underline hover:text-cyan-300">https://3dprintingcostcalc.com</a></p>
+      </div>
     </section>
   </div>
 </Layout>
