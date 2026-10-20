@@ -49,7 +49,7 @@ const faqs = [
     <!-- Interactive TCO Calculator -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       <!-- Input Controls (7 Cols) -->
-      <div class="lg:col-span-7 bg-[#0e1628] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+      <div class="lg:col-span-7 bg-[#0e1628] border border-white/10 p-6 shadow-xl space-y-5">
         <h2 class="text-base font-bold text-white tracking-wide uppercase font-mono text-xs text-blue-400">
           Hardware & Usage Parameters
         </h2>
@@ -58,7 +58,8 @@ const faqs = [
           <!-- Printer Hardware Preset -->
           <div class="sm:col-span-2">
             <label for="tcoPrinterSelect" class="block font-medium text-slate-300 mb-1">Select 3D Printer Model:</label>
-            <select id="tcoPrinterSelect" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white">
+            <select id="tcoPrinterSelect" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-sm text-white">
+              <option value="custom">➕ Custom Printer (Manual Entry)</option>
               {printers.map((p) => (
                 <option value={p.slug} data-msrp={p.msrpUsd} data-watts={p.avgWattsPla}>
                   {p.brand} {p.model} (${p.msrpUsd} MSRP · {p.avgWattsPla}W)
@@ -70,37 +71,43 @@ const faqs = [
           <!-- Custom Hardware Price -->
           <div>
             <label for="tcoHardwarePrice" class="block font-medium text-slate-300 mb-1">Upfront Printer Price ($):</label>
-            <input type="number" id="tcoHardwarePrice" value="849" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoHardwarePrice" value="849" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
+          </div>
+
+          <!-- Printer Power Draw (Watts) -->
+          <div>
+            <label for="tcoPrinterWatts" class="block font-medium text-slate-300 mb-1">Printer Power Draw (Watts):</label>
+            <input type="number" id="tcoPrinterWatts" value="130" step="5" min="10" max="2500" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
 
           <!-- Average Print Hours Per Month -->
           <div>
             <label for="tcoMonthlyHours" class="block font-medium text-slate-300 mb-1">Monthly Print Hours:</label>
-            <input type="number" id="tcoMonthlyHours" value="120" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoMonthlyHours" value="120" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
 
           <!-- Monthly Spools -->
           <div>
             <label for="tcoSpoolsMonth" class="block font-medium text-slate-300 mb-1">Spools Used Per Month (1kg):</label>
-            <input type="number" id="tcoSpoolsMonth" value="2" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoSpoolsMonth" value="2" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
 
           <!-- Cost Per Spool -->
           <div>
             <label for="tcoSpoolCost" class="block font-medium text-slate-300 mb-1">Average Spool Cost ($):</label>
-            <input type="number" id="tcoSpoolCost" value="20" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoSpoolCost" value="20" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
 
           <!-- Electricity Rate -->
           <div>
             <label for="tcoElecRate" class="block font-medium text-slate-300 mb-1">Electricity Rate ($/kWh):</label>
-            <input type="number" id="tcoElecRate" step="0.01" value="0.16" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoElecRate" step="0.01" value="0.16" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
 
           <!-- Replacement Outsource Cost -->
-          <div>
+          <div class="sm:col-span-2">
             <label for="tcoOutsourceCost" class="block font-medium text-slate-300 mb-1">Outsource Cost Per 100g Part ($):</label>
-            <input type="number" id="tcoOutsourceCost" value="30" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm" />
+            <input type="number" id="tcoOutsourceCost" value="30" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-white font-mono text-sm" />
           </div>
         </div>
       </div>
@@ -236,6 +243,7 @@ const faqs = [
 
   const printerSelect = document.getElementById('tcoPrinterSelect') as HTMLSelectElement;
   const hardwarePriceInput = document.getElementById('tcoHardwarePrice') as HTMLInputElement;
+  const printerWattsInput = document.getElementById('tcoPrinterWatts') as HTMLInputElement;
   const monthlyHoursInput = document.getElementById('tcoMonthlyHours') as HTMLInputElement;
   const spoolsMonthInput = document.getElementById('tcoSpoolsMonth') as HTMLInputElement;
   const spoolCostInput = document.getElementById('tcoSpoolCost') as HTMLInputElement;
@@ -252,8 +260,8 @@ const faqs = [
   const tcoOutsourceVal = document.getElementById('tcoOutsourceVal');
 
   function updateTCO() {
-    const selected = printers.find(p => p.slug === printerSelect.value) || printers[0];
     const hardwareCost = parseFloat(hardwarePriceInput.value) || 0;
+    const watts = parseFloat(printerWattsInput.value) || 130;
     const monthlyHours = parseFloat(monthlyHoursInput.value) || 0;
     const spoolsMonth = parseFloat(spoolsMonthInput.value) || 0;
     const spoolCost = parseFloat(spoolCostInput.value) || 0;
@@ -261,7 +269,7 @@ const faqs = [
     const outsourcePrice = parseFloat(outsourceCostInput.value) || 30;
 
     const monthlyFilamentCost = spoolsMonth * spoolCost;
-    const monthlyKwh = (selected.avgWattsPla / 1000) * monthlyHours;
+    const monthlyKwh = (watts / 1000) * monthlyHours;
     const monthlyElecCost = monthlyKwh * elecRate;
     const monthlyMaintenance = 2.50; // ~$30/yr maintenance reserve
     const monthlyOpEx = monthlyFilamentCost + monthlyElecCost + monthlyMaintenance;
@@ -271,8 +279,7 @@ const faqs = [
     const year1Total = hardwareCost + year1Filament + year1Elec + 30;
 
     // Break-even math:
-    // In-house 100g part costs: 0.1kg * spoolCost + (100g print time ~2.5h electricity)
-    const inHousePartCost = (0.1 * spoolCost) + (2.5 * (selected.avgWattsPla / 1000) * elecRate);
+    const inHousePartCost = (0.1 * spoolCost) + (2.5 * (watts / 1000) * elecRate);
     const savingsPerPart = Math.max(1, outsourcePrice - inHousePartCost);
     const breakEvenCount = Math.ceil(hardwareCost / savingsPerPart);
     const partsPerMonth = (spoolsMonth * 1000) / 100;
@@ -289,14 +296,35 @@ const faqs = [
   }
 
   printerSelect?.addEventListener('change', () => {
+    if (printerSelect.value === 'custom') {
+      updateTCO();
+      return;
+    }
     const selected = printers.find(p => p.slug === printerSelect.value);
     if (selected) {
       hardwarePriceInput.value = selected.msrpUsd.toString();
+      printerWattsInput.value = selected.avgWattsPla.toString();
       updateTCO();
     }
   });
 
-  [hardwarePriceInput, monthlyHoursInput, spoolsMonthInput, spoolCostInput, elecRateInput, outsourceCostInput].forEach(inp => {
+  const onManualParamChange = () => {
+    const selected = printers.find(p => p.slug === printerSelect.value);
+    if (selected) {
+      if (
+        parseFloat(hardwarePriceInput.value) !== selected.msrpUsd ||
+        parseFloat(printerWattsInput.value) !== selected.avgWattsPla
+      ) {
+        printerSelect.value = 'custom';
+      }
+    }
+    updateTCO();
+  };
+
+  hardwarePriceInput?.addEventListener('input', onManualParamChange);
+  printerWattsInput?.addEventListener('input', onManualParamChange);
+
+  [monthlyHoursInput, spoolsMonthInput, spoolCostInput, elecRateInput, outsourceCostInput].forEach(inp => {
     inp?.addEventListener('input', updateTCO);
   });
 

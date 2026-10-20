@@ -41,6 +41,30 @@
   }
 }
 
+/* =========================================================
+   90-DEGREE TECHNICAL BOX AESTHETIC (WIREGAUGECALCULATOR.COM)
+   ========================================================= */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* 3D Logo Badge: adapts dynamically to dark/light modes */
+.logo-badge-3d {
+  background-color: rgba(6, 182, 212, 0.18);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  transition: all 0.2s ease;
+}
+
+html.light .logo-badge-3d {
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
+  border-color: #67e8f9 !important;
+}
+
 /* 3D Print Bed Isometric Grid Motif */
 .print-bed-pattern {
   background-image: 
@@ -469,7 +493,7 @@ html.light .bg-red-950\/40 .text-white {
     background: #ffffff !important;
     color: #0f172a !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 12px !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;

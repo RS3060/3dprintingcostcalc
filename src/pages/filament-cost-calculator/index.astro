@@ -54,7 +54,8 @@ const faqs = [
           <!-- Material Selector -->
           <div>
             <label for="fMatSelect" class="block font-medium text-slate-300 mb-1">Polymer / Filament Type:</label>
-            <select id="fMatSelect" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white">
+            <select id="fMatSelect" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-sm text-white">
+              <option value="custom">➕ Custom Material (Manual Entry)</option>
               {materials.filter(m => m.diameterMm > 0).map((m) => (
                 <option value={m.slug} data-density={m.densityGcm3} data-price={m.defaultPricePerKgUsd}>
                   {m.name} ({m.densityGcm3} g/cm³)
@@ -239,6 +240,10 @@ const faqs = [
   }
 
   matSelect?.addEventListener('change', () => {
+    if (matSelect.value === 'custom') {
+      calculateFilament();
+      return;
+    }
     const selected = materials.find(m => m.slug === matSelect.value);
     if (selected) {
       densityInput.value = selected.densityGcm3.toString();
@@ -247,7 +252,23 @@ const faqs = [
     }
   });
 
-  [diameterSelect, densityInput, spoolWeightInput, spoolPriceInput, gramsToConvertInput].forEach(inp => {
+  const onManualMaterialParam = () => {
+    const selected = materials.find(m => m.slug === matSelect.value);
+    if (selected) {
+      if (
+        parseFloat(densityInput.value) !== selected.densityGcm3 ||
+        parseFloat(spoolPriceInput.value) !== selected.defaultPricePerKgUsd
+      ) {
+        matSelect.value = 'custom';
+      }
+    }
+    calculateFilament();
+  };
+
+  densityInput?.addEventListener('input', onManualMaterialParam);
+  spoolPriceInput?.addEventListener('input', onManualMaterialParam);
+
+  [diameterSelect, spoolWeightInput, gramsToConvertInput].forEach(inp => {
     inp?.addEventListener('input', calculateFilament);
     inp?.addEventListener('change', calculateFilament);
   });

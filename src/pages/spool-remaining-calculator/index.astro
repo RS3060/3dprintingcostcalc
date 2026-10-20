@@ -60,7 +60,8 @@ const faqs = [
             <label for="spoolBrandSelect" class="block font-medium text-slate-300 mb-1">
               Select Empty Spool Profile:
             </label>
-            <select id="spoolBrandSelect" class="w-full bg-[#162035] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-medium">
+            <select id="spoolBrandSelect" class="w-full bg-[#162035] border border-white/10 px-3 py-2 text-sm text-white font-medium">
+              <option value="custom">➕ Custom Spool (Manual Tare Entry)</option>
               {tareData.map((s) => (
                 <option value={s.id} data-tare={s.emptyWeightGrams}>
                   {s.brand} - {s.spoolType} ({s.emptyWeightGrams}g tare)
@@ -277,6 +278,10 @@ const faqs = [
   }
 
   brandSelect?.addEventListener('change', () => {
+    if (brandSelect.value === 'custom') {
+      calculateNet();
+      return;
+    }
     const selected = tareData.find(s => s.id === brandSelect.value);
     if (selected) {
       tareInput.value = selected.emptyWeightGrams.toString();
@@ -284,7 +289,17 @@ const faqs = [
     }
   });
 
-  [grossInput, tareInput, reqInput].forEach(inp => {
+  const onManualTareParam = () => {
+    const selected = tareData.find(s => s.id === brandSelect.value);
+    if (selected && parseFloat(tareInput.value) !== selected.emptyWeightGrams) {
+      brandSelect.value = 'custom';
+    }
+    calculateNet();
+  };
+
+  tareInput?.addEventListener('input', onManualTareParam);
+
+  [grossInput, reqInput].forEach(inp => {
     inp?.addEventListener('input', calculateNet);
   });
 
