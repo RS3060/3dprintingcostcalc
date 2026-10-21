@@ -736,9 +736,16 @@ const currSym = locInfo.currency;
 
 <script>
   import { calculate3DPrintCost } from '../utils/costMath';
-  import { parse3DFile, estimateMeshWeightAndTime } from '../utils/fileParser';
   import printers from '../data/printers.json';
   import materials from '../data/materials.json';
+
+  let fileParserModule: typeof import('../utils/fileParser') | null = null;
+  async function loadFileParser() {
+    if (!fileParserModule) {
+      fileParserModule = await import('../utils/fileParser');
+    }
+    return fileParserModule;
+  }
 
   // Elements
   const root = document.getElementById('calculatorRoot');
@@ -1044,7 +1051,7 @@ const currSym = locInfo.currency;
   });
 
   // Recompute mesh estimation from sliders
-  function recomputeMeshEstimation() {
+  async function recomputeMeshEstimation() {
     const activePrinter = getActivePrinter();
     const density = parseFloat(materialDensityInput.value) || 1.24;
 
@@ -1052,6 +1059,7 @@ const currSym = locInfo.currency;
     const infillRatio = (parseInt(infillInput.value, 10) || 15) / 100.0;
     const supportMultiplier = parseFloat(supportSelect.value) || 1.0;
 
+    const { estimateMeshWeightAndTime } = await loadFileParser();
     const estimated = estimateMeshWeightAndTime(currentMeshVolume, currentSurfaceArea, {
       wallLoops,
       infillRatio,
@@ -1095,6 +1103,7 @@ const currSym = locInfo.currency;
     if (parsedFileSize) parsedFileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
 
     try {
+      const { parse3DFile } = await loadFileParser();
       const parsed = await parse3DFile(file, {
         wallLoops: parseInt(wallLoopsInput.value, 10) || 2,
         infillRatio: (parseInt(infillInput.value, 10) || 15) / 100,

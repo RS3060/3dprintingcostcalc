@@ -10,6 +10,9 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
+  build: {
+    inlineStylesheets: 'always',
+  },
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'zh', 'ja', 'ko', 'fr', 'es', 'ru', 'de', 'pt', 'it'],
