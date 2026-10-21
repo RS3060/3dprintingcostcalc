@@ -133,6 +133,9 @@ const jsonLdContent = JSON.stringify({
 <!doctype html>
 <html lang={locInfo.htmlLang} class="dark">
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <!-- Google tag (gtag.js) - High-Performance Deferred Loading -->
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <script is:inline>
@@ -175,8 +178,6 @@ const jsonLdContent = JSON.stringify({
         });
       })();
     </script>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
