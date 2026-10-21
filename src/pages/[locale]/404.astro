@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import NotFoundContent from '../../components/NotFoundContent.astro';
+import { NON_DEFAULT_LOCALES } from '../../i18n/locales';
+
+export function getStaticPaths() {
+  return NON_DEFAULT_LOCALES.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params;
+---
+
+<NotFoundContent locale={locale} />

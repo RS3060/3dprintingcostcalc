@@ -288,12 +288,12 @@ const jsonLdContent = JSON.stringify({
 
         <!-- Desktop Navigation Links -->
         <nav class="hidden lg:flex items-center gap-1 text-sm font-medium" aria-label="Main navigation">
-          <a href={getLocalizedPath('/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.jobCost}</a>
-          <a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.printerTco}</a>
-          <a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.filamentLength}</a>
-          <a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.spoolTare}</a>
-          <a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.amsWaste}</a>
-          <a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.resinSla}</a>
+          <a data-nav="jobCost" href={getLocalizedPath('/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.jobCost}</a>
+          <a data-nav="printerTco" href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.printerTco}</a>
+          <a data-nav="filamentLength" href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.filamentLength}</a>
+          <a data-nav="spoolTare" href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.spoolTare}</a>
+          <a data-nav="amsWaste" href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.amsWaste}</a>
+          <a data-nav="resinSla" href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{t.nav.resinSla}</a>
         </nav>
 
         <!-- Right Side Actions: Language Selector, Theme Toggle & Mobile Menu Trigger -->
@@ -342,19 +342,19 @@ const jsonLdContent = JSON.stringify({
         )}
 
         <div>
-          <span class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">{t.nav.calculators}</span>
+          <span data-nav="calculatorsTitle" class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 block mb-2 px-3">{t.nav.calculators}</span>
           <div class="space-y-1">
-            <a href={getLocalizedPath('/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.jobCost}</a>
-            <a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.printerTco}</a>
-            <a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.filamentLength}</a>
-            <a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.spoolTare}</a>
-            <a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.amsWaste}</a>
-            <a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.resinSla}</a>
+            <a data-nav="jobCost" href={getLocalizedPath('/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.jobCost}</a>
+            <a data-nav="printerTco" href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.printerTco}</a>
+            <a data-nav="filamentLength" href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.filamentLength}</a>
+            <a data-nav="spoolTare" href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.spoolTare}</a>
+            <a data-nav="amsWaste" href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.amsWaste}</a>
+            <a data-nav="resinSla" href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="block px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/5 rounded transition-colors">{t.nav.resinSla}</a>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-3">
-          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.machineProfiles}</span>
+          <span data-nav="machineProfilesTitle" class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.machineProfiles}</span>
           <div class="grid grid-cols-2 gap-1 text-xs">
             <a href={getLocalizedPath('/cost-calculator/bambu-lab-p1s/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu P1S</a>
             <a href={getLocalizedPath('/cost-calculator/bambu-lab-a1-mini/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">Bambu A1 Mini</a>
@@ -366,7 +366,7 @@ const jsonLdContent = JSON.stringify({
         </div>
 
         <div class="border-t border-white/5 pt-3">
-          <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.materialsGuides}</span>
+          <span data-nav="materialsGuidesTitle" class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-2 px-3">{t.nav.materialsGuides}</span>
           <div class="grid grid-cols-2 gap-1 text-xs">
             <a href={getLocalizedPath('/filament-cost/pla/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PLA Guide</a>
             <a href={getLocalizedPath('/filament-cost/petg/', currentLocale)} class="px-3 py-1.5 text-slate-300 hover:text-cyan-400 transition-colors">PETG Guide</a>
@@ -376,11 +376,11 @@ const jsonLdContent = JSON.stringify({
         </div>
 
         <div class="border-t border-white/5 pt-3 flex items-center justify-between px-3 text-xs text-slate-400">
-          <a href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a>
+          <a data-nav="privacy" href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a>
           <span>·</span>
-          <a href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a>
+          <a data-nav="terms" href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a>
           <span>·</span>
-          <a href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
+          <a data-nav="contact" href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
         </div>
       </nav>
     </header>
@@ -400,31 +400,31 @@ const jsonLdContent = JSON.stringify({
               <div class="logo-badge-3d w-7 h-7 flex items-center justify-center font-bold text-xs tracking-tight border" aria-hidden="true">3D</div>
               <span class="font-semibold text-white">3DPrintingCostCalc.com</span>
             </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
+            <p id="footerAboutDesc" class="text-xs text-slate-400 leading-relaxed">
               {t.footer.aboutDesc}
             </p>
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 rounded">
               <span class="w-1.5 h-1.5 bg-emerald-400 animate-pulse" aria-hidden="true"></span>
-              {t.footer.clientSideBadge}
+              <span id="footerClientBadge">{t.footer.clientSideBadge}</span>
             </div>
           </div>
 
           <!-- Col 2: Core Calculators -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.calculatorsCol}</h3>
+            <h3 id="footerColCalculators" class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.calculatorsCol}</h3>
             <ul class="space-y-2 text-xs">
-              <li><a href={getLocalizedPath('/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.jobCost}</a></li>
-              <li><a href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.printerTco}</a></li>
-              <li><a href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.filamentLength}</a></li>
-              <li><a href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.spoolTare}</a></li>
-              <li><a href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.amsWaste}</a></li>
-              <li><a href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.resinSla}</a></li>
+              <li><a data-nav="jobCost" href={getLocalizedPath('/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.jobCost}</a></li>
+              <li><a data-nav="printerTco" href={getLocalizedPath('/3d-printer-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.printerTco}</a></li>
+              <li><a data-nav="filamentLength" href={getLocalizedPath('/filament-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.filamentLength}</a></li>
+              <li><a data-nav="spoolTare" href={getLocalizedPath('/spool-remaining-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.spoolTare}</a></li>
+              <li><a data-nav="amsWaste" href={getLocalizedPath('/multicolor-ams-waste-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.amsWaste}</a></li>
+              <li><a data-nav="resinSla" href={getLocalizedPath('/resin-3d-print-cost-calculator/', currentLocale)} class="hover:text-cyan-400 transition-colors">{t.nav.resinSla}</a></li>
             </ul>
           </div>
 
           <!-- Col 3: Popular Printer Profiles -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.machineProfilesCol}</h3>
+            <h3 id="footerColProfiles" class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.machineProfilesCol}</h3>
             <ul class="space-y-2 text-xs">
               <li><a href={getLocalizedPath('/cost-calculator/bambu-lab-p1s/', currentLocale)} class="hover:text-cyan-400 transition-colors">Bambu Lab P1S</a></li>
               <li><a href={getLocalizedPath('/cost-calculator/bambu-lab-a1-mini/', currentLocale)} class="hover:text-cyan-400 transition-colors">Bambu A1 Mini</a></li>
@@ -437,21 +437,21 @@ const jsonLdContent = JSON.stringify({
 
           <!-- Col 4: Materials & Legal -->
           <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.materialsCol}</h3>
+            <h3 id="footerColMaterials" class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">{t.footer.materialsCol}</h3>
             <ul class="space-y-2 text-xs">
               <li><a href={getLocalizedPath('/filament-cost/pla/', currentLocale)} class="hover:text-cyan-400 transition-colors">PLA Guide</a></li>
               <li><a href={getLocalizedPath('/filament-cost/petg/', currentLocale)} class="hover:text-cyan-400 transition-colors">PETG Guide</a></li>
               <li><a href={getLocalizedPath('/filament-cost/abs/', currentLocale)} class="hover:text-cyan-400 transition-colors">ABS Guide</a></li>
-              <li><a href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a></li>
-              <li><a href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a></li>
-              <li><a href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a></li>
+              <li><a data-nav="privacy" href="/privacy/" class="hover:text-cyan-400 transition-colors">{t.nav.privacy}</a></li>
+              <li><a data-nav="terms" href="/terms/" class="hover:text-cyan-400 transition-colors">{t.nav.terms}</a></li>
+              <li><a data-nav="contact" href="/contact/" class="hover:text-cyan-400 transition-colors">{t.nav.contact}</a></li>
             </ul>
           </div>
         </div>
 
         <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-          <p>{t.footer.copyrightNotice}</p>
-          <p class="text-slate-400">{t.footer.builtFor}</p>
+          <p id="footerCopyright">{t.footer.copyrightNotice}</p>
+          <p id="footerBuiltFor" class="text-slate-400">{t.footer.builtFor}</p>
         </div>
       </div>
     </footer>
